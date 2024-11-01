@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogCorner.EduSync.Speech.Domain", "LogCorner.EduSync.Speech.Domain.csproj", "{44034CF9-3C7B-4ED5-97A3-E5FD0D86F4ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCorner.EduSync.Speech.SharedKernel", "..\LogCorner.EduSync.Speech.SharedKernel\LogCorner.EduSync.Speech.SharedKernel.csproj", "{B7A4A65A-15FB-495E-B074-CDFDCB1FB358}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "LogCorner.EduSync.Speech.Database", "..\LogCorner.EduSync.Speech.Database\LogCorner.EduSync.Speech.Database.sqlproj", "{CE1FA34C-F9E3-4D5D-9FEB-FB0BBC2E9B1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCorner.EduSync.Speech.Application", "..\LogCorner.EduSync.Speech.Application\LogCorner.EduSync.Speech.Application.csproj", "{DCF175DE-C451-40D6-895F-8BC7CF8BB78B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCorner.EduSync.Speech.Infrastructure", "..\LogCorner.EduSync.Speech.Infrastructure\LogCorner.EduSync.Speech.Infrastructure.csproj", "{36376417-7696-429E-AA94-FD33D82F5F75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCorner.EduSync.Speech.Presentation", "..\LogCorner.EduSync.Speech.Presentation\LogCorner.EduSync.Speech.Presentation.csproj", "{E185E7D3-1EF5-44D6-92DA-31E448E258ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44034CF9-3C7B-4ED5-97A3-E5FD0D86F4ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44034CF9-3C7B-4ED5-97A3-E5FD0D86F4ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44034CF9-3C7B-4ED5-97A3-E5FD0D86F4ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44034CF9-3C7B-4ED5-97A3-E5FD0D86F4ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A4A65A-15FB-495E-B074-CDFDCB1FB358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A4A65A-15FB-495E-B074-CDFDCB1FB358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A4A65A-15FB-495E-B074-CDFDCB1FB358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A4A65A-15FB-495E-B074-CDFDCB1FB358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1FA34C-F9E3-4D5D-9FEB-FB0BBC2E9B1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE1FA34C-F9E3-4D5D-9FEB-FB0BBC2E9B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE1FA34C-F9E3-4D5D-9FEB-FB0BBC2E9B1E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{CE1FA34C-F9E3-4D5D-9FEB-FB0BBC2E9B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE1FA34C-F9E3-4D5D-9FEB-FB0BBC2E9B1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1FA34C-F9E3-4D5D-9FEB-FB0BBC2E9B1E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{DCF175DE-C451-40D6-895F-8BC7CF8BB78B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF175DE-C451-40D6-895F-8BC7CF8BB78B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF175DE-C451-40D6-895F-8BC7CF8BB78B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF175DE-C451-40D6-895F-8BC7CF8BB78B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36376417-7696-429E-AA94-FD33D82F5F75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36376417-7696-429E-AA94-FD33D82F5F75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36376417-7696-429E-AA94-FD33D82F5F75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36376417-7696-429E-AA94-FD33D82F5F75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E185E7D3-1EF5-44D6-92DA-31E448E258ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E185E7D3-1EF5-44D6-92DA-31E448E258ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E185E7D3-1EF5-44D6-92DA-31E448E258ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E185E7D3-1EF5-44D6-92DA-31E448E258ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {757CBAE2-E221-4CA7-8230-720189E9239A}
+	EndGlobalSection
+EndGlobal
