@@ -59,10 +59,21 @@
     <Folder Include="Docker" />
     <Folder Include="Docker\mssql-tools" />
     <Folder Include="Docker\Restore" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Docker\mssql-tools\Dockerfile" />
     <None Include="Docker\Dockerfile" />
     <None Include="Docker\readme.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Speech.sql" />
+    <Build Include="dbo\Tables\MediaFile.sql" />
+    <Build Include="dbo\Tables\EventStore.sql" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
