@@ -28,7 +28,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
                 return BadRequest(ModelState);
             }
 
-            var command = new RegisterSpeechCommandMessage(dto.Title, dto.Description, dto.Url, dto.TypeId);
+            var command = new RegisterSpeechCommandMessage(dto.Title, dto.Description, dto.Url, dto.Type);
 
             await _createSpeechUseCase.Handle(command);
 
