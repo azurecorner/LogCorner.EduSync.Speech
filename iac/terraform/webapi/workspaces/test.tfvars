@@ -1,16 +1,16 @@
-resource_group_location   = "westeurope"
-resource_group_name = "LOGCORNER-MICROSERVICES-IAC"
+resource_group_location = "westeurope"
+resource_group_name     = "LOGCORNER-MICROSERVICES-IAC"
 #---------------   azure kubernetes services ----------------------------------------
-aks_name   = "demo-apim-aks-test"
+aks_name    = "demo-apim-aks-test"
 node_count  = 3
 node_type   = "Standard_D4s_v4"
 dns_prefix  = "tfq"
-environment  = "test"
+environment = "test"
 
 #---------------   azure container registry ----------------------------------------
 
-acr_name= "locornermsacrtest"
-sku  ="Standard"
+acr_name = "locornermsacrtest"
+sku      = "Standard"
 
 default_tags = {
   environment = "test"
@@ -19,5 +19,5 @@ default_tags = {
 
 #---------------   azure ad application registration ----------------------------------------
 
-tenantName = "workshopb2clogcorner"
-ConfidentialClientDisplayName="LogCorner.EduSync.ConfidentialClient"
+tenantName                    = "workshopb2clogcorner"
+ConfidentialClientDisplayName = "LogCorner.EduSync.ConfidentialClient"

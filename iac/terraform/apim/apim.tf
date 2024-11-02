@@ -10,7 +10,7 @@ resource "azurerm_api_management" "apim" {
   virtual_network_type = "External"
 
   virtual_network_configuration {
-      subnet_id = data.azurerm_subnet.apim.id
+    subnet_id = data.azurerm_subnet.apim.id
   }
 }
 
@@ -21,16 +21,16 @@ resource "azurerm_api_management_api" "query-http-api" {
   revision            = "1"
   display_name        = "Query HTTP API"
   path                = "query"
-  service_url          = var.query_http_api_service_url
-  protocols = ["https"]
+  service_url         = var.query_http_api_service_url
+  protocols           = ["https"]
 
   # import {
   #   content_format = "openapi-link"
   #   content_value  = "${var.query_http_api_service_url}/swagger/v1/swagger.json"
-   
+
   # }
 
-    oauth2_authorization {
+  oauth2_authorization {
     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
   }
 }
@@ -43,16 +43,16 @@ resource "azurerm_api_management_api" "command-http-api" {
   revision            = "1"
   display_name        = "Command HTTP API"
   path                = "command"
-  service_url          = var.command_http_api_service_url
-  protocols = ["https"]
+  service_url         = var.command_http_api_service_url
+  protocols           = ["https"]
 
   import {
     content_format = "openapi-link"
     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
-   
+
   }
 
-    oauth2_authorization {
+  oauth2_authorization {
     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
   }
 }
@@ -94,8 +94,8 @@ resource "azurerm_api_management_authorization_server" "api-standard-apim-author
 
   client_id                    = "63ef158a-ce8b-4d2f-b078-10bd8f404b02"
   client_registration_endpoint = "http://localhost"
-  
-  default_scope                = "https://workshopb2clogcorner.onmicrosoft.com/command/api/Speech.Create"
+
+  default_scope = "https://workshopb2clogcorner.onmicrosoft.com/command/api/Speech.Create"
 
 
   client_secret = ""
@@ -108,6 +108,6 @@ resource "azurerm_api_management_authorization_server" "api-standard-apim-author
     "Body"
   ]
 
-  authorization_methods        = ["GET", "POST","PUT","DELETE"]
+  authorization_methods        = ["GET", "POST", "PUT", "DELETE"]
   bearer_token_sending_methods = ["authorizationHeader"]
 }

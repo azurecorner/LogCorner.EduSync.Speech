@@ -8,5 +8,5 @@ variable "resource_group_name" {
   description = "Location of the azure resource group."
 }
 variable "kubernetes_cluster_principal" {
-  
+
 }

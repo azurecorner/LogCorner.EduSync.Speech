@@ -36,23 +36,23 @@ variable "dns_prefix" {
 
 variable "default_tags" {
   type = object({
-    environment       = string
+    environment = string
     deployed_by = string
   })
-   default = {
-   environment = ""
-  deployed_by = ""
+  default = {
+    environment = ""
+    deployed_by = ""
   }
 }
 
 variable "tags" {
-  
+
 }
 
 variable "subnet_aks_id" {
-  
+
 }
 
 variable "subnet_agic_id" {
-  
+
 }

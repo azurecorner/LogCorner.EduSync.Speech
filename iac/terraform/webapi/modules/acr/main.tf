@@ -5,11 +5,11 @@ resource "azurerm_container_registry" "default" {
   location            = var.resource_group_location
   sku                 = var.sku
   admin_enabled       = false
-  tags = var.tags
+  tags                = var.tags
 }
 
 resource "azurerm_role_assignment" "aks_acr" {
   scope                = azurerm_container_registry.default.id
   role_definition_name = "AcrPull"
-  principal_id         = var.kubernetes_cluster_identity 
+  principal_id         = var.kubernetes_cluster_identity
 }

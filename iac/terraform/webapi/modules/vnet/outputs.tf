@@ -5,9 +5,9 @@ output "subnet_aks_id" {
 }
 
 output "subnet_agic_id" {
-  value       = azurerm_subnet.agic-aks.id
+  value = azurerm_subnet.agic-aks.id
 }
 
 output "subnet_apim_id" {
-  value       = azurerm_subnet.apim.id
+  value = azurerm_subnet.apim.id
 }
