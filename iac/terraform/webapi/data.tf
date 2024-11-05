@@ -1,9 +1,6 @@
 
-# Reference to the current subscription.  Used when creating role assignments
-data "azurerm_subscription" "current" {}
+data "azurerm_client_config" "current" {}
 
-# The main resource group for this deployment
-/* data "azurerm_resource_group" "resource_group" {
-  name = var.resource_group_name
+data "azuread_service_principal" "service_principal" {
+  display_name = var.service_principal_name
 }
- */

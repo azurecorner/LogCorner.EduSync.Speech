@@ -5,7 +5,8 @@ resource_group_location = "eastus"  # Update this value if needed
 resource_group_name     = "rg-edusync-dev"  # Update this value if needed
 
 environment             = "dev"  # Update this value if needed
-
+service_principal_name           = "BICEP-SP"
+user_assigned_identity_name= "edusync-dev-identity"
 # Define the name of the AKS cluster
 aks_name                = "aks-edusync-dev"  # Update this value if needed
 
@@ -33,3 +34,7 @@ default_tags = {
 # Define the container registry details
 acr_name = "locornermsacrdev"
 sku      = "Standard"
+
+# Define the key vault details
+key_vault_name = "kv-shared-edusync-dev"
+key_vault_sku  = "standard"
