@@ -29,13 +29,28 @@ variable "node_count" {
   type        = string
   description = "The number of K8S nodes to provision."
 }
-variable "node_type" {
+variable "username" {
   type        = string
-  description = "The size of each node."
+  description = "The admin username for the new cluster."
+
 }
-variable "dns_prefix" {
+
+variable "load_balancer_sku" {
   type        = string
-  description = "DNS Prefix"
+  description = "The SKU of the Load Balancer."
+
+}
+
+variable "vm_size" {
+  type        = string
+  description = "The size of the Virtual Machine."
+
+  
+}
+variable "msi_id" {
+  type        = string
+  description = "The Managed Service Identity ID. Set this value if you're running this example using Managed Identity as the authentication method."
+
 }
 
 #---------------   azure container registry ----------------------------------------

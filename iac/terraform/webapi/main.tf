@@ -1,7 +1,8 @@
 resource "azurerm_resource_group" "resource_group" {
   name     = var.resource_group_name
   location = var.resource_group_location
-  tags = (merge(var.default_tags, tomap({
+
+  tags                   = (merge(var.default_tags, tomap({
     type = "resourcegroup"
     })
   ))
@@ -11,7 +12,7 @@ module "logcorner-vnet" {
   source                       = "./modules/vnet"
   resource_group_location      = azurerm_resource_group.resource_group.location
   resource_group_name          = azurerm_resource_group.resource_group.name
-  kubernetes_cluster_principal = module.logcorner-kubernetes_service.kubernetes_cluster_principal
+  depends_on = [ azurerm_resource_group.resource_group ]
 }
 
 
@@ -21,16 +22,19 @@ module "logcorner-kubernetes_service" {
   resource_group_location = azurerm_resource_group.resource_group.location
   resource_group_name     = azurerm_resource_group.resource_group.name
   aks_name                = var.aks_name
+  vm_size                 = var.vm_size
   node_count              = var.node_count
-  node_type               = var.node_type
-  dns_prefix              = var.dns_prefix
-  subnet_aks_id           = module.logcorner-vnet.subnet_aks_id
-  subnet_agic_id          = module.logcorner-vnet.subnet_agic_id
-  environment             = var.environment
+  username                = var.username
+  load_balancer_sku       = var.load_balancer_sku
+   subnet_aks_id           = module.logcorner-vnet.subnet_aks_id
+  msi_id = var.msi_id
   tags = (merge(var.default_tags, tomap({
     type = "aks"
+    environment = var.environment
     })
   ))
+
+  depends_on = [ module.logcorner-vnet ]
 }
 
 module "logcorner-container_registry" {
@@ -42,7 +46,16 @@ module "logcorner-container_registry" {
   kubernetes_cluster_identity = module.logcorner-kubernetes_service.kubernetes_cluster_identity
   tags = (merge(var.default_tags, tomap({
     type = "acr"
+    environment = var.environment
     })
   ))
+  depends_on = [ module.logcorner-vnet ]
 }
 
+resource "azurerm_role_assignment" "aks" {
+  principal_id         =  module.logcorner-kubernetes_service.kubernetes_cluster_principal
+  role_definition_name = "Network Contributor"
+  scope                = module.logcorner-vnet.subnet_aks_id
+
+  depends_on = [ module.logcorner-kubernetes_service, module.logcorner-vnet ]
+}
