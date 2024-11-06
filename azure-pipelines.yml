@@ -28,5 +28,5 @@ steps:
   inputs:
     repository: '$(repository)'
     command: 'build'
-    Dockerfile: '/**/dockeragent/Dockerfile'
+    Dockerfile: '/**/LogCorner.EduSync.Speech.Presentation/Dockerfile'
     arguments: '-t $(repository).azurecr.io/$(imageName):$(Build.BuildId)'
