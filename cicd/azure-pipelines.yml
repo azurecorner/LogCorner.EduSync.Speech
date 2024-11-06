@@ -53,6 +53,6 @@ steps:
     namespace: 'helm'
     command: 'install'
     chartType: 'FilePath'
-    chartPath: '$(System.DefaultWorkingDirectory)/iac:helm-chart/chart/logcorner.edusync.speech.command'
+    chartPath: '$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech.command'
     chartVersion: '1.0.0'
     releaseName: 'logcorner-command'
