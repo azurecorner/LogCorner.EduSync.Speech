@@ -6,7 +6,7 @@ variables:
 - name: repository
   value: locornermsacrdev
 - name: imageName
-  value: LogCorner.EduSync.Speech.Command
+  value: logcorner.edusync.speech.command
 trigger:
 - master
 
