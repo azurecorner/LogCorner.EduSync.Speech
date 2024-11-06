@@ -62,7 +62,6 @@ steps:
     azureSubscription: 'BICEP-SP'
     azureResourceGroup: 'rg-edusync-dev'
     kubernetesCluster: 'aks-edusync-dev'
-    namespace: 'helm'
     command: 'install'
     chartType: 'FilePath'
     chartPath: '$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech'
