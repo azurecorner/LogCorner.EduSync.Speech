@@ -64,3 +64,11 @@ helm rollback logcorner-command 1
 helm history logcorner-command 
 
 helm uninstall logcorner-command  logcorner.edusync.speech
+
+
+
+# grafana
+
+kubectl get pvc --namespace=helm -o wide
+
+password admin/admin =>  admin/Grafana1#
