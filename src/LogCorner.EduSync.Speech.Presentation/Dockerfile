@@ -12,10 +12,14 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["LogCorner.EduSync.Speech.Presentation.csproj", "."]
-RUN dotnet restore "./LogCorner.EduSync.Speech.Presentation.csproj"
+COPY ["LogCorner.EduSync.Speech.Presentation/LogCorner.EduSync.Speech.Presentation.csproj", "LogCorner.EduSync.Speech.Presentation/"]
+COPY ["LogCorner.EduSync.Speech.Application/LogCorner.EduSync.Speech.Application.csproj", "LogCorner.EduSync.Speech.Application/"]
+COPY ["LogCorner.EduSync.Speech.Domain/LogCorner.EduSync.Speech.Domain.csproj", "LogCorner.EduSync.Speech.Domain/"]
+COPY ["LogCorner.EduSync.Speech.SharedKernel/LogCorner.EduSync.Speech.SharedKernel.csproj", "LogCorner.EduSync.Speech.SharedKernel/"]
+COPY ["LogCorner.EduSync.Speech.Infrastructure/LogCorner.EduSync.Speech.Infrastructure.csproj", "LogCorner.EduSync.Speech.Infrastructure/"]
+RUN dotnet restore "./LogCorner.EduSync.Speech.Presentation/LogCorner.EduSync.Speech.Presentation.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/LogCorner.EduSync.Speech.Presentation"
 RUN dotnet build "./LogCorner.EduSync.Speech.Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
