@@ -44,3 +44,15 @@ steps:
       accessToken=$(az acr login --name $(repository) --expose-token --output tsv --query accessToken)
       echo $accessToken | docker login $(repository).azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin
       docker push $(repository).azurecr.io/$(imageName):$(Build.BuildId)
+- task: HelmDeploy@1
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscription: 'BICEP-SP'
+    azureResourceGroup: 'rg-edusync-dev'
+    kubernetesCluster: 'aks-edusync-dev'
+    namespace: 'helm'
+    command: 'install'
+    chartType: 'Name'
+    chartName: 'logcorner.edusync.speech.command'
+    chartVersion: '1.0.0'
+    releaseName: 'logcorner-command'
