@@ -7,6 +7,8 @@ variables:
   value: locornermsacrdev
 - name: imageName
   value: logcorner.edusync.speech.command
+- name: serviceConnectionName
+  value: 'BICEP SP'
 trigger:
 - master
 
@@ -32,10 +34,10 @@ steps:
     buildContext: 'src'
     arguments: '-t $(repository).azurecr.io/$(imageName):$(Build.BuildId)'
 - task: AzureCLI@2
-  enabled: false
+  enabled: true
   displayName: Docker Push
   inputs:
-    azureSubscription:  ${{ variables.serviceConnectionName }}
+    azureSubscription:  $(serviceConnectionName)
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
