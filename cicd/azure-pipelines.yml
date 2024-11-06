@@ -28,7 +28,7 @@ steps:
     targetType: 'inline'
     script: |
       echo "Checking if chart path exists..."
-      ls -al $(System.DefaultWorkingDirectory)/
+      ls -al $(System.DefaultWorkingDirectory)/iac/
       if [ -d "$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech.command" ]; then
         echo "Chart path exists."
       else
