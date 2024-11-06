@@ -30,3 +30,14 @@ steps:
     command: 'build'
     Dockerfile: '/**/LogCorner.EduSync.Speech.Presentation/Dockerfile'
     arguments: '-t $(repository).azurecr.io/$(imageName):$(Build.BuildId)'
+- task: AzureCLI@2
+  enabled: false
+  displayName: Docker Push
+  inputs:
+    azureSubscription:  ${{ variables.serviceConnectionName }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      accessToken=$(az acr login --name $(repository) --expose-token --output tsv --query accessToken)
+      echo $accessToken | docker login $(repository).azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin
+      docker push $(repository).azurecr.io/$(imageName):$(Build.BuildId)
