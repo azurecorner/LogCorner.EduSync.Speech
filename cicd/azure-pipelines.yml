@@ -28,8 +28,8 @@ steps:
     targetType: 'inline'
     script: |
       echo "Checking if chart path exists..."
-      ls -al $(System.DefaultWorkingDirectory)/iac/
-      if [ -d "$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech.command" ]; then
+      ls -al $(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech
+      if [ -d "$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech" ]; then
         echo "Chart path exists."
       else
         echo "Chart path does not exist."
@@ -65,6 +65,6 @@ steps:
     namespace: 'helm'
     command: 'install'
     chartType: 'FilePath'
-    chartPath: '$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech.command'
+    chartPath: '$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech'
     chartVersion: '1.0.0'
     releaseName: 'logcorner-command'
