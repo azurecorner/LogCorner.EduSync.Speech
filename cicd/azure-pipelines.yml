@@ -23,6 +23,18 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      echo "Checking if chart path exists..."
+      ls -al $(System.DefaultWorkingDirectory)/iac/helm-chart/chart/
+      if [ -d "$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech.command" ]; then
+        echo "Chart path exists."
+      else
+        echo "Chart path does not exist."
+      fi
+
 
 - task: Docker@2
   enabled: true
