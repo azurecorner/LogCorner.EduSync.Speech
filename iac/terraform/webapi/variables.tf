@@ -134,7 +134,7 @@ variable "admin_username" {
 
 }
 
-variable "firewall_rules" {
+variable "mssql_server_firewall_rules" {
   type = map(object({
     start_ip_address = string
     end_ip_address   = string

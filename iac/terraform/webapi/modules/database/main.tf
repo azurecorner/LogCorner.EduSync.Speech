@@ -65,7 +65,7 @@ resource "azurerm_key_vault_secret" "key_vault_secret" {
 
 
 resource "azurerm_mssql_firewall_rule" "mssql_firewall_rule" {
-  for_each         = var.firewall_rules
+  for_each         = var.mssql_server_firewall_rules
   name             = "FirewallRule-${each.key}"
   server_id        = azurerm_mssql_server.mssql_server.id
   start_ip_address = each.value.start_ip_address

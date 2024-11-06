@@ -58,14 +58,9 @@ variable "key_vault_id" {
 
 }
 
-
-# Add your existing variables here
-
-variable "firewall_rules" {
+variable "mssql_server_firewall_rules" {
   type = map(object({
     start_ip_address = string
     end_ip_address   = string
   }))
-
-
 }

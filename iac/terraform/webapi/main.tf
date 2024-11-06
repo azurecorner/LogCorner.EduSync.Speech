@@ -102,7 +102,7 @@ module "sql_server" {
   resource_group_location                                     = local.mssql_server_localion
   mssql_server_name                                           = var.mssql_server_name
   mssql_server_version                                        = var.mssql_server_version
-  firewall_rules                                              = var.firewall_rules
+  mssql_server_firewall_rules                                 = var.mssql_server_firewall_rules
   mssql_database_sku_name                                     = var.mssql_database_sku_name
   mssql_database_long_term_retention_policy_monthly_retention = var.mssql_database_long_term_retention_policy_monthly_retention
   mssql_database_long_term_retention_policy_week_of_year      = var.mssql_database_long_term_retention_policy_week_of_year
