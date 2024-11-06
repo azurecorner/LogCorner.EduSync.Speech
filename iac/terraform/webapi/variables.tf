@@ -89,3 +89,65 @@ variable "key_vault_sku" {
     error_message = "The sku_name must be one of the following: standard, premium."
   }
 }
+
+
+#---------------   azure sql  server ----------------------------------------
+
+
+variable "mssql_server_name" {
+
+}
+
+variable "mssql_server_version" {
+
+}
+variable "mssql_database_read_scale" {
+
+}
+variable "mssql_database_sku_name" {
+
+}
+variable "mssql_database_storage_account_type" {
+
+}
+
+variable "mssql_database_zone_redundant" {
+
+}
+
+variable "mssql_database_long_term_retention_policy_monthly_retention" {
+
+}
+
+variable "mssql_database_long_term_retention_policy_week_of_year" {
+
+}
+
+variable "sql_db_name" {
+  type        = string
+  description = "The name of the SQL Database."
+}
+
+variable "admin_username" {
+  type        = string
+  description = "The administrator username of the SQL logical server."
+
+}
+
+variable "firewall_rules" {
+  type = map(object({
+    start_ip_address = string
+    end_ip_address   = string
+  }))
+
+  default = {
+    rule1 = {
+      start_ip_address = "90.91.111.65"
+      end_ip_address   = "90.91.111.65"
+    }
+    rule2 = {
+      start_ip_address = "0.0.0.0"
+      end_ip_address   = "0.0.0.0"
+    }
+  }
+}

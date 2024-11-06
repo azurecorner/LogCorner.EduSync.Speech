@@ -33,8 +33,25 @@ default_tags = {
 
 # Define the container registry details
 acr_name = "locornermsacrdev"
+
+# Define the app service plan details
 sku      = "Standard"
 
 # Define the key vault details
 key_vault_name = "kv-shared-edusync-dev"
+
+# Define the key vault SKU
 key_vault_sku  = "standard"
+
+
+// sql server
+mssql_server_name                                           = "mssql-server-edusync-dev"
+mssql_server_version                                        = "12.0"
+mssql_database_read_scale                                   = true
+mssql_database_sku_name                                     = "BC_Gen5_2"
+mssql_database_storage_account_type                         = "Geo"
+mssql_database_zone_redundant                               = true
+mssql_database_long_term_retention_policy_monthly_retention = "P1M"
+mssql_database_long_term_retention_policy_week_of_year      = 1
+sql_db_name                                                 = "backend-db-edusync-dev"
+admin_username                                              = "mssql-admin-user"

@@ -18,9 +18,6 @@ variable "key_vault_name" {
   type        = string
 }
 
-# variable "key_vault_id" {
-
-# }
 variable "user_assigned_identity_id" {
 
 }

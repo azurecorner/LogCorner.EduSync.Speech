@@ -15,7 +15,8 @@ resource "azurerm_mssql_server" "mssql_server" {
   administrator_login           = var.admin_username
   administrator_login_password  = random_password.admin_password[0].result
   version                       = var.mssql_server_version
-  public_network_access_enabled = false
+  public_network_access_enabled = true
+
 
   identity {
     type = "SystemAssigned"
@@ -60,4 +61,13 @@ resource "azurerm_key_vault_secret" "key_vault_secret" {
   value        = random_password.admin_password[0].result
 
   depends_on = [random_password.admin_password]
+}
+
+
+resource "azurerm_mssql_firewall_rule" "mssql_firewall_rule" {
+  for_each         = var.firewall_rules
+  name             = "FirewallRule-${each.key}"
+  server_id        = azurerm_mssql_server.mssql_server.id
+  start_ip_address = each.value.start_ip_address
+  end_ip_address   = each.value.end_ip_address
 }
