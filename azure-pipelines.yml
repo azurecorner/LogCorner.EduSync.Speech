@@ -29,6 +29,7 @@ steps:
     repository: '$(repository)'
     command: 'build'
     Dockerfile: '/**/LogCorner.EduSync.Speech.Presentation/Dockerfile'
+    buildContext: 'src'
     arguments: '-t $(repository).azurecr.io/$(imageName):$(Build.BuildId)'
 - task: AzureCLI@2
   enabled: false
