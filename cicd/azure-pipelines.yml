@@ -62,7 +62,7 @@ steps:
     azureSubscription: 'BICEP-SP'
     azureResourceGroup: 'rg-edusync-dev'
     kubernetesCluster: 'aks-edusync-dev'
-    command: 'install'
+    command: 'upgrade'
     chartType: 'FilePath'
     chartPath: '$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech'
     chartVersion: '1.0.0'
