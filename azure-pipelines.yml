@@ -8,7 +8,7 @@ variables:
 - name: imageName
   value: logcorner.edusync.speech.command
 - name: serviceConnectionName
-  value: 'BICEP SP'
+  value: 'BICEP-SP'
 trigger:
 - master
 
@@ -37,7 +37,7 @@ steps:
   enabled: true
   displayName: Docker Push
   inputs:
-    azureSubscription:  $(serviceConnectionName)
+    azureSubscription: $(serviceConnectionName)
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
