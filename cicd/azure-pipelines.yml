@@ -9,6 +9,21 @@ variables:
   value: logcorner.edusync.speech.command
 - name: serviceConnectionName
   value: 'BICEP-SP'
+- name: sqlServerName
+  value: 'mssql-server-edusync-dev.database.windows.net'
+
+- name: sqlDatabaseName
+  value: 'backend-db-edusync-dev'
+  
+- name: sqlScriptPath
+  value: 'script.sql'
+
+- name : secretValue
+  value: 'P@ssw0rd'
+  
+- name : administratorLogin
+  value: 'logcorner'
+
 trigger:
 - master
 
@@ -59,7 +74,7 @@ steps:
 - task: HelmDeploy@1
   inputs:
     connectionType: 'Azure Resource Manager'
-    azureSubscription: 'BICEP-SP'
+    azureSubscription: $(serviceConnectionName)
     azureResourceGroup: 'rg-edusync-dev'
     kubernetesCluster: 'aks-edusync-dev'
     command: 'upgrade'
@@ -67,3 +82,14 @@ steps:
     chartPath: '$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech'
     chartVersion: '1.0.1'
     releaseName: 'logcorner-command'
+    
+- task: SqlAzureDacpacDeployment@1
+  enabled: true
+  inputs:
+    azureSubscription: $(serviceConnectionName)
+    ServerName: $(sqlServerName)
+    DatabaseName: $(sqlDatabaseName)
+    SqlUsername: $(administratorLogin)
+    SqlPassword: $(secretValue)
+    deployType: 'SqlTask'
+    sqlFile: $(Build.Repository.LocalPath)\data\$(sqlScriptPath)
