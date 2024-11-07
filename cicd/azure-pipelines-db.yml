@@ -10,33 +10,13 @@ variables:
 - name: resourceGroupName
   value: RG_END_TO_END_DATA_ENGINEERING_PROJECT
 
-- name : keyVaultName
-  value: 'kv-depe2e-datasync-dev'
-
-- name : userPrincipalObjectId
-  value: '7abf4c5b-9638-4ec4-b830-ede0a8031b25'
-
-- name: servicePrincipalObjectId
-  value: '7a5690e2-6aca-412b-bb81-4fd1cb41830d'
-
-- name : secretName
-  value: 'kv-sql-admin-secret'
-
-- name : secretValue
-  value: 'P@ssw0rd'
-  
-- name : administratorLogin
-  value: 'logcorner'
-
-- name : userAssignedIdentityName
-  value: 'userAssignedIdentity-datasync-dev'
-
 - name: sqlServerName
   value: 'mssql-server-edusync-dev.database.windows.net'
 
 - name: sqlDatabaseName
   value: 'backend-db-edusync-dev'
-  
+
+- group: DB_VARIABLES_SECRETS
 
 
 pool:
@@ -123,7 +103,7 @@ stages:
         ServerName: '$(sqlServerName)'
         DatabaseName: '$(sqlDatabaseName)'
         SqlUsername: 'mssql-admin-user'
-        SqlPassword: 'fwZTfA?JrBVh{6jJPDk+'
+        SqlPassword: '$(SqlServer--Password)'
         deployType: 'DacpacTask'
         DeploymentAction: 'Publish'
         DacpacFile: '$(Pipeline.Workspace)/DatabaseCode/LogCorner.EduSync.Speech.Database.dacpac'
