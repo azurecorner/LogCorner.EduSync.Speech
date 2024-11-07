@@ -1,0 +1,80 @@
+name: Deploy-Azure-Common
+
+trigger: none
+
+variables: 
+
+- name: azureResourceManagerConnection
+  value: 'BICEP-SP'
+
+- name: resourceGroupName
+  value: RG_END_TO_END_DATA_ENGINEERING_PROJECT
+
+- name : keyVaultName
+  value: 'kv-depe2e-datasync-dev'
+
+- name : userPrincipalObjectId
+  value: '7abf4c5b-9638-4ec4-b830-ede0a8031b25'
+
+- name: servicePrincipalObjectId
+  value: '7a5690e2-6aca-412b-bb81-4fd1cb41830d'
+
+- name : secretName
+  value: 'kv-sql-admin-secret'
+
+- name : secretValue
+  value: 'P@ssw0rd'
+  
+- name : administratorLogin
+  value: 'logcorner'
+
+- name : userAssignedIdentityName
+  value: 'userAssignedIdentity-datasync-dev'
+
+- name: sqlServerName
+  value: 'sql-server-datasync-001.database.windows.net'
+
+- name: sqlDatabaseName
+  value: 'sql-db-datasync-001'
+  
+- name: sqlScriptPath
+  value: 'script.sql'
+
+pool:
+  vmImage: windows-latest
+
+jobs:
+  - job: Deploy_IAC
+    displayName: Deploy Azure Common
+    steps:
+    - checkout: self
+    - task: DotNetCoreCLI@2
+      displayName: dotnet restore
+      inputs:
+        command: restore
+        projects: '**/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build
+      inputs:
+        projects: '**/*.csproj'
+    - task: VSBuild@1
+      displayName: database build
+      inputs:
+        solution: '**\*.sqlproj'
+    - task: DotNetCoreCLI@2
+      displayName: dotnet test
+      inputs:
+        command: test
+        projects: '**/*Unit[Tt]ests/*.csproj'
+    - task: SqlAzureDacpacDeployment@1
+      enabled: false
+      inputs:
+        azureSubscription: $(azureResourceManagerConnection)
+        ServerName: $(sqlServerName)
+        DatabaseName: $(sqlDatabaseName)
+        SqlUsername: $(administratorLogin)
+        SqlPassword: $(secretValue)
+        deployType: 'SqlTask'
+        sqlFile: $(Build.Repository.LocalPath)\data\$(sqlScriptPath)
+
+    
