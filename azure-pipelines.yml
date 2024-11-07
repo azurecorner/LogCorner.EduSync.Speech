@@ -80,13 +80,6 @@ jobs:
         codeCoverageTool: 'Cobertura'
         summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*.cobertura.xml'
         reportDirectory: '$(System.DefaultWorkingDirectory)/_temp/cchtml'
-    - task: DotNetCoreCLI@2
-     
-      inputs:
-        command: 'publish'
-        publishWebProjects: false
-        projects: '$(System.DefaultWorkingDirectory)/src/LogCorner.EduSync.Speech.Database/LogCorner.EduSync.Speech.Database.sqlproj'
-        arguments: '--configuration Release --output $(build.artifactstagingdirectory)'
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/src/LogCorner.EduSync.Speech.Database/bin/Debug'
