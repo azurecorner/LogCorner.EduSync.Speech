@@ -124,5 +124,5 @@ stages:
         DatabaseName: '$(sqlDatabaseName)'
         deployType: 'DacpacTask'
         DeploymentAction: 'Publish'
-        PublishProfile: '$(Pipeline.Workspace)/DatabaseCode/LogCorner.EduSync.Speech.Database.dacpac'
+        DacpacFile: '$(Pipeline.Workspace)/DatabaseCode/LogCorner.EduSync.Speech.Database.dacpac'
         IpDetectionMethod: 'AutoDetect'
