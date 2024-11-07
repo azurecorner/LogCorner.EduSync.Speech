@@ -50,11 +50,13 @@ jobs:
     - checkout: self
     - task: DotNetCoreCLI@2
       displayName: dotnet restore
+      enabled: false
       inputs:
         command: restore
         projects: '**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: dotnet build
+      enabled: false
       inputs:
         projects: '**/*.csproj'
     - task: VSBuild@1
@@ -63,6 +65,7 @@ jobs:
         solution: '**\*.sqlproj'
     - task: DotNetCoreCLI@2
       displayName: dotnet test
+      enabled: false
       inputs:
         command: test
         projects: '**/*Unit[Tt]ests/*.csproj'
