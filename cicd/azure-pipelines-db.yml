@@ -32,13 +32,12 @@ variables:
   value: 'userAssignedIdentity-datasync-dev'
 
 - name: sqlServerName
-  value: 'sql-server-datasync-001.database.windows.net'
+  value: 'mssql-server-edusync-dev.database.windows.net'
 
 - name: sqlDatabaseName
-  value: 'sql-db-datasync-001'
+  value: 'backend-db-edusync-dev'
   
-- name: sqlScriptPath
-  value: 'script.sql'
+
 
 pool:
   vmImage: windows-latest
@@ -117,12 +116,12 @@ stages:
         targetPath: $(Build.SourcesDirectory)/FunctionAppCode
 
     - task: SqlAzureDacpacDeployment@1
-      enabled: false
+      enabled: true
       inputs:
-        azureSubscription: $(azureResourceManagerConnection)
-        ServerName: $(sqlServerName)
-        DatabaseName: $(sqlDatabaseName)
-        SqlUsername: $(administratorLogin)
-        SqlPassword: $(secretValue)
-        deployType: 'SqlTask'
-        sqlFile: $(Build.Repository.LocalPath)\data\$(sqlScriptPath)
+        azureSubscription: '$(azureResourceManagerConnection)'
+        AuthenticationType: 'servicePrincipal'
+        ServerName: '$(sqlServerName)'
+        DatabaseName: '$(sqlDatabaseName)'
+        deployType: 'DacpacTask'
+        DeploymentAction: 'Publish'
+        IpDetectionMethod: 'AutoDetect'
