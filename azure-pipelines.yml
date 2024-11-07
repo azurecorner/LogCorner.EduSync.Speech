@@ -87,7 +87,11 @@ jobs:
         publishWebProjects: false
         projects: '$(System.DefaultWorkingDirectory)/src/LogCorner.EduSync.Speech.Database/LogCorner.EduSync.Speech.Database.sqlproj'
         arguments: '--configuration Release --output $(build.artifactstagingdirectory)'
-
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)/src/LogCorner.EduSync.Speech.Database/bin/Debug'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
