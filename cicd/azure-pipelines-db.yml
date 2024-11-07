@@ -119,9 +119,11 @@ stages:
       enabled: true
       inputs:
         azureSubscription: '$(azureResourceManagerConnection)'
-        AuthenticationType: 'servicePrincipal'
+        AuthenticationType: 'server'
         ServerName: '$(sqlServerName)'
         DatabaseName: '$(sqlDatabaseName)'
+        SqlUsername: 'mssql-admin-user'
+        SqlPassword: 'fwZTfA?JrBVh{6jJPDk+'
         deployType: 'DacpacTask'
         DeploymentAction: 'Publish'
         DacpacFile: '$(Pipeline.Workspace)/DatabaseCode/LogCorner.EduSync.Speech.Database.dacpac'
