@@ -66,6 +66,33 @@ jobs:
       inputs:
         command: test
         projects: '**/*Unit[Tt]ests/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: dotnet collect code coverage
+      enabled: false
+      inputs:
+        command: test
+        projects: '**/*[Uu]nit[Tt]ests/*.csproj'
+        arguments: '--collect "Code Coverage"'
+    - task: PublishCodeCoverageResults@1
+      enabled: false
+      displayName: Publish code coverage results
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*.cobertura.xml'
+        reportDirectory: '$(System.DefaultWorkingDirectory)/_temp/cchtml'
+    - task: DotNetCoreCLI@2
+     
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        projects: '$(System.DefaultWorkingDirectory)/src/LogCorner.EduSync.Speech.Database/LogCorner.EduSync.Speech.Database.sqlproj'
+        arguments: '--configuration Release --output $(build.artifactstagingdirectory)'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'DatabaseCode'
+        publishLocation: 'Container'
     - task: SqlAzureDacpacDeployment@1
       enabled: false
       inputs:
