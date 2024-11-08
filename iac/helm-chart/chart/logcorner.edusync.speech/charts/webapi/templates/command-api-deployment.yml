@@ -27,6 +27,7 @@ spec:
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
+
         - name: ConnectionStrings__SpeechDB
           valueFrom:
             secretKeyRef:

@@ -83,13 +83,3 @@ steps:
     chartVersion: '1.0.1'
     releaseName: 'logcorner-command'
     
-- task: SqlAzureDacpacDeployment@1
-  enabled: true
-  inputs:
-    azureSubscription: $(serviceConnectionName)
-    ServerName: $(sqlServerName)
-    DatabaseName: $(sqlDatabaseName)
-    SqlUsername: $(administratorLogin)
-    SqlPassword: $(secretValue)
-    deployType: 'SqlTask'
-    sqlFile: $(Build.Repository.LocalPath)\data\$(sqlScriptPath)

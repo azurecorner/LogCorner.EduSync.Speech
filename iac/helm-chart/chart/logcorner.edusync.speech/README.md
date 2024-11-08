@@ -45,7 +45,7 @@ helm list --short  => list release name
 
 helm get manifest logcorner-command
 
-
+https://57.152.95.62/swagger/index.html
 
 
 https://helm.kubernetes.docker.com/speech-command-http-api/swagger/index.html
@@ -72,3 +72,26 @@ helm uninstall logcorner-command  logcorner.edusync.speech
 kubectl get pvc --namespace=helm -o wide
 
 password admin/admin =>  admin/Grafana1#
+
+
+
+# test
+http://57.152.95.62/swagger/index.html
+{
+  "title": "Lorem Ipsum is simply dummy text",
+  "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ",
+  "url": "http://test.com",
+  "type": 3
+}
+
+
+curl -X 'POST' \
+  'http://57.152.95.62/api/speech' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "title": "2_Lorem Ipsum is simply dummy text",
+  "description": "2_Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'\''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ",
+  "url": "http://2_test.com",
+  "type": 2
+}'
