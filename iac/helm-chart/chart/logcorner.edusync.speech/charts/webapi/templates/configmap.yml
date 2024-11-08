@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mssql-config
+  namespace: helm
+  labels:
+    product: mssql
+data:
+  SQL_SERVER: "mssql-server-edusync-dev.database.windows.net"
+  DB_NAME: "backend-db-edusync-dev"
+  USER_NAME: "mssql-admin-user"

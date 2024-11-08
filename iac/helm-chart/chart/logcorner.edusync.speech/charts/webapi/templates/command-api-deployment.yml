@@ -27,12 +27,30 @@ spec:
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
-
-        - name: ConnectionStrings__SpeechDB
+        # Reference the ConfigMap for non-sensitive connection details
+        - name: SQL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: mssql-config
+              key: SQL_SERVER
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: mssql-config
+              key: DB_NAME
+        - name: USER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: mssql-config
+              key: USER_NAME
+        # Reference the Secret for the password
+        - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mssql
-              key: ConnectionStrings__SpeechDB 
+              key: DB_PASSWORD
+        - name: ConnectionStrings__SpeechDB
+          value: "Data Source=$(SQL_SERVER);Initial Catalog=$(DB_NAME);User=$(USER_NAME);Password=$(DB_PASSWORD)"
         ports:
         - containerPort: 80
         - containerPort: 443
