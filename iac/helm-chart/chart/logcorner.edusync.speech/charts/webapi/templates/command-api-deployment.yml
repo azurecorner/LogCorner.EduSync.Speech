@@ -26,7 +26,12 @@ spec:
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         env:
         - name: ASPNETCORE_ENVIRONMENT
-          value: "Kubernetes.helm"
+          value: "Development"
+        - name: ConnectionStrings__SpeechDB
+          valueFrom:
+            secretKeyRef:
+              name: mssql
+              key: ConnectionStrings__SpeechDB 
         ports:
         - containerPort: 80
         - containerPort: 443
