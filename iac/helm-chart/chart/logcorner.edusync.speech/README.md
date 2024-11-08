@@ -95,3 +95,6 @@ curl -X 'POST' \
   "url": "http://2_test.com",
   "type": 2
 }'
+
+kubectl describe secret mssql -n helm
+kubectl get secret mssql -n helm -o=jsonpath='{.data.DB_PASSWORD}' | base64 --decode
