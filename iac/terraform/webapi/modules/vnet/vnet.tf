@@ -1,6 +1,6 @@
 
 resource "azurerm_virtual_network" "apim-aks" {
-  name                = "apim-aks-vnet"
+  name                = "edusync-vnet"
   address_space       = ["10.10.0.0/16"]
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
@@ -20,13 +20,6 @@ resource "azurerm_subnet" "apim" {
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.apim-aks.name
   address_prefixes     = ["10.10.2.0/24"]
-  depends_on           = [azurerm_virtual_network.apim-aks]
-}
-resource "azurerm_subnet" "agic-aks" {
-  name                 = "agic-aks-subnet"
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.apim-aks.name
-  address_prefixes     = ["10.10.3.0/24"]
   depends_on           = [azurerm_virtual_network.apim-aks]
 }
 

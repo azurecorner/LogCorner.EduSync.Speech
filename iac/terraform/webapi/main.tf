@@ -2,6 +2,22 @@ locals {
   mssql_server_localion = "francecentral"
 }
 
+locals {
+  nsg_configurations = {
+    nsg_apim = {
+      network_security_group_name = "nsg_apim"
+      nsgrules                    = var.nsgrules_apim
+      subnet_ids                  = [module.virtual_network.subnet_apim_id]
+    },
+    nsg_aks = {
+      network_security_group_name = "nsg_aks"
+      nsgrules                    = var.nsgrules_aks
+      subnet_ids                  = [module.virtual_network.subnet_aks_id]
+    }
+
+  }
+}
+
 resource "azurerm_resource_group" "resource_group" {
   name     = var.resource_group_name
   location = var.resource_group_location
@@ -32,66 +48,83 @@ module "virtual_network" {
   depends_on              = [azurerm_resource_group.resource_group]
 }
 
-module "network_security_group" {
-  source                  = "./modules/network_security_group"
-  resource_group_location = azurerm_resource_group.resource_group.location
-  resource_group_name     = azurerm_resource_group.resource_group.name
-  nsgrules                = var.nsgrules
-  network_security_group_name = "nsg"
-  subnet_ids              = [module.virtual_network.subnet_apim_id]
-  
-  tags = (merge(var.default_tags, tomap({
-    type        = "nsg"
-    environment = var.environment
-    })
-  ))
+# module "network_security_group" {
+#   source                  = "./modules/network_security_group"
+#   resource_group_location = azurerm_resource_group.resource_group.location
+#   resource_group_name     = azurerm_resource_group.resource_group.name
+#   nsgrules                = var.nsgrules
+#   network_security_group_name = "nsg"
+#   subnet_ids              = [module.virtual_network.subnet_apim_id, module.virtual_network.subnet_aks_id]
 
-  depends_on = [module.virtual_network]
-  
-}
+#   tags = (merge(var.default_tags, tomap({
+#     type        = "nsg"
+#     environment = var.environment
+#     })
+#   ))
 
-module "logcorner-kubernetes_service" {
-  source                  = "./modules/aks"
-  resource_group_location = azurerm_resource_group.resource_group.location
-  resource_group_name     = azurerm_resource_group.resource_group.name
-  aks_name                = var.aks_name
-  vm_size                 = var.vm_size
-  node_count              = var.node_count
-  username                = var.username
-  load_balancer_sku       = var.load_balancer_sku
-  subnet_aks_id           = module.virtual_network.subnet_aks_id
-  msi_id                  = var.msi_id
-  tags = (merge(var.default_tags, tomap({
-    type        = "aks"
-    environment = var.environment
-    })
-  ))
+#   depends_on = [module.virtual_network]
 
-  depends_on = [module.virtual_network]
-}
-
-module "logcorner-container_registry" {
-  source                      = "./modules/acr"
+# }
+module "network_security_groups" {
+  for_each                    = local.nsg_configurations
+  source                      = "./modules/network_security_group"
   resource_group_location     = azurerm_resource_group.resource_group.location
   resource_group_name         = azurerm_resource_group.resource_group.name
-  acr_name                    = var.acr_name
-  sku                         = var.sku
-  kubernetes_cluster_identity = module.logcorner-kubernetes_service.kubernetes_cluster_identity
-  tags = (merge(var.default_tags, tomap({
-    type        = "acr"
+  network_security_group_name = each.value.network_security_group_name
+  nsgrules                    = each.value.nsgrules
+  subnet_ids                  = each.value.subnet_ids
+
+  tags = merge(var.default_tags, tomap({
+    type        = "nsg"
     environment = var.environment
-    })
-  ))
+  }))
+
   depends_on = [module.virtual_network]
 }
 
-resource "azurerm_role_assignment" "aks" {
-  principal_id         = module.logcorner-kubernetes_service.kubernetes_cluster_principal
-  role_definition_name = "Network Contributor"
-  scope                = module.virtual_network.subnet_aks_id
 
-  depends_on = [module.logcorner-kubernetes_service, module.virtual_network]
-}
+# module "logcorner-kubernetes_service" {
+#   source                  = "./modules/aks"
+#   resource_group_location = azurerm_resource_group.resource_group.location
+#   resource_group_name     = azurerm_resource_group.resource_group.name
+#   aks_name                = var.aks_name
+#   vm_size                 = var.vm_size
+#   node_count              = var.node_count
+#   username                = var.username
+#   load_balancer_sku       = var.load_balancer_sku
+#   subnet_aks_id           = module.virtual_network.subnet_aks_id
+#   msi_id                  = var.msi_id
+#   tags = (merge(var.default_tags, tomap({
+#     type        = "aks"
+#     environment = var.environment
+#     })
+#   ))
+
+#   depends_on = [module.virtual_network]
+# }
+
+# module "logcorner-container_registry" {
+#   source                      = "./modules/acr"
+#   resource_group_location     = azurerm_resource_group.resource_group.location
+#   resource_group_name         = azurerm_resource_group.resource_group.name
+#   acr_name                    = var.acr_name
+#   sku                         = var.sku
+#   kubernetes_cluster_identity = module.logcorner-kubernetes_service.kubernetes_cluster_identity
+#   tags = (merge(var.default_tags, tomap({
+#     type        = "acr"
+#     environment = var.environment
+#     })
+#   ))
+#   depends_on = [module.virtual_network]
+# }
+
+# resource "azurerm_role_assignment" "aks" {
+#   principal_id         = module.logcorner-kubernetes_service.kubernetes_cluster_principal
+#   role_definition_name = "Network Contributor"
+#   scope                = module.virtual_network.subnet_aks_id
+
+#   depends_on = [module.logcorner-kubernetes_service, module.virtual_network]
+# }
 
 
 # module "key_vault" {

@@ -189,42 +189,61 @@ variable "publisher_email" {
   default = "tocane.techhnologies@gmail.com"
 }
 
-variable "nsgrules" {
-  description = "Network Security Group Configuration"
+variable "nsgrules_apim" {
+  description = "NSG rules for APIM"
   type        = map(any)
   default = {
-    "default-allow-https" = {
-      name                   = "default-allow-https"
-      priority               = 1002
-      direction              = "Inbound"
-      access                 = "Allow"
-      protocol               = "Tcp"
-      source_port_range      = "*"
-      destination_port_range = "443"
-      source_address_prefix  = "*"
+
+    "Allow_HTTP" = {
+      name                       = "Allow_HTTP"
+      priority                   = 1002
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "*"
       destination_address_prefix = "*"
     }
-    "default-allow-http" = {
-      name                   = "default-allow-http"
-      priority               = 1003
-      direction              = "Inbound"
-      access                 = "Allow"
-      protocol               = "Tcp"
-      source_port_range      = "*"
-      destination_port_range = "80"
-      source_address_prefix  = "*"
+    "Allow_HTTPS" = {
+      name                       = "Allow_HTTPS"
+      priority                   = 1003
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "80"
+      source_address_prefix      = "*"
       destination_address_prefix = "*"
-  }
- "default-allow-apim" = {
-      name                   = "default-allow-http"
-      priority               = 1004
-      direction              = "Inbound"
-      access                 = "Allow"
-      protocol               = "Tcp"
-      source_port_range      = "*"
-      destination_port_range = "3443"
-      source_address_prefix  = "*"
+    }
+    "Allow_APIM_Inbound" = {
+      name                       = "Allow_APIM_Inbound"
+      priority                   = 1004
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "3443"
+      source_address_prefix      = "*"
       destination_address_prefix = "*"
+    }
   }
 }
+variable "nsgrules_aks" {
+  description = "NSG rules for AKS"
+  type        = map(any)
+  default = {
+    "Allow_AKS_Inbound" = {
+      name                       = "Allow_AKS_Inbound"
+      priority                   = 100
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    }
+    # Add more rules as needed for AKS
+  }
 }
