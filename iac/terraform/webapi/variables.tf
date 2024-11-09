@@ -151,3 +151,80 @@ variable "mssql_server_firewall_rules" {
     }
   }
 }
+
+
+# api management
+
+
+
+variable "query_http_api_service_url" {
+  default = "https://conferenceapi.azurewebsites.net"
+}
+
+variable "command_http_api_service_url" {
+  default = "http://10.10.1.35"
+}
+
+variable "virtual_network_name" {
+  default = "apim-aks-vnet"
+}
+
+variable "subnet_id" {
+  default = "apim-subnet"
+}
+
+variable "api_management_name" {
+  default = "apim-edusync-dev"
+}
+
+variable "sku_name" {
+  default = "Developer_1"
+}
+
+variable "publisher_name" {
+  default = "logconer"
+}
+
+variable "publisher_email" {
+  default = "tocane.techhnologies@gmail.com"
+}
+
+variable "nsgrules" {
+  description = "Network Security Group Configuration"
+  type        = map(any)
+  default = {
+    "default-allow-https" = {
+      name                   = "default-allow-https"
+      priority               = 1002
+      direction              = "Inbound"
+      access                 = "Allow"
+      protocol               = "Tcp"
+      source_port_range      = "*"
+      destination_port_range = "443"
+      source_address_prefix  = "*"
+      destination_address_prefix = "*"
+    }
+    "default-allow-http" = {
+      name                   = "default-allow-http"
+      priority               = 1003
+      direction              = "Inbound"
+      access                 = "Allow"
+      protocol               = "Tcp"
+      source_port_range      = "*"
+      destination_port_range = "80"
+      source_address_prefix  = "*"
+      destination_address_prefix = "*"
+  }
+ "default-allow-apim" = {
+      name                   = "default-allow-http"
+      priority               = 1004
+      direction              = "Inbound"
+      access                 = "Allow"
+      protocol               = "Tcp"
+      source_port_range      = "*"
+      destination_port_range = "3443"
+      source_address_prefix  = "*"
+      destination_address_prefix = "*"
+  }
+}
+}
