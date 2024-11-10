@@ -45,8 +45,11 @@ helm list --short  => list release name
 
 helm get manifest logcorner-command
 
-https://57.152.95.62/swagger/index.html
+http://51.8.20.211/swagger/index.html
 
+http:// 48.217.211.31/WeatherForecast
+
+http://logcorner-command-http-api-service/WeatherForecast
 
 https://helm.kubernetes.docker.com/speech-command-http-api/swagger/index.html
 
@@ -98,3 +101,21 @@ curl -X 'POST' \
 
 kubectl describe secret mssql -n helm
 kubectl get secret mssql -n helm -o=jsonpath='{.data.DB_PASSWORD}' | base64 --decode
+
+kubectl exec -it <other-pod-name> -n helm -- /bin/sh
+
+
+# ingress nginx
+
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx --namespace helm --create-namespace
+
+
+
+kubectl exec -it curl-test -n helm -- /bin/sh
+
+kubectl exec -it curl-test -n helm -- curl http://logcorner-command-http-api-service/WeatherForecast
+
+kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx

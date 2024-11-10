@@ -2,15 +2,13 @@ replicaCount: 1
 namespace: helm
 image:
   repository: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command
-  tag: "1097"
+  tag: "1102"
 imagePullPolicy: IfNotPresent
 restartPolicy: Always
 service:
-  type: LoadBalancer #ClusterIP
+  type: ClusterIP
   port: 80
   targetPort: 8080
   ssl_port: 443
   ssl_targetPort: 443
-ingress:
-  host: helm.kubernetes.docker.com
-  secretName: logcorner-ingress-tls
+
