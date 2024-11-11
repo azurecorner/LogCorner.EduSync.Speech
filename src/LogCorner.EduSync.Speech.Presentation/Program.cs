@@ -57,15 +57,22 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
     builder.Services.AddScoped<IEventPublisher, EventPublisher>();
     builder.Services.AddSharedKernel();
 
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy(
-            "CorsPolicy",
-            builder => builder.WithOrigins(configuration["allowedOrigins"].Split(","))
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
-    });
+    //builder.Services.AddCors(options =>
+    //{
+    //    builder.Services.AddCors(options =>
+    //    {
+    //        options.AddPolicy(
+    //            "CorsPolicy",
+    //            builder =>
+    //            {
+    //                var allowedOrigins = configuration["allowedOrigins"]?.Split(",") ?? Array.Empty<string>();
+    //                builder.WithOrigins(allowedOrigins)
+    //                    .AllowAnyMethod()
+    //                    .AllowAnyHeader()
+    //                    .AllowCredentials();
+    //            });
+    //    });
+    //});
 }
 
 static void ConfigureApplicationBuilder(WebApplication app)
