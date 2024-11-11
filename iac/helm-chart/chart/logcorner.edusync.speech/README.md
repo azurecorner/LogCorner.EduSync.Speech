@@ -47,7 +47,7 @@ helm get manifest logcorner-command
 
 http://51.8.20.211/swagger/index.html
 
-http://135.237.63.0/WeatherForecast
+http://10.10.1.7/WeatherForecast
 
 http://logcorner-command-http-api-service/WeatherForecast
 
@@ -112,6 +112,13 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 helm install ingress-nginx ingress-nginx/ingress-nginx --namespace helm --create-namespace
 
+##  ou
+
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace \
+  --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" \
+  --set controller.service.type=LoadBalancer
 
 
 kubectl exec -it curl-test -n helm -- /bin/sh
@@ -121,18 +128,18 @@ kubectl exec -it curl-test -n helm -- curl http://logcorner-command-http-api-ser
 kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx
 
 
-curl http://135.237.63.0/speech-command-http-api/WeatherForecast
+curl http://10.10.1.7/speech-command-http-api/WeatherForecast
 
 
  kubectl exec -it curl-test -n helm -- curl http://logcorner-command-http-api-service/WeatherForecast
 
 
-  kubectl exec -it curl-test -n helm -- curl http://135.237.63.0/WeatherForecast
+  kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/WeatherForecast
 
-   kubectl exec -it curl-test -n helm -- curl http://51.8.76.160/hello-world-two
-    kubectl exec -it curl-test -n helm -- curl http://51.8.76.160/hello-world-one
+   kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/hello-world-two
+    kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/hello-world-one
 
-     kubectl exec -it curl-test -n helm -- curl http://51.8.76.160/aks-command-api/WeatherForecast
+     kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/aks-command-api/WeatherForecast
 
    # ingress tutorial
 
