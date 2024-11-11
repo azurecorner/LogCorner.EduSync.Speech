@@ -47,7 +47,7 @@ helm get manifest logcorner-command
 
 http://51.8.20.211/swagger/index.html
 
-http:// 48.217.211.31/WeatherForecast
+http://135.237.63.0/WeatherForecast
 
 http://logcorner-command-http-api-service/WeatherForecast
 
@@ -119,3 +119,23 @@ kubectl exec -it curl-test -n helm -- /bin/sh
 kubectl exec -it curl-test -n helm -- curl http://logcorner-command-http-api-service/WeatherForecast
 
 kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx
+
+
+curl http://135.237.63.0/speech-command-http-api/WeatherForecast
+
+
+ kubectl exec -it curl-test -n helm -- curl http://logcorner-command-http-api-service/WeatherForecast
+
+
+  kubectl exec -it curl-test -n helm -- curl http://135.237.63.0/WeatherForecast
+
+   kubectl exec -it curl-test -n helm -- curl https://51.8.76.160/hello-world-two
+
+
+   # ingress tutorial
+
+   helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+
+   kubectl get pods --namespace ingress-nginx
+
+   kubectl get service ingress-nginx-controller --namespace=ingress-nginx
