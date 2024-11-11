@@ -148,3 +148,30 @@ curl http://10.10.1.7/speech-command-http-api/WeatherForecast
    kubectl get pods --namespace ingress-nginx
 
    kubectl get service ingress-nginx-controller --namespace=ingress-nginx
+
+
+   # https://spacelift.io/blog/kubernetes-ingress
+#  helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+#  kubectl get pods --namespace ingress-nginx
+# kubectl get service ingress-nginx-controller --namespace=ingress-nginx
+#
+
+# INTERNAL_IP ==> 
+# helm install ingress-nginx ingress-nginx/ingress-nginx \
+#   --namespace ingress-nginx \
+#   --create-namespace \
+#   --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" \
+#   --set controller.service.type=LoadBalancer
+
+
+
+
+{{- /*
+ INTERNAL_IP with static ip ==> 
+  helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace \
+  --set controller.service.type=LoadBalancer \
+  --set controller.service.loadBalancerIP=10.10.1.7 \
+  --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" 
+*/ -}}
