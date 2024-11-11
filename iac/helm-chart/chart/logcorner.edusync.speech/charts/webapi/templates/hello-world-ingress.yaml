@@ -16,6 +16,13 @@ spec:
   rules:
   - http:
       paths:
+      - path: /aks-command-api(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: aks-command-api-service
+            port:
+              number: 80
       - path: /hello-world-one(/|$)(.*)
         pathType: Prefix
         backend:

@@ -129,8 +129,10 @@ curl http://135.237.63.0/speech-command-http-api/WeatherForecast
 
   kubectl exec -it curl-test -n helm -- curl http://135.237.63.0/WeatherForecast
 
-   kubectl exec -it curl-test -n helm -- curl https://51.8.76.160/hello-world-two
+   kubectl exec -it curl-test -n helm -- curl http://51.8.76.160/hello-world-two
+    kubectl exec -it curl-test -n helm -- curl http://51.8.76.160/hello-world-one
 
+     kubectl exec -it curl-test -n helm -- curl http://51.8.76.160/aks-command-api/WeatherForecast
 
    # ingress tutorial
 

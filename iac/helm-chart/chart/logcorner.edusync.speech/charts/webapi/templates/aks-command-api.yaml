@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aks-command-api-deployment  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aks-command-api
+  template:
+    metadata:
+      labels:
+        app: aks-command-api
+    spec:
+      containers:
+      - name: aks-command-api
+        image: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command:1104
+        ports:
+        - containerPort: 8080  
+        env:
+        - name: TITLE
+          value: "Welcome to Azure Kubernetes Service (AKS)"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Kubernetes"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aks-command-api-service 
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080  # Updated to match the container's listening port
+  selector:
+    app: aks-command-api
