@@ -110,45 +110,45 @@ resource "azurerm_role_assignment" "aks" {
 }
 
 
-# module "key_vault" {
-#   source                      = "./modules/keyvault"
-#   resource_group_name         = var.resource_group_name
-#   resource_group_location     = var.resource_group_location
-#   user_assigned_identity_id   = azurerm_user_assigned_identity.user_assigned_identity.principal_id
-#   tenant_id                   = data.azurerm_client_config.current.tenant_id
-#   key_vault_name              = var.key_vault_name
-#   key_vault_sku               = var.key_vault_sku
-#   service_principal_name      = var.service_principal_name
-#   service_principal_object_id = data.azuread_service_principal.service_principal.object_id
-#   tags = (merge(var.default_tags, tomap({
-#     type = "key_vault"
-#     })
-#   ))
+module "key_vault" {
+  source                      = "./modules/keyvault"
+  resource_group_name         = var.resource_group_name
+  resource_group_location     = var.resource_group_location
+  user_assigned_identity_id   = azurerm_user_assigned_identity.user_assigned_identity.principal_id
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  key_vault_name              = var.key_vault_name
+  key_vault_sku               = var.key_vault_sku
+  service_principal_name      = var.service_principal_name
+  service_principal_object_id = data.azuread_service_principal.service_principal.object_id
+  tags = (merge(var.default_tags, tomap({
+    type = "key_vault"
+    })
+  ))
 
-#   depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.virtual_network]
-# }
+  depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.virtual_network]
+}
 
-# module "sql_server" {
-#   source                                                      = "./modules/database"
-#   resource_group_name                                         = var.resource_group_name
-#   resource_group_location                                     = local.mssql_server_localion
-#   mssql_server_name                                           = var.mssql_server_name
-#   mssql_server_version                                        = var.mssql_server_version
-#   mssql_server_firewall_rules                                 = var.mssql_server_firewall_rules
-#   mssql_database_sku_name                                     = var.mssql_database_sku_name
-#   mssql_database_long_term_retention_policy_monthly_retention = var.mssql_database_long_term_retention_policy_monthly_retention
-#   mssql_database_long_term_retention_policy_week_of_year      = var.mssql_database_long_term_retention_policy_week_of_year
-#   mssql_database_read_scale                                   = var.mssql_database_read_scale
+module "sql_server" {
+  source                                                      = "./modules/database"
+  resource_group_name                                         = var.resource_group_name
+  resource_group_location                                     = local.mssql_server_localion
+  mssql_server_name                                           = var.mssql_server_name
+  mssql_server_version                                        = var.mssql_server_version
+  mssql_server_firewall_rules                                 = var.mssql_server_firewall_rules
+  mssql_database_sku_name                                     = var.mssql_database_sku_name
+  mssql_database_long_term_retention_policy_monthly_retention = var.mssql_database_long_term_retention_policy_monthly_retention
+  mssql_database_long_term_retention_policy_week_of_year      = var.mssql_database_long_term_retention_policy_week_of_year
+  mssql_database_read_scale                                   = var.mssql_database_read_scale
 
-#   mssql_database_storage_account_type = var.mssql_database_storage_account_type
-#   mssql_database_zone_redundant       = var.mssql_database_zone_redundant
+  mssql_database_storage_account_type = var.mssql_database_storage_account_type
+  mssql_database_zone_redundant       = var.mssql_database_zone_redundant
 
-#   tags = (merge(var.default_tags, tomap({
-#     type = "key_vault"
-#     })
-#   ))
-#   key_vault_id   = module.key_vault.key_vault_id
-#   sql_db_name    = var.sql_db_name
-#   admin_username = var.admin_username
-#   depends_on     = [module.virtual_network, module.key_vault]
-# }
+  tags = (merge(var.default_tags, tomap({
+    type = "key_vault"
+    })
+  ))
+  key_vault_id   = module.key_vault.key_vault_id
+  sql_db_name    = var.sql_db_name
+  admin_username = var.admin_username
+  depends_on     = [module.virtual_network, module.key_vault]
+}

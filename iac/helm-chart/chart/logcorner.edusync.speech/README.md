@@ -175,3 +175,16 @@ curl http://10.10.1.7/speech-command-http-api/WeatherForecast
   --set controller.service.loadBalancerIP=10.10.1.7 \
   --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" 
 */ -}}
+
+
+
+curl -X 'POST' \
+  'http://10.10.1.7/aks-command-api/api/speech' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "title": "2_Lorem Ipsum is simply dummy text",
+  "description": "2_Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'\''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ",
+  "url": "http://2_test.com",
+  "type": 2
+}'

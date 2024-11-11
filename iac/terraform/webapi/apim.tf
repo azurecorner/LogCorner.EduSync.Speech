@@ -1,112 +1,180 @@
-# # https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway
-# # https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/mutual-tls-deploy-aks-api-management
+# https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway
+# https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/mutual-tls-deploy-aks-api-management
 
-# resource "azurerm_api_management" "apim" {
-#   name                = var.api_management_name
-#   location            = var.resource_group_location
-#   resource_group_name = var.resource_group_name
-#   publisher_name      = var.publisher_name
-#   publisher_email     = var.publisher_email
+resource "azurerm_api_management" "apim" {
+  name                = var.api_management_name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  publisher_name      = var.publisher_name
+  publisher_email     = var.publisher_email
 
-#   sku_name = var.sku_name
+  sku_name = var.sku_name
 
-#   virtual_network_type = "External"
+  virtual_network_type = "External"
 
-#   virtual_network_configuration {
-#     subnet_id = module.virtual_network.subnet_apim_id
-#   }
-#   depends_on = [ module.network_security_groups ]
-# }
+  virtual_network_configuration {
+    subnet_id = module.virtual_network.subnet_apim_id
+  }
+  depends_on = [ module.network_security_groups ]
+}
 
-# # resource "azurerm_api_management_api" "query-http-api" {
-# #   name                = "query-http-api"
-# #   resource_group_name = var.resource_group_name
-# #   api_management_name = azurerm_api_management.apim.name
-# #   revision            = "1"
-# #   display_name        = "Query HTTP API"
-# #   path                = "query"
-# #   service_url         = var.query_http_api_service_url
-# #   protocols           = ["https"]
-
-
-# #   # oauth2_authorization {
-# #   #   authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
-# #   # }
-# # }
+resource "azurerm_api_management_api" "query-http-api" {
+  name                = "query-http-api"
+  resource_group_name = var.resource_group_name
+  api_management_name = azurerm_api_management.apim.name
+  revision            = "1"
+  display_name        = "Query HTTP API"
+  path                = "query"
+  service_url         = "http://10.10.1.7/aks-command-api/WeatherForecast" #var.query_http_api_service_url
+  protocols           = ["https", "http"]
 
 
-# resource "azurerm_api_management_api" "command-http-api" {
-#   name                = "command-http-api"
-#   resource_group_name = var.resource_group_name
+  # oauth2_authorization {
+  #   authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
+  # }
+}
+
+
+resource "azurerm_api_management_api" "test-api" {
+  name                = "test-api"
+  resource_group_name = var.resource_group_name
+  api_management_name = azurerm_api_management.apim.name
+  revision            = "1"
+  display_name        = "Test HTTP API"
+  path                = "test"
+  service_url         = "https://jsonplaceholder.typicode.com/todos" #var.command_http_api_service_url
+  protocols           = ["https"]
+
+  #   import {
+  #     content_format = "openapi-link"
+  #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
+
+  #   }
+
+  #   oauth2_authorization {
+  #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
+  #   }
+}
+
+
+resource "azurerm_api_management_api" "command-http-api" {
+  name                = "command-http-api"
+  resource_group_name = var.resource_group_name
+  api_management_name = azurerm_api_management.apim.name
+  revision            = "1"
+  display_name        = "Command HTTP API"
+  path                = "command"
+  service_url         = "http://10.10.1.7/aks-command-api/api/speech" #var.command_http_api_service_url
+  protocols           = ["https","http"]
+
+  #   import {
+  #     content_format = "openapi-link"
+  #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
+
+  #   }
+
+  #   oauth2_authorization {
+  #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
+  #   }
+}
+
+
+
+resource "azurerm_api_management_product" "product" {
+  product_id            = "speech-microservice-http-api"
+  api_management_name   = azurerm_api_management.apim.name
+  resource_group_name   = var.resource_group_name
+  display_name          = "The Speech Micro Service  HTTP API Product"
+  subscription_required = false
+  approval_required     = false
+  published             = true
+}
+
+resource "azurerm_api_management_product_api" "product_query_http_api" {
+  api_name            = azurerm_api_management_api.query-http-api.name
+  product_id          = azurerm_api_management_product.product.product_id
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = var.resource_group_name
+}
+
+
+resource "azurerm_api_management_product_api" "product_command_http_api" {
+  api_name            = azurerm_api_management_api.command-http-api.name
+  product_id          = azurerm_api_management_product.product.product_id
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = var.resource_group_name
+}
+
+
+# resource "azurerm_api_management_authorization_server" "api-standard-apim-authorization-server" {
+#   name                = "apim-authorization-server"
 #   api_management_name = azurerm_api_management.apim.name
-#   revision            = "1"
-#   display_name        = "Command HTTP API"
-#   path                = "command"
-#   service_url         = "https://jsonplaceholder.typicode.com/todos" #var.command_http_api_service_url
-#   protocols           = ["https"]
-
-#   #   import {
-#   #     content_format = "openapi-link"
-#   #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
-
-#   #   }
-
-#   #   oauth2_authorization {
-#   #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
-#   #   }
-# }
-
-# resource "azurerm_api_management_product" "product" {
-#   product_id            = "speech-microservice-http-api"
-#   api_management_name   = azurerm_api_management.apim.name
-#   resource_group_name   = var.resource_group_name
-#   display_name          = "The Speech Micro Service  HTTP API Product"
-#   subscription_required = false
-#   approval_required     = false
-#   published             = true
-# }
-
-# # resource "azurerm_api_management_product_api" "product_query_http_api" {
-# #   api_name            = azurerm_api_management_api.query-http-api.name
-# #   product_id          = azurerm_api_management_product.product.product_id
-# #   api_management_name = azurerm_api_management.apim.name
-# #   resource_group_name = var.resource_group_name
-# # }
-
-
-# resource "azurerm_api_management_product_api" "product_command_http_api" {
-#   api_name            = azurerm_api_management_api.command-http-api.name
-#   product_id          = azurerm_api_management_product.product.product_id
-#   api_management_name = azurerm_api_management.apim.name
 #   resource_group_name = var.resource_group_name
+#   display_name        = "oauth2 authorization Server"
+
+#   authorization_endpoint = "https://workshopb2clogcorner.b2clogin.com/workshopb2clogcorner.onmicrosoft.com/B2C_1_SignUpIn/oauth2/v2.0/authorize"
+#   token_endpoint         = "https://workshopb2clogcorner.b2clogin.com/workshopb2clogcorner.onmicrosoft.com/B2C_1_SignUpIn/oauth2/v2.0/token"
+
+#   client_id                    = "63ef158a-ce8b-4d2f-b078-10bd8f404b02"
+#   client_registration_endpoint = "http://localhost"
+
+#   default_scope = "https://workshopb2clogcorner.onmicrosoft.com/command/api/Speech.Create"
+
+
+#   client_secret = ""
+
+#   grant_types = [
+#     "authorizationCode",
+#   ]
+
+#   client_authentication_method = [
+#     "Body"
+#   ]
+
+#   authorization_methods        = ["GET", "POST", "PUT", "DELETE"]
+#   bearer_token_sending_methods = ["authorizationHeader"]
 # }
 
 
-# # resource "azurerm_api_management_authorization_server" "api-standard-apim-authorization-server" {
-# #   name                = "apim-authorization-server"
-# #   api_management_name = azurerm_api_management.apim.name
-# #   resource_group_name = var.resource_group_name
-# #   display_name        = "oauth2 authorization Server"
+resource "azurerm_api_management_api_operation" "api_management_api_operation_query" {
+  operation_id        = "get-all-weatherForecast"
+  api_name            = azurerm_api_management_api.query-http-api.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = var.resource_group_name
+  display_name        = "Get WeatherForecast"
+  method              = "GET"
+  url_template        = "/"
+  description         = "Get all WeatherForecast."
 
-# #   authorization_endpoint = "https://workshopb2clogcorner.b2clogin.com/workshopb2clogcorner.onmicrosoft.com/B2C_1_SignUpIn/oauth2/v2.0/authorize"
-# #   token_endpoint         = "https://workshopb2clogcorner.b2clogin.com/workshopb2clogcorner.onmicrosoft.com/B2C_1_SignUpIn/oauth2/v2.0/token"
+  # template_parameter {
+  #   name     = "id"
+  #   type     = "number"
+  #   required = true
+  # }
 
-# #   client_id                    = "63ef158a-ce8b-4d2f-b078-10bd8f404b02"
-# #   client_registration_endpoint = "http://localhost"
+  response {
+    status_code = 200
+  }
+}
 
-# #   default_scope = "https://workshopb2clogcorner.onmicrosoft.com/command/api/Speech.Create"
+resource "azurerm_api_management_api_operation" "api_management_api_operation_command" {
+  operation_id        = "command-http-api-service"
+  api_name            = azurerm_api_management_api.command-http-api.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = var.resource_group_name
+  display_name        = "command_http_api_service_"
+  method              = "POST"
+  url_template        = "/"
+  description         = "command_http_api_service_"
 
+  # template_parameter {
+  #   name     = "id"
+  #   type     = "number"
+  #   required = true
+  # }
 
-# #   client_secret = ""
+  response {
+    status_code = 200
+  }
+}
 
-# #   grant_types = [
-# #     "authorizationCode",
-# #   ]
-
-# #   client_authentication_method = [
-# #     "Body"
-# #   ]
-
-# #   authorization_methods        = ["GET", "POST", "PUT", "DELETE"]
-# #   bearer_token_sending_methods = ["authorizationHeader"]
-# # }

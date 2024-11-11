@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mssql-config
-  namespace: helm
+  #namespace: helm
   labels:
     product: mssql
 data:

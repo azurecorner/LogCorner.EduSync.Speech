@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: aks-command-api-deployment  
+ # namespace: helm
 spec:
   replicas: 1
   selector:
@@ -22,6 +23,30 @@ spec:
           value: "Welcome to Azure Kubernetes Service (AKS)"
         - name: ASPNETCORE_ENVIRONMENT
           value: "Kubernetes"
+         # Reference the ConfigMap for non-sensitive connection details
+        - name: SQL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: mssql-config
+              key: SQL_SERVER
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: mssql-config
+              key: DB_NAME
+        - name: USER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: mssql-config
+              key: USER_NAME
+        # Reference the Secret for the password
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mssql
+              key: DB_PASSWORD
+        - name: ConnectionStrings__SpeechDB
+          value: "Data Source=$(SQL_SERVER);Initial Catalog=$(DB_NAME);User=$(USER_NAME);Password=$(DB_PASSWORD)"
 ---
 apiVersion: v1
 kind: Service
