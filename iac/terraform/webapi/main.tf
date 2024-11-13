@@ -109,6 +109,7 @@ resource "azurerm_role_assignment" "aks" {
   depends_on = [module.logcorner-kubernetes_service, module.virtual_network]
 }
 
+# TODO ADD ACR PULL ROLE
 
 module "key_vault" {
   source                      = "./modules/keyvault"

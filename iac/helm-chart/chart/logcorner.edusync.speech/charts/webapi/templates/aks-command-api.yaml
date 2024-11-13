@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: aks-command-api
-        image: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command:1104
+        image: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command:1107
         ports:
         - containerPort: 8080  
         env:
