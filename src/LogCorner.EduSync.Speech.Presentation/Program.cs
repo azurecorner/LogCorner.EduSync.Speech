@@ -86,8 +86,6 @@ static void ConfigureApplicationBuilder(WebApplication app)
     app.UseCors("CorsPolicy");
     app.UseHttpsRedirection();
     string? pathBase = app.Configuration["pathBase"];
-    
-
 
     if (!string.IsNullOrWhiteSpace(pathBase))
     {
