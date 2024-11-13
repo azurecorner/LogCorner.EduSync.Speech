@@ -247,3 +247,43 @@ variable "nsgrules_aks" {
     # Add more rules as needed for AKS
   }
 }
+
+
+
+//application gateway
+
+variable "application_gateway_name" {
+
+}
+
+variable "application_gateway_backend_pool_name" {
+
+}
+
+variable "application_gateway_backend_settings_name" {
+
+}
+
+variable "application_gateway_probe_name" {
+
+}
+
+
+variable "application_gateway_https_frontend_port" {
+
+}
+variable "frontend_ip_configuration_name" {
+
+}
+
+variable "https_listener_name" {
+
+}
+
+variable "ssl_certificate_name" {
+
+}
+
+variable "gateway_ip_configuration_name" {
+
+}
