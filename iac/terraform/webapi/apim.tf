@@ -10,12 +10,17 @@ resource "azurerm_api_management" "apim" {
 
   sku_name = var.sku_name
 
-  virtual_network_type = "External"
+  virtual_network_type = "Internal"
 
   virtual_network_configuration {
     subnet_id = module.virtual_network.subnet_apim_id
   }
+
+   identity {
+    type = "SystemAssigned"
+  }
   depends_on = [ module.network_security_groups ]
+
 }
 
 resource "azurerm_api_management_api" "query-http-api" {
@@ -177,4 +182,94 @@ resource "azurerm_api_management_api_operation" "api_management_api_operation_co
     status_code = 200
   }
 }
+data "azurerm_key_vault_certificate" "api_certificate" {
+  name         = "api-management-cert"
+  key_vault_id = module.key_vault.key_vault_id
 
+  depends_on = [module.key_vault]
+}
+
+
+# custom domain
+
+resource "azurerm_key_vault_access_policy" "apim_key_vault_access_policy" {
+  key_vault_id = module.key_vault.key_vault_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_api_management.apim.identity[0].principal_id
+
+  secret_permissions = [
+    "Get",
+  ]
+
+  certificate_permissions = [
+    "Get",
+  ]
+
+  depends_on = [ azurerm_api_management.apim ]
+}
+
+resource "azurerm_api_management_custom_domain" "api_management_custom_domain" {
+  api_management_id = azurerm_api_management.apim.id
+
+  gateway {
+    host_name    = "api.cloud-devops-craft.com"
+    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+  }
+
+  developer_portal {
+    host_name    = "portal.cloud-devops-craft.com"
+    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+  }
+  management {
+    host_name    = "management.cloud-devops-craft.com"
+    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+  }
+
+  depends_on = [ azurerm_key_vault_access_policy.apim_key_vault_access_policy ]
+}
+
+
+
+resource "azurerm_private_dns_zone" "api_private_dns_zone" {
+  name                = "cloud-devops-craft.com"
+  resource_group_name = var.resource_group_name
+  depends_on = [
+    azurerm_resource_group.resource_group
+  ]
+}
+
+
+resource "azurerm_private_dns_a_record" "private_dns_a_record_api" {
+  name                = "api"
+  zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
+  resource_group_name = var.resource_group_name
+  ttl                 = 3600
+  records             = azurerm_api_management.apim.private_ip_addresses
+}
+
+
+resource "azurerm_private_dns_a_record" "private_dns_a_record_management" {
+  name                = "management"
+  zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
+  resource_group_name = var.resource_group_name
+  ttl                 = 3600
+  records             = azurerm_api_management.apim.private_ip_addresses
+}
+
+resource "azurerm_private_dns_a_record" "private_dns_a_record_portal" {
+  name                = "portal"
+  zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
+  resource_group_name = var.resource_group_name
+  ttl                 = 3600
+  records             = azurerm_api_management.apim.private_ip_addresses
+}
+
+
+output "apim_principal_id" {
+  value = azurerm_api_management.apim.identity[0].principal_id
+}
+
+output "api_management_private_ip_addresses" {
+  description = "The Private IP addresses of the API Management Service"
+  value       = azurerm_api_management.apim.private_ip_addresses
+}

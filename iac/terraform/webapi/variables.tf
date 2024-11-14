@@ -174,7 +174,7 @@ variable "subnet_id" {
 }
 
 variable "api_management_name" {
-  default = "apim-edusync-dev-002"
+  default = "apim-edusync-dev-003"
 }
 
 variable "sku_name" {
@@ -216,6 +216,7 @@ variable "nsgrules_apim" {
       source_address_prefix      = "*"
       destination_address_prefix = "*"
     }
+    # TODO : use source as ApiManagement service tag and destination as Virtual Network service tag
     "Allow_APIM_Inbound" = {
       name                       = "Allow_APIM_Inbound"
       priority                   = 1004
