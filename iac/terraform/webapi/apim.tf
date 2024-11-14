@@ -16,10 +16,10 @@ resource "azurerm_api_management" "apim" {
     subnet_id = module.virtual_network.subnet_apim_id
   }
 
-   identity {
+  identity {
     type = "SystemAssigned"
   }
-  depends_on = [ module.network_security_groups ]
+  depends_on = [module.network_security_groups]
 
 }
 
@@ -70,7 +70,7 @@ resource "azurerm_api_management_api" "command-http-api" {
   display_name        = "Command HTTP API"
   path                = "command"
   service_url         = "http://10.10.1.7/aks-command-api/api/speech" #var.command_http_api_service_url
-  protocols           = ["https","http"]
+  protocols           = ["https", "http"]
 
   #   import {
   #     content_format = "openapi-link"
@@ -205,7 +205,7 @@ resource "azurerm_key_vault_access_policy" "apim_key_vault_access_policy" {
     "Get",
   ]
 
-  depends_on = [ azurerm_api_management.apim ]
+  depends_on = [azurerm_api_management.apim]
 }
 
 resource "azurerm_api_management_custom_domain" "api_management_custom_domain" {
@@ -225,7 +225,7 @@ resource "azurerm_api_management_custom_domain" "api_management_custom_domain" {
     key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
   }
 
-  depends_on = [ azurerm_key_vault_access_policy.apim_key_vault_access_policy ]
+  depends_on = [azurerm_key_vault_access_policy.apim_key_vault_access_policy]
 }
 
 

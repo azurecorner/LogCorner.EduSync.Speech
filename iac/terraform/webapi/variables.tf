@@ -288,3 +288,26 @@ variable "ssl_certificate_name" {
 variable "gateway_ip_configuration_name" {
 
 }
+
+
+# virtual machine
+
+variable "vm_username" {
+  type = string
+}
+
+variable "public_ip_name" {
+  type = string
+}
+
+variable "network_security_group_name" {
+  type = string
+}
+
+variable "network_interface_name" {
+  type = string
+}
+
+variable "virtual_machine_name" {
+  type = string
+}

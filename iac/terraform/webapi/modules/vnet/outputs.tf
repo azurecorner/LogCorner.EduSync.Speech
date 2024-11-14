@@ -3,13 +3,14 @@ output "subnet_aks_id" {
   description = "The name of the azure kubernetes service cluster"
   value       = azurerm_subnet.aks.id
 }
-
-
-
 output "subnet_apim_id" {
   value = azurerm_subnet.apim.id
 }
 
 output "subnet_appgw_id" {
   value = azurerm_subnet.appgw.id
+}
+
+output "subnet_jumpbox_id" {
+  value = azurerm_subnet.jumpbox.id
 }

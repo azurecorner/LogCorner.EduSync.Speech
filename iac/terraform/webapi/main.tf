@@ -153,12 +153,12 @@ module "sql_server" {
   admin_username = var.admin_username
   depends_on     = [module.virtual_network, module.key_vault]
 }
-resource  "azurerm_public_ip" "app_gateway_ip" {
-  name = "app_gateway_ip"
-  location = var.resource_group_location
+resource "azurerm_public_ip" "app_gateway_ip" {
+  name                = "app_gateway_ip"
+  location            = var.resource_group_location
   resource_group_name = var.resource_group_name
-  sku = "Standard"
-  allocation_method = "Static"
+  sku                 = "Standard"
+  allocation_method   = "Static"
 }
 
 # data "azurerm_key_vault_certificate" "certificate" {
@@ -204,3 +204,24 @@ resource  "azurerm_public_ip" "app_gateway_ip" {
 
 #   depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.key_vault]
 # }
+
+
+module "virtual_machine" {
+  source = "./modules/virtual_machine"
+
+  resource_group_name         = var.resource_group_name
+  resource_group_location     = var.resource_group_location
+  subnet_id                   = module.virtual_network.subnet_aks_id
+  public_ip_name              = "JUMBO-BOX-${var.public_ip_name}"
+  network_security_group_name = "JUMBO-BOX-${var.network_security_group_name}"
+  network_interface_name      = "JUMBO-BOX-${var.network_interface_name}"
+  virtual_machine_name        = "JUMBO-BOX-${var.virtual_machine_name}"
+  username                    = var.vm_username
+  computer_name               = var.virtual_machine_name
+  tags = (merge(var.default_tags, tomap({
+    type = "virtual_machine"
+    })
+  ))
+
+  depends_on = [module.virtual_network]
+}

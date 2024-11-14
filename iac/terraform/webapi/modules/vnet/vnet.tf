@@ -23,8 +23,6 @@ resource "azurerm_subnet" "apim" {
   depends_on           = [azurerm_virtual_network.apim-aks]
 }
 
-
-
 resource "azurerm_subnet" "appgw" {
   name                 = "appGw-subnet"
   resource_group_name  = var.resource_group_name
@@ -33,3 +31,10 @@ resource "azurerm_subnet" "appgw" {
   depends_on           = [azurerm_virtual_network.apim-aks]
 }
 
+resource "azurerm_subnet" "jumpbox" {
+  name                 = "jumpbox-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.apim-aks.name
+  address_prefixes     = ["10.10.4.0/24"]
+  depends_on           = [azurerm_virtual_network.apim-aks]
+}

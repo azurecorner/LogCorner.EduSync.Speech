@@ -78,3 +78,16 @@ https_listener_name = "https-listener"
 ssl_certificate_name = "loreal-neo-cert"
 
 gateway_ip_configuration_name = "app-gateway-ip-configuration"
+
+
+# Define the name of the virtual machine
+
+vm_username = "logcorner"
+
+public_ip_name = "PIP"
+
+network_security_group_name = "NSG"
+
+network_interface_name = "NIC"
+
+virtual_machine_name = "VM"
