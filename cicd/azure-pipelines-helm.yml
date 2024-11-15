@@ -75,7 +75,7 @@ steps:
   enabled: false
   inputs:
     connectionType: 'Azure Resource Manager'
-    azureSubscription: $(serviceConnectionName)
+    azureSubscription: '$(serviceConnectionName)'
     azureResourceGroup: 'rg-edusync-dev'
     kubernetesCluster: 'aks-edusync-dev'
     command: 'upgrade'
@@ -83,4 +83,5 @@ steps:
     chartPath: '$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/logcorner.edusync.speech'
     chartVersion: '1.0.1'
     releaseName: 'logcorner-command'
+    overrideValues: 'tag=$(Build.BuildId)'
     
