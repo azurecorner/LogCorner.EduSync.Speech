@@ -72,7 +72,7 @@ steps:
       echo $accessToken | docker login $(repository).azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin
       docker push $(repository).azurecr.io/$(imageName):$(Build.BuildId)
 - task: HelmDeploy@1
-  enabled: true
+  enabled: false
   inputs:
     connectionType: 'Azure Resource Manager'
     azureSubscription: '$(serviceConnectionName)'
