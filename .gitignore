@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 iac/terraform/webapi/.terraform.tfstate.lock.info
+iac/helm-chart/chart/logcorner.edusync.speech/charts/webapi.rar

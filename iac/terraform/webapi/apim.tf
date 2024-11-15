@@ -1,275 +1,275 @@
-# https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway
-# https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/mutual-tls-deploy-aks-api-management
+# # https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway
+# # https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/mutual-tls-deploy-aks-api-management
 
-resource "azurerm_api_management" "apim" {
-  name                = var.api_management_name
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
-  publisher_name      = var.publisher_name
-  publisher_email     = var.publisher_email
-
-  sku_name = var.sku_name
-
-  virtual_network_type = "Internal"
-
-  virtual_network_configuration {
-    subnet_id = module.virtual_network.subnet_apim_id
-  }
-
-  identity {
-    type = "SystemAssigned"
-  }
-  depends_on = [module.network_security_groups]
-
-}
-
-resource "azurerm_api_management_api" "query-http-api" {
-  name                = "query-http-api"
-  resource_group_name = var.resource_group_name
-  api_management_name = azurerm_api_management.apim.name
-  revision            = "1"
-  display_name        = "Query HTTP API"
-  path                = "query"
-  service_url         = "http://10.10.1.7/aks-command-api/WeatherForecast" #var.query_http_api_service_url
-  protocols           = ["https", "http"]
-
-
-  # oauth2_authorization {
-  #   authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
-  # }
-}
-
-
-resource "azurerm_api_management_api" "test-api" {
-  name                = "test-api"
-  resource_group_name = var.resource_group_name
-  api_management_name = azurerm_api_management.apim.name
-  revision            = "1"
-  display_name        = "Test HTTP API"
-  path                = "test"
-  service_url         = "https://jsonplaceholder.typicode.com/todos" #var.command_http_api_service_url
-  protocols           = ["https"]
-
-  #   import {
-  #     content_format = "openapi-link"
-  #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
-
-  #   }
-
-  #   oauth2_authorization {
-  #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
-  #   }
-}
-
-
-resource "azurerm_api_management_api" "command-http-api" {
-  name                = "command-http-api"
-  resource_group_name = var.resource_group_name
-  api_management_name = azurerm_api_management.apim.name
-  revision            = "1"
-  display_name        = "Command HTTP API"
-  path                = "command"
-  service_url         = "http://10.10.1.7/aks-command-api/api/speech" #var.command_http_api_service_url
-  protocols           = ["https", "http"]
-
-  #   import {
-  #     content_format = "openapi-link"
-  #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
-
-  #   }
-
-  #   oauth2_authorization {
-  #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
-  #   }
-}
-
-
-
-resource "azurerm_api_management_product" "product" {
-  product_id            = "speech-microservice-http-api"
-  api_management_name   = azurerm_api_management.apim.name
-  resource_group_name   = var.resource_group_name
-  display_name          = "The Speech Micro Service  HTTP API Product"
-  subscription_required = false
-  approval_required     = false
-  published             = true
-}
-
-resource "azurerm_api_management_product_api" "product_query_http_api" {
-  api_name            = azurerm_api_management_api.query-http-api.name
-  product_id          = azurerm_api_management_product.product.product_id
-  api_management_name = azurerm_api_management.apim.name
-  resource_group_name = var.resource_group_name
-}
-
-
-resource "azurerm_api_management_product_api" "product_command_http_api" {
-  api_name            = azurerm_api_management_api.command-http-api.name
-  product_id          = azurerm_api_management_product.product.product_id
-  api_management_name = azurerm_api_management.apim.name
-  resource_group_name = var.resource_group_name
-}
-
-
-# resource "azurerm_api_management_authorization_server" "api-standard-apim-authorization-server" {
-#   name                = "apim-authorization-server"
-#   api_management_name = azurerm_api_management.apim.name
+# resource "azurerm_api_management" "apim" {
+#   name                = var.api_management_name
+#   location            = var.resource_group_location
 #   resource_group_name = var.resource_group_name
-#   display_name        = "oauth2 authorization Server"
+#   publisher_name      = var.publisher_name
+#   publisher_email     = var.publisher_email
 
-#   authorization_endpoint = "https://workshopb2clogcorner.b2clogin.com/workshopb2clogcorner.onmicrosoft.com/B2C_1_SignUpIn/oauth2/v2.0/authorize"
-#   token_endpoint         = "https://workshopb2clogcorner.b2clogin.com/workshopb2clogcorner.onmicrosoft.com/B2C_1_SignUpIn/oauth2/v2.0/token"
+#   sku_name = var.sku_name
 
-#   client_id                    = "63ef158a-ce8b-4d2f-b078-10bd8f404b02"
-#   client_registration_endpoint = "http://localhost"
+#   virtual_network_type = "Internal"
 
-#   default_scope = "https://workshopb2clogcorner.onmicrosoft.com/command/api/Speech.Create"
+#   virtual_network_configuration {
+#     subnet_id = module.virtual_network.subnet_apim_id
+#   }
+
+#   identity {
+#     type = "SystemAssigned"
+#   }
+#   depends_on = [module.network_security_groups]
+
+# }
+
+# resource "azurerm_api_management_api" "query-http-api" {
+#   name                = "query-http-api"
+#   resource_group_name = var.resource_group_name
+#   api_management_name = azurerm_api_management.apim.name
+#   revision            = "1"
+#   display_name        = "Query HTTP API"
+#   path                = "query"
+#   service_url         = "http://10.10.1.7/aks-command-api/WeatherForecast" #var.query_http_api_service_url
+#   protocols           = ["https", "http"]
 
 
-#   client_secret = ""
-
-#   grant_types = [
-#     "authorizationCode",
-#   ]
-
-#   client_authentication_method = [
-#     "Body"
-#   ]
-
-#   authorization_methods        = ["GET", "POST", "PUT", "DELETE"]
-#   bearer_token_sending_methods = ["authorizationHeader"]
+#   # oauth2_authorization {
+#   #   authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
+#   # }
 # }
 
 
-resource "azurerm_api_management_api_operation" "api_management_api_operation_query" {
-  operation_id        = "get-all-weatherForecast"
-  api_name            = azurerm_api_management_api.query-http-api.name
-  api_management_name = azurerm_api_management.apim.name
-  resource_group_name = var.resource_group_name
-  display_name        = "Get WeatherForecast"
-  method              = "GET"
-  url_template        = "/"
-  description         = "Get all WeatherForecast."
+# resource "azurerm_api_management_api" "test-api" {
+#   name                = "test-api"
+#   resource_group_name = var.resource_group_name
+#   api_management_name = azurerm_api_management.apim.name
+#   revision            = "1"
+#   display_name        = "Test HTTP API"
+#   path                = "test"
+#   service_url         = "https://jsonplaceholder.typicode.com/todos" #var.command_http_api_service_url
+#   protocols           = ["https"]
 
-  # template_parameter {
-  #   name     = "id"
-  #   type     = "number"
-  #   required = true
-  # }
+#   #   import {
+#   #     content_format = "openapi-link"
+#   #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
 
-  response {
-    status_code = 200
-  }
-}
+#   #   }
 
-resource "azurerm_api_management_api_operation" "api_management_api_operation_command" {
-  operation_id        = "command-http-api-service"
-  api_name            = azurerm_api_management_api.command-http-api.name
-  api_management_name = azurerm_api_management.apim.name
-  resource_group_name = var.resource_group_name
-  display_name        = "command_http_api_service_"
-  method              = "POST"
-  url_template        = "/"
-  description         = "command_http_api_service_"
-
-  # template_parameter {
-  #   name     = "id"
-  #   type     = "number"
-  #   required = true
-  # }
-
-  response {
-    status_code = 200
-  }
-}
-data "azurerm_key_vault_certificate" "api_certificate" {
-  name         = "api-management-cert"
-  key_vault_id = module.key_vault.key_vault_id
-
-  depends_on = [module.key_vault]
-}
+#   #   oauth2_authorization {
+#   #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
+#   #   }
+# }
 
 
-# custom domain
+# resource "azurerm_api_management_api" "command-http-api" {
+#   name                = "command-http-api"
+#   resource_group_name = var.resource_group_name
+#   api_management_name = azurerm_api_management.apim.name
+#   revision            = "1"
+#   display_name        = "Command HTTP API"
+#   path                = "command"
+#   service_url         = "http://10.10.1.7/aks-command-api/api/speech" #var.command_http_api_service_url
+#   protocols           = ["https", "http"]
 
-resource "azurerm_key_vault_access_policy" "apim_key_vault_access_policy" {
-  key_vault_id = module.key_vault.key_vault_id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_api_management.apim.identity[0].principal_id
+#   #   import {
+#   #     content_format = "openapi-link"
+#   #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
 
-  secret_permissions = [
-    "Get",
-  ]
+#   #   }
 
-  certificate_permissions = [
-    "Get",
-  ]
-
-  depends_on = [azurerm_api_management.apim]
-}
-
-resource "azurerm_api_management_custom_domain" "api_management_custom_domain" {
-  api_management_id = azurerm_api_management.apim.id
-
-  gateway {
-    host_name    = "api.cloud-devops-craft.com"
-    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
-  }
-
-  developer_portal {
-    host_name    = "portal.cloud-devops-craft.com"
-    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
-  }
-  management {
-    host_name    = "management.cloud-devops-craft.com"
-    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
-  }
-
-  depends_on = [azurerm_key_vault_access_policy.apim_key_vault_access_policy]
-}
+#   #   oauth2_authorization {
+#   #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
+#   #   }
+# }
 
 
 
-resource "azurerm_private_dns_zone" "api_private_dns_zone" {
-  name                = "cloud-devops-craft.com"
-  resource_group_name = var.resource_group_name
-  depends_on = [
-    azurerm_resource_group.resource_group
-  ]
-}
+# resource "azurerm_api_management_product" "product" {
+#   product_id            = "speech-microservice-http-api"
+#   api_management_name   = azurerm_api_management.apim.name
+#   resource_group_name   = var.resource_group_name
+#   display_name          = "The Speech Micro Service  HTTP API Product"
+#   subscription_required = false
+#   approval_required     = false
+#   published             = true
+# }
+
+# resource "azurerm_api_management_product_api" "product_query_http_api" {
+#   api_name            = azurerm_api_management_api.query-http-api.name
+#   product_id          = azurerm_api_management_product.product.product_id
+#   api_management_name = azurerm_api_management.apim.name
+#   resource_group_name = var.resource_group_name
+# }
 
 
-resource "azurerm_private_dns_a_record" "private_dns_a_record_api" {
-  name                = "api"
-  zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
-  resource_group_name = var.resource_group_name
-  ttl                 = 3600
-  records             = azurerm_api_management.apim.private_ip_addresses
-}
+# resource "azurerm_api_management_product_api" "product_command_http_api" {
+#   api_name            = azurerm_api_management_api.command-http-api.name
+#   product_id          = azurerm_api_management_product.product.product_id
+#   api_management_name = azurerm_api_management.apim.name
+#   resource_group_name = var.resource_group_name
+# }
 
 
-resource "azurerm_private_dns_a_record" "private_dns_a_record_management" {
-  name                = "management"
-  zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
-  resource_group_name = var.resource_group_name
-  ttl                 = 3600
-  records             = azurerm_api_management.apim.private_ip_addresses
-}
+# # resource "azurerm_api_management_authorization_server" "api-standard-apim-authorization-server" {
+# #   name                = "apim-authorization-server"
+# #   api_management_name = azurerm_api_management.apim.name
+# #   resource_group_name = var.resource_group_name
+# #   display_name        = "oauth2 authorization Server"
 
-resource "azurerm_private_dns_a_record" "private_dns_a_record_portal" {
-  name                = "portal"
-  zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
-  resource_group_name = var.resource_group_name
-  ttl                 = 3600
-  records             = azurerm_api_management.apim.private_ip_addresses
-}
+# #   authorization_endpoint = "https://workshopb2clogcorner.b2clogin.com/workshopb2clogcorner.onmicrosoft.com/B2C_1_SignUpIn/oauth2/v2.0/authorize"
+# #   token_endpoint         = "https://workshopb2clogcorner.b2clogin.com/workshopb2clogcorner.onmicrosoft.com/B2C_1_SignUpIn/oauth2/v2.0/token"
+
+# #   client_id                    = "63ef158a-ce8b-4d2f-b078-10bd8f404b02"
+# #   client_registration_endpoint = "http://localhost"
+
+# #   default_scope = "https://workshopb2clogcorner.onmicrosoft.com/command/api/Speech.Create"
 
 
-output "apim_principal_id" {
-  value = azurerm_api_management.apim.identity[0].principal_id
-}
+# #   client_secret = ""
 
-output "api_management_private_ip_addresses" {
-  description = "The Private IP addresses of the API Management Service"
-  value       = azurerm_api_management.apim.private_ip_addresses
-}
+# #   grant_types = [
+# #     "authorizationCode",
+# #   ]
+
+# #   client_authentication_method = [
+# #     "Body"
+# #   ]
+
+# #   authorization_methods        = ["GET", "POST", "PUT", "DELETE"]
+# #   bearer_token_sending_methods = ["authorizationHeader"]
+# # }
+
+
+# resource "azurerm_api_management_api_operation" "api_management_api_operation_query" {
+#   operation_id        = "get-all-weatherForecast"
+#   api_name            = azurerm_api_management_api.query-http-api.name
+#   api_management_name = azurerm_api_management.apim.name
+#   resource_group_name = var.resource_group_name
+#   display_name        = "Get WeatherForecast"
+#   method              = "GET"
+#   url_template        = "/"
+#   description         = "Get all WeatherForecast."
+
+#   # template_parameter {
+#   #   name     = "id"
+#   #   type     = "number"
+#   #   required = true
+#   # }
+
+#   response {
+#     status_code = 200
+#   }
+# }
+
+# resource "azurerm_api_management_api_operation" "api_management_api_operation_command" {
+#   operation_id        = "command-http-api-service"
+#   api_name            = azurerm_api_management_api.command-http-api.name
+#   api_management_name = azurerm_api_management.apim.name
+#   resource_group_name = var.resource_group_name
+#   display_name        = "command_http_api_service_"
+#   method              = "POST"
+#   url_template        = "/"
+#   description         = "command_http_api_service_"
+
+#   # template_parameter {
+#   #   name     = "id"
+#   #   type     = "number"
+#   #   required = true
+#   # }
+
+#   response {
+#     status_code = 200
+#   }
+# }
+# data "azurerm_key_vault_certificate" "api_certificate" {
+#   name         = "api-management-cert"
+#   key_vault_id = module.key_vault.key_vault_id
+
+#   depends_on = [module.key_vault]
+# }
+
+
+# # custom domain
+
+# resource "azurerm_key_vault_access_policy" "apim_key_vault_access_policy" {
+#   key_vault_id = module.key_vault.key_vault_id
+#   tenant_id    = data.azurerm_client_config.current.tenant_id
+#   object_id    = azurerm_api_management.apim.identity[0].principal_id
+
+#   secret_permissions = [
+#     "Get",
+#   ]
+
+#   certificate_permissions = [
+#     "Get",
+#   ]
+
+#   depends_on = [azurerm_api_management.apim]
+# }
+
+# resource "azurerm_api_management_custom_domain" "api_management_custom_domain" {
+#   api_management_id = azurerm_api_management.apim.id
+
+#   gateway {
+#     host_name    = "api.cloud-devops-craft.com"
+#     key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+#   }
+
+#   developer_portal {
+#     host_name    = "portal.cloud-devops-craft.com"
+#     key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+#   }
+#   management {
+#     host_name    = "management.cloud-devops-craft.com"
+#     key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+#   }
+
+#   depends_on = [azurerm_key_vault_access_policy.apim_key_vault_access_policy]
+# }
+
+
+
+# resource "azurerm_private_dns_zone" "api_private_dns_zone" {
+#   name                = "cloud-devops-craft.com"
+#   resource_group_name = var.resource_group_name
+#   depends_on = [
+#     azurerm_resource_group.resource_group
+#   ]
+# }
+
+
+# resource "azurerm_private_dns_a_record" "private_dns_a_record_api" {
+#   name                = "api"
+#   zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
+#   resource_group_name = var.resource_group_name
+#   ttl                 = 3600
+#   records             = azurerm_api_management.apim.private_ip_addresses
+# }
+
+
+# resource "azurerm_private_dns_a_record" "private_dns_a_record_management" {
+#   name                = "management"
+#   zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
+#   resource_group_name = var.resource_group_name
+#   ttl                 = 3600
+#   records             = azurerm_api_management.apim.private_ip_addresses
+# }
+
+# resource "azurerm_private_dns_a_record" "private_dns_a_record_portal" {
+#   name                = "portal"
+#   zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
+#   resource_group_name = var.resource_group_name
+#   ttl                 = 3600
+#   records             = azurerm_api_management.apim.private_ip_addresses
+# }
+
+
+# output "apim_principal_id" {
+#   value = azurerm_api_management.apim.identity[0].principal_id
+# }
+
+# output "api_management_private_ip_addresses" {
+#   description = "The Private IP addresses of the API Management Service"
+#   value       = azurerm_api_management.apim.private_ip_addresses
+# }

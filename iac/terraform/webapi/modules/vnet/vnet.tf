@@ -38,3 +38,29 @@ resource "azurerm_subnet" "jumpbox" {
   address_prefixes     = ["10.10.4.0/24"]
   depends_on           = [azurerm_virtual_network.apim-aks]
 }
+
+
+resource "azurerm_subnet" "private" {
+  name                 = "private-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.apim-aks.name
+  address_prefixes     = ["10.10.5.0/24"]
+  depends_on           = [azurerm_virtual_network.apim-aks]
+}
+
+
+resource "azurerm_subnet" "integration" {
+  name                 = "integration-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.apim-aks.name
+  address_prefixes     = ["10.10.6.0/24"]
+   delegation {
+    name = "delegation"
+    service_delegation {
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+      name    = "Microsoft.Web/serverFarms"
+    }
+  }
+
+  depends_on           = [azurerm_virtual_network.apim-aks]
+}
