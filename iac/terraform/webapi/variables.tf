@@ -174,7 +174,7 @@ variable "subnet_id" {
 }
 
 variable "api_management_name" {
-  default = "apim-edusync-dev-003"
+  default = "apim-edusync-dev-004"
 }
 
 variable "sku_name" {

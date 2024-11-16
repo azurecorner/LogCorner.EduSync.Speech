@@ -1,6 +1,6 @@
 $VNET_NAME="edusync-vnet"
 $RESOURCE_GROUP_NAME="rg-edusync-dev"
-$PRIVATE_IP="10.10.1.7"
+$PRIVATE_IP="10.10.1.8"
 $NAMESPACE="ingress-nginx"
 $CLUSTER_NAME="aks-edusync-dev"
 #First, we need a private IP address that the NGINX ingress controller will accept requests from. So, choose a private IP address and verify that it’s available. In this case, the IP address I choose is
@@ -18,13 +18,20 @@ helm repo update
 
 # Deploy the NGINX ingress controller with an internal load balancer
 Write-Output "Deploying the NGINX ingress controller..."
-# Use Helm to deploy an NGINX ingress controller
- helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx  `
-  --namespace $NAMESPACE  `
-  --create-namespace  `
-  --set controller.service.type=LoadBalancer  `
-  --set controller.service.loadBalancerIP=$PRIVATE_IP  `
-  --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" 
+# # Use Helm to deploy an NGINX ingress controllerusing static private IP address
+#  helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx  `
+#   --namespace $NAMESPACE  `
+#   --create-namespace  `
+#   --set controller.service.type=LoadBalancer  `
+#   --set controller.service.loadBalancerIP=$PRIVATE_IP  `
+#   --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" 
+
+# Use Helm to deploy an NGINX ingress controller without static private IP address
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx  `
+--namespace $NAMESPACE  `
+--create-namespace  `
+--set controller.service.type=LoadBalancer  `
+--set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" 
     
 # Test an internal IP address
 # Monitor the ingress service
@@ -43,6 +50,7 @@ $NAMESPACE="default"
 write-host "Waiting for the logcorner-command pod to be ready..."
 kubectl get pods --namespace  $NAMESPACE
 
+$NAMESPACE="ingress-nginx"
 kubectl get service ingress-nginx-controller --namespace  $NAMESPACE
 
 

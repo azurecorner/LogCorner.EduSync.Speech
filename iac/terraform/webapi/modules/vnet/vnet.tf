@@ -54,7 +54,7 @@ resource "azurerm_subnet" "integration" {
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.apim-aks.name
   address_prefixes     = ["10.10.6.0/24"]
-   delegation {
+  delegation {
     name = "delegation"
     service_delegation {
       actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
@@ -62,5 +62,5 @@ resource "azurerm_subnet" "integration" {
     }
   }
 
-  depends_on           = [azurerm_virtual_network.apim-aks]
+  depends_on = [azurerm_virtual_network.apim-aks]
 }

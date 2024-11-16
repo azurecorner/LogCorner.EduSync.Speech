@@ -1,14 +1,42 @@
 replicaCount: 1
-namespace: helm
+
 image:
   repository: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command
-  tag: "1107"
-imagePullPolicy: IfNotPresent
-restartPolicy: Always
+  tag: 1114
+  pullPolicy: IfNotPresent
+
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 80
   targetPort: 8080
-  ssl_port: 443
-  ssl_targetPort: 443
 
+env:
+  title: "Welcome to Azure Kubernetes Service (AKS)"
+  aspnetcoreEnvironment: "Kubernetes"
+
+configMapRef:
+  sqlServerKey: SQL_SERVER
+  dbNameKey: DB_NAME
+  userNameKey: USER_NAME
+
+secretRef:
+  dbPasswordKey: DB_PASSWORD
+
+connectionStringTemplate: "Data Source=$(SQL_SERVER);Initial Catalog=$(DB_NAME);User=$(USER_NAME);Password=$(DB_PASSWORD)"
+
+
+configMap:
+  name: mssql-config
+  labels:
+    product: mssql
+  data:
+    SQL_SERVER: "mssql-server-edusync-dev.database.windows.net"
+    DB_NAME: "backend-db-edusync-dev"
+    USER_NAME: "mssql-admin-user"
+secret:
+  name: mssql
+  labels:
+    version: "1.0.0"
+    product: "mssql"
+  data:
+    DB_PASSWORD: "Dc35zTSzl3B7=NaJo{KP"  # Sensitive data can be overridden securely during deployment

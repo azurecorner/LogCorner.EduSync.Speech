@@ -16,7 +16,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: aks-command-api-service
+            name: logcorner-command-http-api-service
             port:
               number: 80
       - path: /hello-world-one(/|$)(.*)

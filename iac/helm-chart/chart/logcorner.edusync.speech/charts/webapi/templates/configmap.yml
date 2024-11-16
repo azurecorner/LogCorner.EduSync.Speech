@@ -1,11 +1,14 @@
+# templates/configmap.yaml
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mssql-config
-  #namespace: helm
+  name: {{ .Values.configMap.name }}
   labels:
-    product: mssql
+    {{- range $key, $value := .Values.configMap.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 data:
-  SQL_SERVER: "mssql-server-edusync-dev.database.windows.net"
-  DB_NAME: "backend-db-edusync-dev"
-  USER_NAME: "mssql-admin-user"
+  SQL_SERVER: {{ .Values.configMap.data.SQL_SERVER | quote }}
+  DB_NAME: {{ .Values.configMap.data.DB_NAME | quote }}
+  USER_NAME: {{ .Values.configMap.data.USER_NAME | quote }}

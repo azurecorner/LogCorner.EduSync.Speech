@@ -1,61 +1,61 @@
+# templates/deployment.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aks-command-api-deployment  
- # namespace: helm
+  name: {{ include "aks-command-api.fullname" . }}-deployment
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: aks-command-api
+      app: {{ include "aks-command-api.fullname" . }}
   template:
     metadata:
       labels:
-        app: aks-command-api
+        app: {{ include "aks-command-api.fullname" . }}
     spec:
       containers:
       - name: aks-command-api
-        image: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command:1112
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-        - containerPort: 8080  
+        - containerPort: {{ .Values.service.targetPort }}
         env:
         - name: TITLE
-          value: "Welcome to Azure Kubernetes Service (AKS)"
+          value: "{{ .Values.env.title }}"
         - name: ASPNETCORE_ENVIRONMENT
-          value: "Kubernetes"
-         # Reference the ConfigMap for non-sensitive connection details
+          value: "{{ .Values.env.aspnetcoreEnvironment }}"
         - name: SQL_SERVER
           valueFrom:
             configMapKeyRef:
               name: mssql-config
-              key: SQL_SERVER
+              key: {{ .Values.configMapRef.sqlServerKey }}
         - name: DB_NAME
           valueFrom:
             configMapKeyRef:
               name: mssql-config
-              key: DB_NAME
+              key: {{ .Values.configMapRef.dbNameKey }}
         - name: USER_NAME
           valueFrom:
             configMapKeyRef:
               name: mssql-config
-              key: USER_NAME
-        # Reference the Secret for the password
+              key: {{ .Values.configMapRef.userNameKey }}
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mssql
-              key: DB_PASSWORD
+              key: {{ .Values.secretRef.dbPasswordKey }}
         - name: ConnectionStrings__SpeechDB
-          value: "Data Source=$(SQL_SERVER);Initial Catalog=$(DB_NAME);User=$(USER_NAME);Password=$(DB_PASSWORD)"
+          value: "{{ .Values.connectionStringTemplate }}"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: aks-command-api-service 
+  name: {{ include "aks-command-api.fullname" . }}-service
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
   ports:
-  - port: 80
-    targetPort: 8080  # Updated to match the container's listening port
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
   selector:
-    app: aks-command-api
+    app: {{ include "aks-command-api.fullname" . }}

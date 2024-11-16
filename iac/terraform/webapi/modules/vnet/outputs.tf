@@ -1,7 +1,7 @@
 
 output "virtual_network_id" {
   value = azurerm_virtual_network.apim-aks.id
-  
+
 }
 
 output "subnet_aks_id" {
