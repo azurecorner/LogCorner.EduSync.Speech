@@ -2,11 +2,11 @@ replicaCount: 1
 
 image:
   repository: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command
-  tag: 1114
+  tag: 1115
   pullPolicy: IfNotPresent
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
   targetPort: 8080
 

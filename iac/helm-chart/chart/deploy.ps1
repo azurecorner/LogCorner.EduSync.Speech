@@ -1,6 +1,6 @@
 $VNET_NAME="edusync-vnet"
 $RESOURCE_GROUP_NAME="rg-edusync-dev"
-$PRIVATE_IP="10.10.1.8"
+$PRIVATE_IP="10.10.1.4"
 $NAMESPACE="ingress-nginx"
 $CLUSTER_NAME="aks-edusync-dev"
 #First, we need a private IP address that the NGINX ingress controller will accept requests from. So, choose a private IP address and verify that it’s available. In this case, the IP address I choose is
@@ -54,4 +54,40 @@ $NAMESPACE="ingress-nginx"
 kubectl get service ingress-nginx-controller --namespace  $NAMESPACE
 
 
-kubectl exec -it curl-test -n helm -- curl http://$PRIVATE_IP/aks-command-api/WeatherForecast
+$PRIVATE_IP=kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+
+# az network private-dns record-set a add-record  `
+#   -g $RESOURCE_GROUP_NAME  `
+#   -z cloud-devops-craft.com  `
+#   -n ingress  `
+#   -a $PRIVATE_IP
+
+$RecordName = "ingress"
+$PrivateDnsZoneName = "cloud-devops-craft.com"
+# Check if the record exists
+$existingRecord = az network private-dns record-set a show `
+  -g $RESOURCE_GROUP_NAME `
+  -z $PrivateDnsZoneName  `
+  -n $RecordName  `
+  --query "aRecords[?ipv4Address=='$PRIVATE_IP']" `
+  --output tsv
+
+if (-not $existingRecord) {
+    Write-Host "Record does not exist. Adding A record..."
+    az network private-dns record-set a add-record `
+      -g $RESOURCE_GROUP_NAME `
+      -z $PrivateDnsZoneName  `
+      -n $RecordName `
+      -a $PRIVATE_IP
+    Write-Host "A record added: $RecordName -> $PRIVATE_IP"
+} else {
+    Write-Host "Record already exists: $RecordName -> $PRIVATE_IP"
+}
+
+kubectl exec -it curl-test -n helm -- nslookup ingress.cloud-devops-craft.com
+
+kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com/aks-command-api/WeatherForecast
+
+
+# kubectl exec -it curl-test -n helm -- curl http://$PRIVATE_IP/aks-command-api/WeatherForecast
