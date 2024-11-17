@@ -30,7 +30,7 @@
 #   revision            = "1"
 #   display_name        = "Query HTTP API"
 #   path                = "query"
-#   service_url         = "http://10.10.1.7/aks-command-api/WeatherForecast" #var.query_http_api_service_url
+#   service_url         = "http://ingress.cloud-devops-craft.com/aks-command-api/WeatherForecast" #var.query_http_api_service_url
 #   protocols           = ["https", "http"]
 
 
@@ -40,26 +40,26 @@
 # }
 
 
-# resource "azurerm_api_management_api" "test-api" {
-#   name                = "test-api"
-#   resource_group_name = var.resource_group_name
-#   api_management_name = azurerm_api_management.apim.name
-#   revision            = "1"
-#   display_name        = "Test HTTP API"
-#   path                = "test"
-#   service_url         = "https://jsonplaceholder.typicode.com/todos" #var.command_http_api_service_url
-#   protocols           = ["https"]
+# # resource "azurerm_api_management_api" "test-api" {
+# #   name                = "test-api"
+# #   resource_group_name = var.resource_group_name
+# #   api_management_name = azurerm_api_management.apim.name
+# #   revision            = "1"
+# #   display_name        = "Test HTTP API"
+# #   path                = "test"
+# #   service_url         = "https://jsonplaceholder.typicode.com/todos" #var.command_http_api_service_url
+# #   protocols           = ["https"]
 
-#   #   import {
-#   #     content_format = "openapi-link"
-#   #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
+# #   #   import {
+# #   #     content_format = "openapi-link"
+# #   #     content_value  = "${var.command_http_api_service_url}/swagger/v1/swagger.json"
 
-#   #   }
+# #   #   }
 
-#   #   oauth2_authorization {
-#   #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
-#   #   }
-# }
+# #   #   oauth2_authorization {
+# #   #     authorization_server_name = azurerm_api_management_authorization_server.api-standard-apim-authorization-server.name
+# #   #   }
+# # }
 
 
 # resource "azurerm_api_management_api" "command-http-api" {
