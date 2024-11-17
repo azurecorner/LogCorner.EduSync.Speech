@@ -13,3 +13,5 @@ resource "azurerm_private_dns_zone" "api_private_dns_zone" {
     azurerm_resource_group.resource_group
   ]
 }
+
+# TODO LINK PRIVATE DNS ZONE TO VIRTUAL NETWORK

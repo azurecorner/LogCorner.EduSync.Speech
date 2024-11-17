@@ -2,7 +2,6 @@ replicaCount: 1
 
 image:
   repository: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command
-  tag: 1115
   pullPolicy: IfNotPresent
 
 service:

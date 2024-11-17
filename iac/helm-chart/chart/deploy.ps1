@@ -1,8 +1,17 @@
-$VNET_NAME="edusync-vnet"
-$RESOURCE_GROUP_NAME="rg-edusync-dev"
-$PRIVATE_IP="10.10.1.4"
-$NAMESPACE="ingress-nginx"
-$CLUSTER_NAME="aks-edusync-dev"
+param(
+    [string]$ChartName = "logcorner.edusync.speech",
+    [string]$IMAGE_TAG = "1117",
+    [string]$NAMESPACE = "ingress-nginx",
+    [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
+    [string]$CLUSTER_NAME = "aks-edusync-dev",
+    [string]$PrivateDnsZoneName = "cloud-devops-craft.com",
+    [string]$RecordName = "ingress"
+   )
+# $VNET_NAME="edusync-vnet"
+# $RESOURCE_GROUP_NAME="rg-edusync-dev"
+# $NAMESPACE="ingress-nginx"
+# $CLUSTER_NAME="aks-edusync-dev"
+# $IMAGE_TAG="1117"
 #First, we need a private IP address that the NGINX ingress controller will accept requests from. So, choose a private IP address and verify that it’s available. In this case, the IP address I choose is
 az aks get-credentials --resource-group $RESOURCE_GROUP_NAME --name $CLUSTER_NAME --overwrite-existing
 kubectl get deployments --all-namespaces=true
@@ -44,8 +53,12 @@ Write-Output "Deploying logcorner-command chart..."
 # Change to the correct directory (up one level)
 # Define the full path to the Helm chart directory
 $ChartName = "logcorner.edusync.speech"
+kubectl delete pod curl-test --namespace  helm
 
-helm upgrade --install logcorner-command  $ChartName
+# helm upgrade --install logcorner-command  $ChartName
+helm upgrade --install logcorner-command $ChartName `
+    --set global.tag=$IMAGE_TAG
+
 $NAMESPACE="default"
 write-host "Waiting for the logcorner-command pod to be ready..."
 kubectl get pods --namespace  $NAMESPACE
@@ -91,3 +104,11 @@ kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com
 
 
 # kubectl exec -it curl-test -n helm -- curl http://$PRIVATE_IP/aks-command-api/WeatherForecast
+
+
+<# $ChartName = "logcorner.edusync.speech"
+
+# Use --reuse-values to keep any existing values (if needed)
+helm upgrade --install logcorner-command $ChartName `
+    --set global.tag=$IMAGE_TAG
+ #>
