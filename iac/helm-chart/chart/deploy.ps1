@@ -1,6 +1,6 @@
 param(
     [string]$ChartName = "logcorner.edusync.speech",
-    [string]$IMAGE_TAG = "1117",
+    [string]$IMAGE_TAG = "1118",
     [string]$NAMESPACE = "ingress-nginx",
     [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
     [string]$CLUSTER_NAME = "aks-edusync-dev",
@@ -52,7 +52,7 @@ kubectl get service ingress-nginx-controller --namespace  $NAMESPACE
 Write-Output "Deploying logcorner-command chart..."
 # Change to the correct directory (up one level)
 # Define the full path to the Helm chart directory
-$ChartName = "logcorner.edusync.speech"
+#$ChartName = "logcorner.edusync.speech"
 kubectl delete pod curl-test --namespace  helm
 
 # helm upgrade --install logcorner-command  $ChartName
@@ -76,8 +76,8 @@ $PRIVATE_IP=kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpat
 #   -n ingress  `
 #   -a $PRIVATE_IP
 
-$RecordName = "ingress"
-$PrivateDnsZoneName = "cloud-devops-craft.com"
+# $RecordName = "ingress"
+# $PrivateDnsZoneName = "cloud-devops-craft.com"
 # Check if the record exists
 $existingRecord = az network private-dns record-set a show `
   -g $RESOURCE_GROUP_NAME `
