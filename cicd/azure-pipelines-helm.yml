@@ -71,6 +71,13 @@ steps:
       accessToken=$(az acr login --name $(repository) --expose-token --output tsv --query accessToken)
       echo $accessToken | docker login $(repository).azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin
       docker push $(repository).azurecr.io/$(imageName):$(Build.BuildId)
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: 'BICEP-SP'
+    ScriptType: 'FilePath'
+    ScriptPath: '$(System.DefaultWorkingDirectory)/iac/helm-chart/chart/deploy.ps1'
+    ScriptArguments: 'IMAGE_TAG=$(Build.BuildId)'
+    azurePowerShellVersion: 'LatestVersion'
 - task: HelmDeploy@1
   enabled: false
   inputs:
