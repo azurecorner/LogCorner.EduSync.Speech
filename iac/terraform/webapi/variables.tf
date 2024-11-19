@@ -249,7 +249,24 @@ variable "nsgrules_aks" {
   }
 }
 
+variable "nsgrules_vm" {
+  description = "NSG rules for Virtual Machine"
+  type        = map(any)
+  default = {
+    "Allow_RDP_Inbound" = {
+      name                       = "Allow_RDP"
+      priority                   = 100
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "3389"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    }
 
+  }
+}
 
 //application gateway
 

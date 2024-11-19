@@ -14,6 +14,11 @@ locals {
       nsgrules                    = var.nsgrules_aks
       subnet_ids                  = [module.virtual_network.subnet_aks_id]
     }
+    nsg_vm = {
+      network_security_group_name = "nsg_vm"
+      nsgrules                    = var.nsgrules_vm
+      subnet_ids                  = [module.virtual_network.subnet_vm_id]
+    }
 
   }
 }
@@ -209,22 +214,22 @@ module "key_vault" {
 # }
 
 
-# module "virtual_machine" {
-#   source = "./modules/virtual_machine"
+module "virtual_machine" {
+  source = "./modules/virtual_machine"
 
-#   resource_group_name         = var.resource_group_name
-#   resource_group_location     = var.resource_group_location
-#   subnet_id                   = module.virtual_network.subnet_aks_id
-#   public_ip_name              = "JUMBO-BOX-${var.public_ip_name}"
-#   network_security_group_name = "JUMBO-BOX-${var.network_security_group_name}"
-#   network_interface_name      = "JUMBO-BOX-${var.network_interface_name}"
-#   virtual_machine_name        = "JUMBO-BOX-${var.virtual_machine_name}"
-#   username                    = var.vm_username
-#   computer_name               = var.virtual_machine_name
-#   tags = (merge(var.default_tags, tomap({
-#     type = "virtual_machine"
-#     })
-#   ))
+  resource_group_name         = var.resource_group_name
+  resource_group_location     = var.resource_group_location
+  subnet_id                   = module.virtual_network.subnet_vm_id
+  public_ip_name              = "JUMBO-BOX-${var.public_ip_name}"
+  network_security_group_name = "JUMBO-BOX-${var.network_security_group_name}"
+  network_interface_name      = "JUMBO-BOX-${var.network_interface_name}"
+  virtual_machine_name        = "JUMBO-BOX-${var.virtual_machine_name}"
+  username                    = var.vm_username
+  computer_name               = var.virtual_machine_name
+  tags = (merge(var.default_tags, tomap({
+    type = "virtual_machine"
+    })
+  ))
 
-#   depends_on = [module.virtual_network]
-# }
+  depends_on = [module.virtual_network]
+}

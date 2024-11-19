@@ -107,7 +107,7 @@ kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com
 
 
 <# $ChartName = "logcorner.edusync.speech"
-
+kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/aks-command-api/WeatherForecast
 # Use --reuse-values to keep any existing values (if needed)
 helm upgrade --install logcorner-command $ChartName `
     --set global.tag=$IMAGE_TAG

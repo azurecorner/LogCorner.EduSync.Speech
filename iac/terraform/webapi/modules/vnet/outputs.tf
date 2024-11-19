@@ -16,8 +16,8 @@ output "subnet_appgw_id" {
   value = azurerm_subnet.appgw.id
 }
 
-output "subnet_jumpbox_id" {
-  value = azurerm_subnet.jumpbox.id
+output "subnet_vm_id" {
+  value = azurerm_subnet.vm.id
 }
 
 output "subnet_private_id" {

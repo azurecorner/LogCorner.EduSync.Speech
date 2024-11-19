@@ -32,7 +32,7 @@ resource "azurerm_key_vault_access_policy" "vault_access_policy_principal" {
   object_id    = var.service_principal_object_id
 
   certificate_permissions = [
-    "Get" ,"List", "Update" ,"Create", "Import" ,"Delete" ,"Recover" , "Restore" , "Purge"
+    "Get", "List", "Update", "Create", "Import", "Delete", "Recover", "Restore", "Purge"
   ]
 
   secret_permissions = [
@@ -48,7 +48,7 @@ resource "azurerm_key_vault_access_policy" "vault_access_policy_me" {
   object_id    = "7abf4c5b-9638-4ec4-b830-ede0a8031b25"
 
   certificate_permissions = [
-    "Get", "List"
+    "Get", "List", "Update", "Create", "Import", "Delete", "Recover", "Restore", "Purge"
   ]
 
   secret_permissions = [
