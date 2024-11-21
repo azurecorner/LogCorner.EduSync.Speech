@@ -9,8 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: ingress.cloud-devops-craft.com
-    http:
+  - http:
       paths:
       - path: /aks-command-api(/|$)(.*)
         pathType: Prefix

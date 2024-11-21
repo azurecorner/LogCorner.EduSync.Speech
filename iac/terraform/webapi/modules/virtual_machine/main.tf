@@ -49,7 +49,7 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   size                  = "Standard_DS1_v2"
 
   os_disk {
-    name                 = "myOsDisk"
+    name                 = "${var.virtual_machine_name}-OsDisk"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }

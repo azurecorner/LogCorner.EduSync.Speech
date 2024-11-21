@@ -174,7 +174,7 @@ variable "subnet_id" {
 }
 
 variable "api_management_name" {
-  default = "apim-edusync-dev-004"
+  default = "apim-edusync-dev-008"
 }
 
 variable "sku_name" {
@@ -201,21 +201,23 @@ variable "nsgrules_apim" {
       access                     = "Allow"
       protocol                   = "Tcp"
       source_port_range          = "*"
-      destination_port_range     = "443"
+      destination_port_range     = "80"
       source_address_prefix      = "*"
       destination_address_prefix = "*"
     }
-    "Allow_HTTPS" = {
+
+      "Allow_HTTPS" = {
       name                       = "Allow_HTTPS"
       priority                   = 1003
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"
       source_port_range          = "*"
-      destination_port_range     = "80"
+      destination_port_range     = "443"
       source_address_prefix      = "*"
       destination_address_prefix = "*"
     }
+    
     # TODO : use source as ApiManagement service tag and destination as Virtual Network service tag
     "Allow_APIM_Inbound" = {
       name                       = "Allow_APIM_Inbound"
@@ -225,8 +227,19 @@ variable "nsgrules_apim" {
       protocol                   = "Tcp"
       source_port_range          = "*"
       destination_port_range     = "3443"
+      source_address_prefix      = "ApiManagement"
+      destination_address_prefix = "VirtualNetwork"
+    }
+      "Allow_APIM_Outbound" = {
+      name                       = "Allow_APIM_Outbound"
+      priority                   = 1005
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "*"
       source_address_prefix      = "*"
-      destination_address_prefix = "*"
+      destination_address_prefix = "ApiManagement"
     }
   }
 }
@@ -234,9 +247,21 @@ variable "nsgrules_aks" {
   description = "NSG rules for AKS"
   type        = map(any)
   default = {
-    "Allow_AKS_Inbound" = {
-      name                       = "Allow_AKS_Inbound"
+    "Allow_HTTP" = {
+      name                       = "Allow_HTTP"
       priority                   = 100
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "80"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    }
+
+     "Allow_HTTPS" = {
+      name                       = "Allow_HTTPS"
+      priority                   = 101
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"
@@ -254,6 +279,7 @@ variable "nsgrules_vm" {
   type        = map(any)
   default = {
     "Allow_RDP_Inbound" = {
+
       name                       = "Allow_RDP"
       priority                   = 100
       direction                  = "Inbound"

@@ -90,4 +90,4 @@ network_security_group_name = "NSG"
 
 network_interface_name = "NIC"
 
-virtual_machine_name = "VM"
+virtual_machine_name = "HOST"
