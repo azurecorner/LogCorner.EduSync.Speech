@@ -93,6 +93,89 @@ resource "azurerm_api_management_api_operation" "api_management_api_operation_qu
 }
 
 
+# Define the API within Azure API Management
+resource "azurerm_api_management_api" "command-http-api" {
+  name                = "command-http-api"
+  resource_group_name = azurerm_api_management.apim.resource_group_name
+  api_management_name = azurerm_api_management.apim.name
+  revision            = "1"
+  display_name        = "Speech API"
+  path                = "api/speech" # The base path for the API
+  protocols           = ["https","http"]
+  service_url         = "http://ingress.cloud-devops-craft.com/aks-command-api" # Base backend service URL
+}
+# Define the API operation for the POST /api/speech endpoint
+resource "azurerm_api_management_api_operation" "command-http-api-operation_post" {
+  operation_id         = "createSpeech"
+  api_name             = azurerm_api_management_api.command-http-api.name
+  api_management_name  = azurerm_api_management.apim.name
+  resource_group_name  = azurerm_api_management.apim.resource_group_name
+  display_name         = "Create Speech"
+  method               = "POST"
+  url_template         = "/api/speech" # Endpoint path relative to the base service URL
+ 
+   request {
+    representation {
+      content_type = "application/json"
+    }
+  }
+
+  response {
+    status_code       = 200
+    description  = "Successful response"
+    representation {
+      content_type = "application/json"
+    }
+  }
+}
+
+resource "azurerm_api_management_api_operation" "command-http-api-operation_put" {
+  operation_id         = "updateSpeech"
+  api_name             = azurerm_api_management_api.command-http-api.name
+  api_management_name  = azurerm_api_management.apim.name
+  resource_group_name  = azurerm_api_management.apim.resource_group_name
+  display_name         = "Update Speech"
+  method               = "PUT"
+  url_template         = "/api/speech" # Endpoint path relative to the base service URL
+  request {
+    representation {
+      content_type = "application/json"
+    }
+  }
+  response {
+    status_code       = 200
+    description  = "Successful response"
+    representation {
+      content_type = "application/json"
+    }
+  }
+}
+
+
+resource "azurerm_api_management_api_operation" "command-http-api-operation_delete" {
+  operation_id         = "deleteSpeech"
+  api_name             = azurerm_api_management_api.command-http-api.name
+  api_management_name  = azurerm_api_management.apim.name
+  resource_group_name  = azurerm_api_management.apim.resource_group_name
+  display_name         = "Delete Speech"
+  method               = "DELETE"
+  url_template         = "/api/speech" # Endpoint path relative to the base service URL
+
+  request {
+    representation {
+      content_type = "application/json"
+    }
+  }
+
+  response {
+    status_code       = 200
+    description  = "Successful response"
+    representation {
+      content_type = "application/json"
+    }
+  }
+}
+
 
 # resource "azurerm_api_management_api" "test-api" {
 #   name                = "test-api"
@@ -157,12 +240,12 @@ resource "azurerm_api_management_product_api" "product_query_http_api" {
 }
 
 
-# resource "azurerm_api_management_product_api" "product_command_http_api" {
-#   api_name            = azurerm_api_management_api.command-http-api.name
-#   product_id          = azurerm_api_management_product.product.product_id
-#   api_management_name = azurerm_api_management.apim.name
-#   resource_group_name = var.resource_group_name
-# }
+resource "azurerm_api_management_product_api" "product_command_http_api" {
+  api_name            = azurerm_api_management_api.command-http-api.name
+  product_id          = azurerm_api_management_product.product.product_id
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = var.resource_group_name
+}
 
 
 # resource "azurerm_api_management_authorization_server" "api-standard-apim-authorization-server" {

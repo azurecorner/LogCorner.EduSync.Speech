@@ -179,7 +179,7 @@ curl http://10.10.1.7/speech-command-http-api/WeatherForecast
 
 
 curl -X 'POST' \
-  'http://10.10.1.7/aks-command-api/api/speech' \
+  'http://ingress.cloud-devops-craft.com/aks-command-api/api/speech' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{

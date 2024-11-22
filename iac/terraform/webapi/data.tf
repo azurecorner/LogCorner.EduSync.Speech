@@ -6,9 +6,9 @@ data "azuread_service_principal" "service_principal" {
 }
 
 
-data "azurerm_key_vault_certificate" "api_certificate" {
-  name         = "api-management-cert"
-  key_vault_id = module.key_vault.key_vault_id
+# data "azurerm_key_vault_certificate" "api_certificate" {
+#   name         = "api-management-cert"
+#   key_vault_id = module.key_vault.key_vault_id
 
-  depends_on = [module.key_vault]
-}
+#   depends_on = [module.key_vault]
+# }

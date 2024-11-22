@@ -1,6 +1,6 @@
 param(
     [string]$ChartName = "logcorner.edusync.speech",
-    [string]$IMAGE_TAG = "1121",
+    [string]$IMAGE_TAG = "1122",
     [string]$NAMESPACE = "ingress-nginx",
     [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
     [string]$CLUSTER_NAME = "aks-edusync-dev",
@@ -119,7 +119,7 @@ Write-Host "Getting all WeatherForecast ..." -ForegroundColor Green
 
 kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com/aks-command-api/WeatherForecast
 
-Write-Host "Getting  WeatherForecast by id ..." -ForegroundColor Green
+Write-Host "`nGetting  WeatherForecast by id ..." -ForegroundColor Green
 
 kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com/aks-command-api/WeatherForecast/1
 
@@ -132,3 +132,15 @@ kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/aks-command-api/Weat
 helm upgrade --install logcorner-command $ChartName `
     --set global.tag=$IMAGE_TAG
  #>
+
+
+#  kubectl exec -it curl-test -n helm -- curl -X 'POST' \
+#  'http://10.10.1.7/aks-command-api/api/speech' \
+#  -H 'accept: */*' \
+#  -H 'Content-Type: application/json' \
+#  -d '{
+#  "title": "3_Lorem Ipsum is simply dummy text",
+#  "description": "3_Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'\''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ",
+#  "url": "http://3_test.com",
+#  "type": 3
+# }'

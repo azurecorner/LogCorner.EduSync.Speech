@@ -38,4 +38,4 @@ secret:
     version: "1.0.0"
     product: "mssql"
   data:
-    DB_PASSWORD: "Dc35zTSzl3B7=NaJo{KP"  # Sensitive data can be overridden securely during deployment
+    DB_PASSWORD: "A=6Ng@CyG3_fKn0ohXuz"  # Sensitive data can be overridden securely during deployment
