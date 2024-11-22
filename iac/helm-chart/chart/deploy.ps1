@@ -1,6 +1,6 @@
 param(
     [string]$ChartName = "logcorner.edusync.speech",
-    [string]$IMAGE_TAG = "1122",
+    [string]$IMAGE_TAG = "1125",
     [string]$NAMESPACE = "ingress-nginx",
     [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
     [string]$CLUSTER_NAME = "aks-edusync-dev",
@@ -15,7 +15,7 @@ param(
 #First, we need a private IP address that the NGINX ingress controller will accept requests from. So, choose a private IP address and verify that it’s available. In this case, the IP address I choose is
 az aks get-credentials --resource-group $RESOURCE_GROUP_NAME --name $CLUSTER_NAME --overwrite-existing
 kubectl get deployments --all-namespaces=true
-az network vnet check-ip-address --name $VNET_NAME -g $RESOURCE_GROUP_NAME --ip-address $PRIVATE_IP
+# az network vnet check-ip-address --name $VNET_NAME -g $RESOURCE_GROUP_NAME --ip-address $PRIVATE_IP
 
 # Add the ingress-nginx Helm repository if not already added
 Write-Host "Adding the ingress-nginx repository..." -ForegroundColor Green
@@ -46,7 +46,29 @@ helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx  `
 # Monitor the ingress service
 Write-Host "Monitoring ingress-nginx-controller service..." -ForegroundColor Green
 #kubectl  get services -o wide -w ingress-nginx-controller -n $NAMESPACE
-kubectl get service ingress-nginx-controller --namespace  $NAMESPACE
+
+######kubectl get service ingress-nginx-controller --namespace  $NAMESPACE
+
+
+##########
+
+#$NAMESPACE = "your-namespace"  # Replace with your namespace
+$ServiceName = "ingress-nginx-controller"
+
+Write-Host "Waiting for external IP for service '$ServiceName' in namespace '$NAMESPACE'..."
+
+do {
+    $externalIP = kubectl get service $ServiceName --namespace $NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+    if (-not $externalIP) {
+        Write-Host "External IP is still pending. Retrying in 5 seconds..."
+        Start-Sleep -Seconds 5
+    }
+} while (-not $externalIP)
+
+Write-Host "Service is ready! External IP: $externalIP"
+
+
+##########
 
 # Deploy an additional Helm chart (logcorner-command)
 Write-Host "Deploying logcorner-command chart..." -ForegroundColor Green
