@@ -11,7 +11,7 @@ resource "azurerm_api_management" "apim" {
 
   sku_name = var.sku_name
 
-  virtual_network_type =  "External"
+  virtual_network_type =  "Internal"
 
   virtual_network_configuration {
     subnet_id = module.virtual_network.subnet_apim_id
@@ -187,6 +187,23 @@ resource "azurerm_api_management_product_api" "product_command_http_api" {
 }
 
 # custom domain
+resource "azurerm_api_management_custom_domain" "api_management_custom_domain" {
+  api_management_id = azurerm_api_management.apim.id
+  gateway {
+    host_name    = "api.cloud-devops-craft.com"
+    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+  }
+  developer_portal {
+    host_name    = "developer.cloud-devops-craft.com"
+    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+  }
+  management {
+    host_name    = "management.cloud-devops-craft.com"
+    key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
+  }
+  
+  depends_on = [azurerm_key_vault_access_policy.apim_key_vault_access_policy]
+}
 
 resource "azurerm_key_vault_access_policy" "apim_key_vault_access_policy" {
   key_vault_id = module.key_vault.key_vault_id

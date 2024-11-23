@@ -162,58 +162,58 @@ module "sql_server" {
 }
 
 
-# resource "azurerm_public_ip" "app_gateway_ip" {
-#   name                = "app_gateway_ip"
-#   location            = var.resource_group_location
-#   resource_group_name = var.resource_group_name
-#   sku                 = "Standard"
-#   allocation_method   = "Static"
-#   depends_on = [ azurerm_resource_group.resource_group ]
-# }
+resource "azurerm_public_ip" "app_gateway_ip" {
+  name                = "app_gateway_ip"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  sku                 = "Standard"
+  allocation_method   = "Static"
+  depends_on = [ azurerm_resource_group.resource_group ]
+}
 
-# data "azurerm_key_vault_certificate" "certificate" {
-#   name         = "logcorner-datasync-cert"
-#   key_vault_id = module.key_vault.key_vault_id
+data "azurerm_key_vault_certificate" "certificate" {
+  name         = "logcorner-datasync-cert"
+  key_vault_id = module.key_vault.key_vault_id
 
-#   depends_on = [module.key_vault]
-# }
+  depends_on = [module.key_vault]
+}
 
-# module "application_gateway" {
-#   source                    = "./modules/application_gateway"
-#   resource_group_name       = var.resource_group_name
-#   resource_group_location   = var.resource_group_location
-#   virtual_network_subnet_id = module.virtual_network.subnet_appgw_id
-#   key_vault_secret_id       = data.azurerm_key_vault_certificate.certificate.secret_id
-#   user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
-#   public_ip_address_id      = azurerm_public_ip.app_gateway_ip.id
+module "application_gateway" {
+  source                    = "./modules/application_gateway"
+  resource_group_name       = var.resource_group_name
+  resource_group_location   = var.resource_group_location
+  virtual_network_subnet_id = module.virtual_network.subnet_appgw_id
+  key_vault_secret_id       = data.azurerm_key_vault_certificate.certificate.secret_id
+  user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
+  public_ip_address_id      = azurerm_public_ip.app_gateway_ip.id
 
 
-#   application_gateway_name = var.application_gateway_name
+  application_gateway_name = var.application_gateway_name
 
-#   application_gateway_backend_pool_name = var.application_gateway_backend_pool_name
+  application_gateway_backend_pool_name = var.application_gateway_backend_pool_name
 
-#   application_gateway_backend_settings_name = var.application_gateway_backend_settings_name
+  application_gateway_backend_settings_name = var.application_gateway_backend_settings_name
 
-#   application_gateway_probe_name = var.application_gateway_probe_name
+  application_gateway_probe_name = var.application_gateway_probe_name
 
-#   application_gateway_https_frontend_port = var.application_gateway_https_frontend_port
+  application_gateway_https_frontend_port = var.application_gateway_https_frontend_port
 
-#   frontend_ip_configuration_name = var.frontend_ip_configuration_name
+  frontend_ip_configuration_name = var.frontend_ip_configuration_name
 
-#   https_listener_name = var.https_listener_name
+  https_listener_name = var.https_listener_name
 
-#   ssl_certificate_name = var.ssl_certificate_name
+  ssl_certificate_name = var.ssl_certificate_name
 
-#   gateway_ip_configuration_name = var.gateway_ip_configuration_name
+  gateway_ip_configuration_name = var.gateway_ip_configuration_name
 
-#   functionapp_backend_address_pool_fqdn =  "webpagetest.org" //module.web_app.linux_web_app_default_hostname
-#   tags = (merge(var.default_tags, tomap({
-#     type = "application_gateway"
-#     })
-#   ))
+  functionapp_backend_address_pool_fqdn =  "webpagetest.org" //module.web_app.linux_web_app_default_hostname
+  tags = (merge(var.default_tags, tomap({
+    type = "application_gateway"
+    })
+  ))
 
-#   depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.key_vault]
-# }
+  depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.key_vault]
+}
 
 
 

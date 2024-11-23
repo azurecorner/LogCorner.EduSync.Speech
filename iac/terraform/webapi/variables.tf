@@ -311,8 +311,9 @@ variable "application_gateway_backend_settings_name" {
 variable "application_gateway_probe_name" {
 
 }
-
-
+variable "gateway_ip_configuration_name" {
+  
+}
 variable "application_gateway_https_frontend_port" {
 
 }
@@ -328,9 +329,7 @@ variable "ssl_certificate_name" {
 
 }
 
-variable "gateway_ip_configuration_name" {
 
-}
 
 
 # virtual machine

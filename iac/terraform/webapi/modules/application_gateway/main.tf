@@ -1,5 +1,4 @@
-# https://youtu.be/uKEXiDG5gg0?si=LEJo8hze_A-4-bHA
-# https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts/microsoft.web/private-webapp-with-app-gateway-and-apim
+
 resource "azurerm_application_gateway" "application_gateway" {
   location            = var.resource_group_location
   name                = var.application_gateway_name

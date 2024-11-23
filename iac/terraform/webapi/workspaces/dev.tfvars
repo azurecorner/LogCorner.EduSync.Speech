@@ -75,7 +75,7 @@ frontend_ip_configuration_name = "appgw-frontend-ip"
 
 https_listener_name = "https-listener"
 
-ssl_certificate_name = "loreal-neo-cert"
+ssl_certificate_name = "logcorner-datasync-cert"
 
 gateway_ip_configuration_name = "app-gateway-ip-configuration"
 
