@@ -1,0 +1,16 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "powershell",
+    "FUNCTIONS_WORKER_RUNTIME_VERSION": "7.2",
+    "AzureWebJobsStorage": "",
+    "MyVariableName": "test",
+    "KeyVaultName" : "certifautorenewvault",
+    "AcmeDirectory":"LE_STAGE",
+    "AcmeContact" :"leyegora@gmail.com",
+    "storageAccountName" :"certifautorenewstore",
+    "storageContainerName": "sslcontainer",
+    "resourceGroupName":"FUNC-APP-DOCKER-ACR-POWERSHELL",
+    "totalDaysBeforeExpiration" :200
+  }
+}
