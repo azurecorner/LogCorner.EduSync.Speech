@@ -244,10 +244,3 @@ module "virtual_machine" {
   depends_on                  = [module.virtual_network]
 }
 
-# resource "azurerm_private_dns_a_record" "private_dns_a_record_client_vm" {
-#   name                = "client_vm"
-#   zone_name           = azurerm_private_dns_zone.api_private_dns_zone.name
-#   resource_group_name = var.resource_group_name
-#   ttl                 = 3600
-#   records             = module.virtual_machine.private_ip_address
-# }

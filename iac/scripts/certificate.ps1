@@ -1,8 +1,10 @@
-
+param( 
+   [SecureString] $pfxPassword ="Gophette1#12"
+ )
 $domain="cloud-devops-craft.com"
 # Create the root signing cert
 $root = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
-    -Subject "CN=contoso-net-signing-root" -KeyExportPolicy Exportable `
+    -Subject "CN=cloud-devops-craft-com-signing-root" -KeyExportPolicy Exportable `
     -HashAlgorithm sha256 -KeyLength 4096 `
     -CertStoreLocation "Cert:\CurrentUser\My" -KeyUsageProperty Sign `
     -KeyUsage CertSign -NotAfter (get-date).AddYears(5)
@@ -28,7 +30,7 @@ Export-PfxCertificate -Cert $ssl -FilePath .\scripts\ssl\datasync-ssl.pfx `
 $vaultName = "kv-shared-edusync-dev"     # Replace with your Key Vault name
 $certificateName = "logcorner-datasync-cert"  # Replace with desired certificate name in Key Vault
 $pfxFilePath = ".\scripts\ssl\datasync-ssl.pfx" # Path to your PFX file
-$pfxPassword = Read-Host -AsSecureString -Prompt "Enter PFX password" # Securely input PFX password
+#####$pfxPassword = Read-Host -AsSecureString -Prompt "Enter PFX password" # Securely input PFX password
 
 # Upload the PFX certificate to Azure Key Vault
 Import-AzKeyVaultCertificate -VaultName $vaultName `
@@ -39,7 +41,7 @@ Import-AzKeyVaultCertificate -VaultName $vaultName `
 # Upload the PFX certificate root to Azure Key Vault
 $certificateName = "logcorner-datasync-cert-root"  # Replace with desired certificate name in Key Vault
 $pfxFilePath = ".\scripts\ssl\datasync-signing-root.pfx" # Path to your PFX file
-$pfxPassword = Read-Host -AsSecureString -Prompt "Enter PFX password" # Securely input PFX password
+#####$pfxPassword = Read-Host -AsSecureString -Prompt "Enter PFX password" # Securely input PFX password
 
 # Upload the PFX certificate to Azure Key Vault
 Import-AzKeyVaultCertificate -VaultName $vaultName `
