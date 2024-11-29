@@ -22,7 +22,9 @@ steps:
       
             if (Test-Path -Path $chartPath -PathType Container) {
                 Write-Host "Chart path exists."
-                ls
+                Get-ChildItem -Path $chartPath | ForEach-Object {
+              Write-Host $_.FullName
+          }
             } else {
                 Write-Host "Chart path does not exist."
             }
