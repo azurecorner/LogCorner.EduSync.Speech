@@ -1,7 +1,6 @@
 param( 
    [SecureString] $pfxPassword 
  )
-
  # Convert plain text to SecureString if necessary
 if ($pfxPassword -isnot [System.Security.SecureString]) {
     $pfxPassword = ConvertTo-SecureString $pfxPassword -AsPlainText -Force
@@ -13,6 +12,7 @@ $domain="cloud-devops-craft.com"
 $currentPath = Get-Location
 
 Write-Host "path = $currentPath"
+$currentPath = "$currentPath\iac\scripts"
 
 Write-Host "Create the root signing cert"
 $root = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
@@ -39,9 +39,9 @@ Export-Certificate -Type CERT -Cert $ssl -FilePath $currentPath\ssl\datasync-ssl
 Write-Host "Export PFX of the root and SSL certs"
 
 Export-PfxCertificate -Cert $root -FilePath $currentPath\ssl\datasync-signing-root.pfx `
-    -Password (read-host -AsSecureString -Prompt "password")
+    -Password $pfxPassword #(read-host -AsSecureString -Prompt "password")
 Export-PfxCertificate -Cert $ssl -FilePath $currentPath\ssl\datasync-ssl.pfx `
-    -ChainOption BuildChain -Password (read-host -AsSecureString -Prompt "password")
+    -ChainOption BuildChain -Password $pfxPassword # (read-host -AsSecureString -Prompt "password")
 
 
 
