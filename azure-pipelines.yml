@@ -3,6 +3,9 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+variables:
+- group: SECRETS
+
 trigger:
 - master
 
@@ -15,4 +18,5 @@ steps:
     azureSubscription: 'BICEP-SP'
     ScriptType: 'FilePath'
     ScriptPath: '$(System.DefaultWorkingDirectory)/iac/scripts/certificate.ps1'
+    ScriptArguments: '-pfxPassword $(pfxPassword)'
     azurePowerShellVersion: 'LatestVersion'
