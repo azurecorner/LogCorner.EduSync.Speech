@@ -22,6 +22,7 @@ steps:
       
             if (Test-Path -Path $chartPath -PathType Container) {
                 Write-Host "Chart path exists."
+                ls
             } else {
                 Write-Host "Chart path does not exist."
             }
