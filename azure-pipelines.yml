@@ -13,6 +13,18 @@ pool:
   vmImage: windows-latest
 
 steps:
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      Write-Host "Checking if chart path exists..."
+            $chartPath = "$(System.DefaultWorkingDirectory)/iac/scripts"
+      
+            if (Test-Path -Path $chartPath -PathType Container) {
+                Write-Host "Chart path exists."
+            } else {
+                Write-Host "Chart path does not exist."
+            }
 - task: AzurePowerShell@5
   inputs:
     azureSubscription: 'BICEP-SP'
