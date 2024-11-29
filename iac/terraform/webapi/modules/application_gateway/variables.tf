@@ -27,7 +27,7 @@ variable "user_assigned_identity_id" {
   description = "id of the user assigned managed identity."
   type        = string
 }
-variable "functionapp_backend_address_pool_fqdn" {
+variable "backend_address_pool_fqdn" {
 
 }
 

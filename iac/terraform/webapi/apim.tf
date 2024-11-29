@@ -11,7 +11,7 @@ resource "azurerm_api_management" "apim" {
 
   sku_name = var.sku_name
 
-  virtual_network_type =  "Internal"
+  virtual_network_type = "Internal"
 
   virtual_network_configuration {
     subnet_id = module.virtual_network.subnet_apim_id
@@ -31,23 +31,23 @@ resource "azurerm_api_management_api" "query-http-api" {
   api_management_name = azurerm_api_management.apim.name
   revision            = "1"
   display_name        = "Query HTTP API"
-  #path                = "weather-forecast" # Path under API Management
-  protocols           = ["https","http"]
+  path                = "external" # Path under API Management
+  protocols           = ["https", "http"]
   service_url         = "http://ingress.cloud-devops-craft.com/aks-command-api" # Base URL of the backend service
 }
 
 # Define the API operation for the WeatherForecast endpoint
 resource "azurerm_api_management_api_operation" "api_management_api_operation_query" {
-  operation_id         = "getWeatherForecast"
-  api_name             = azurerm_api_management_api.query-http-api.name
-  api_management_name  = azurerm_api_management.apim.name
-  resource_group_name  = azurerm_api_management.apim.resource_group_name
-  display_name         = "Get Weather Forecast"
-  method               = "GET"
-  url_template         = "/WeatherForecast" # Endpoint path relative to the base URL
+  operation_id        = "getWeatherForecast"
+  api_name            = azurerm_api_management_api.query-http-api.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = azurerm_api_management.apim.resource_group_name
+  display_name        = "Get Weather Forecast"
+  method              = "GET"
+  url_template        = "/WeatherForecast" # Endpoint path relative to the base URL
   response {
-    status_code       = 200
-    description  = "Successful response"
+    status_code = 200
+    description = "Successful response"
     representation {
       content_type = "application/json"
     }
@@ -64,7 +64,7 @@ resource "azurerm_api_management_api_operation" "api_management_api_operation_qu
   method              = "GET"
   url_template        = "/WeatherForecast/{id}"
   description         = "Get WeatherForecast by Id."
-   
+
   template_parameter {
     name     = "id"
     type     = "number"
@@ -84,29 +84,29 @@ resource "azurerm_api_management_api" "command-http-api" {
   api_management_name = azurerm_api_management.apim.name
   revision            = "2"
   display_name        = "Command HTTP API"
-  path                = "apim" # The base path for the API
-  protocols           = ["https","http"]
+  path                = "internal" # The base path for the API
+  protocols           = ["https", "http"]
   service_url         = "http://ingress.cloud-devops-craft.com/aks-command-api" # Base backend service URL
 }
 # Define the API operation for the POST /api/speech endpoint
 resource "azurerm_api_management_api_operation" "command-http-api-operation_post" {
-  operation_id         = "createSpeech"
-  api_name             = azurerm_api_management_api.command-http-api.name
-  api_management_name  = azurerm_api_management.apim.name
-  resource_group_name  = azurerm_api_management.apim.resource_group_name
-  display_name         = "Create Speech"
-  method               = "POST"
-  url_template         = "/api/speech" # Endpoint path relative to the base service URL
- 
-   request {
+  operation_id        = "createSpeech"
+  api_name            = azurerm_api_management_api.command-http-api.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = azurerm_api_management.apim.resource_group_name
+  display_name        = "Create Speech"
+  method              = "POST"
+  url_template        = "/api/speech" # Endpoint path relative to the base service URL
+
+  request {
     representation {
       content_type = "application/json"
     }
   }
 
   response {
-    status_code       = 200
-    description  = "Successful response"
+    status_code = 200
+    description = "Successful response"
     representation {
       content_type = "application/json"
     }
@@ -114,21 +114,21 @@ resource "azurerm_api_management_api_operation" "command-http-api-operation_post
 }
 
 resource "azurerm_api_management_api_operation" "command-http-api-operation_put" {
-  operation_id         = "updateSpeech"
-  api_name             = azurerm_api_management_api.command-http-api.name
-  api_management_name  = azurerm_api_management.apim.name
-  resource_group_name  = azurerm_api_management.apim.resource_group_name
-  display_name         = "Update Speech"
-  method               = "PUT"
-  url_template         = "/api/speech" # Endpoint path relative to the base service URL
+  operation_id        = "updateSpeech"
+  api_name            = azurerm_api_management_api.command-http-api.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = azurerm_api_management.apim.resource_group_name
+  display_name        = "Update Speech"
+  method              = "PUT"
+  url_template        = "/api/speech" # Endpoint path relative to the base service URL
   request {
     representation {
       content_type = "application/json"
     }
   }
   response {
-    status_code       = 200
-    description  = "Successful response"
+    status_code = 200
+    description = "Successful response"
     representation {
       content_type = "application/json"
     }
@@ -137,13 +137,13 @@ resource "azurerm_api_management_api_operation" "command-http-api-operation_put"
 
 
 resource "azurerm_api_management_api_operation" "command-http-api-operation_delete" {
-  operation_id         = "deleteSpeech"
-  api_name             = azurerm_api_management_api.command-http-api.name
-  api_management_name  = azurerm_api_management.apim.name
-  resource_group_name  = azurerm_api_management.apim.resource_group_name
-  display_name         = "Delete Speech"
-  method               = "DELETE"
-  url_template         = "/api/speech" # Endpoint path relative to the base service URL
+  operation_id        = "deleteSpeech"
+  api_name            = azurerm_api_management_api.command-http-api.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = azurerm_api_management.apim.resource_group_name
+  display_name        = "Delete Speech"
+  method              = "DELETE"
+  url_template        = "/api/speech" # Endpoint path relative to the base service URL
 
   request {
     representation {
@@ -152,8 +152,8 @@ resource "azurerm_api_management_api_operation" "command-http-api-operation_dele
   }
 
   response {
-    status_code       = 200
-    description  = "Successful response"
+    status_code = 200
+    description = "Successful response"
     representation {
       content_type = "application/json"
     }
@@ -201,7 +201,7 @@ resource "azurerm_api_management_custom_domain" "api_management_custom_domain" {
     host_name    = "management.cloud-devops-craft.com"
     key_vault_id = data.azurerm_key_vault_certificate.api_certificate.versionless_secret_id
   }
-  
+
   depends_on = [azurerm_key_vault_access_policy.apim_key_vault_access_policy]
 }
 

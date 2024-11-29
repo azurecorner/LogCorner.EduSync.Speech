@@ -174,7 +174,7 @@ variable "subnet_id" {
 }
 
 variable "api_management_name" {
-  default = "apim-edusync-dev-009"
+  default = "apim-edusync-dev-10"
 }
 
 variable "sku_name" {
@@ -193,10 +193,9 @@ variable "nsgrules_apim" {
   description = "NSG rules for APIM"
   type        = map(any)
   default = {
-
     "Allow_HTTP" = {
       name                       = "Allow_HTTP"
-      priority                   = 1002
+      priority                   = 100
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"
@@ -206,9 +205,9 @@ variable "nsgrules_apim" {
       destination_address_prefix = "*"
     }
 
-      "Allow_HTTPS" = {
+    "Allow_HTTPS" = {
       name                       = "Allow_HTTPS"
-      priority                   = 1003
+      priority                   = 110
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"
@@ -217,11 +216,9 @@ variable "nsgrules_apim" {
       source_address_prefix      = "*"
       destination_address_prefix = "*"
     }
-    
-    # TODO : use source as ApiManagement service tag and destination as Virtual Network service tag
     "Allow_APIM_Inbound" = {
       name                       = "Allow_APIM_Inbound"
-      priority                   = 1004
+      priority                   = 120
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"
@@ -230,9 +227,49 @@ variable "nsgrules_apim" {
       source_address_prefix      = "ApiManagement"
       destination_address_prefix = "VirtualNetwork"
     }
-      "Allow_APIM_Outbound" = {
+    "AllowAppGatewayToAPIM" = {
+      name                       = "AllowAppGatewayToAPIM"
+      priority                   = 130
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "10.10.3.0/24" #the subnet variable to be used for Application Gateway while you create a virtual network.
+      destination_address_prefix = "10.10.2.0/24" # apim subnet
+      description                = "Allows inbound App Gateway traffic to APIM"
+    }
+    "AllowAzureLoadBalancer" = {
+      name                       = "AllowAzureLoadBalancer"
+      priority                   = 140
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "6390"
+      source_address_prefix      = "AzureLoadBalancer"
+      destination_address_prefix = "10.10.2.0/24" # apim subnet
+      description                = "Allows inbound Azure Infrastructure Load Balancer traffic to APIM"
+    }
+
+    "AllowKeyVault" = {
+      name                       = "Allow_AllowKeyVault"
+      priority                   = 150
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "10.10.2.0/24" # apim subnet
+      destination_address_prefix = "AzureKeyVault"
+      description                = "Allows outbound traffic to Azure Key Vault"
+    }
+
+    # TODO : use source as ApiManagement service tag and destination as Virtual Network service tag
+
+    "Allow_APIM_Outbound" = {
       name                       = "Allow_APIM_Outbound"
-      priority                   = 1005
+      priority                   = 160
       direction                  = "Outbound"
       access                     = "Allow"
       protocol                   = "Tcp"
@@ -259,7 +296,7 @@ variable "nsgrules_aks" {
       destination_address_prefix = "*"
     }
 
-     "Allow_HTTPS" = {
+    "Allow_HTTPS" = {
       name                       = "Allow_HTTPS"
       priority                   = 101
       direction                  = "Inbound"
@@ -294,6 +331,39 @@ variable "nsgrules_vm" {
   }
 }
 
+variable "nsgrules_appgw" {
+  description = "NSG rules for Web Application Gateway"
+  type        = map(any)
+  default = {
+    "AppGw_Inbound" = {
+
+      name                       = "AppGw_Inbound"
+      priority                   = 100
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "*"
+      source_port_range          = "*"
+      destination_port_range     = "65200-65535"
+      source_address_prefix      = "GatewayManager"
+      destination_address_prefix = "*"
+    }
+
+    "AppGw_Inbound_Internet" = {
+
+      name                       = "AppGw_Inbound_Internet"
+      priority                   = 110
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "Internet"
+      destination_address_prefix = "135.237.4.90" # $appGwNsgDestIPs = $appGatewayInternalIP, $appGatewayExternalIP.IpAddress
+    }
+
+  }
+}
+
 //application gateway
 
 variable "application_gateway_name" {
@@ -312,7 +382,7 @@ variable "application_gateway_probe_name" {
 
 }
 variable "gateway_ip_configuration_name" {
-  
+
 }
 variable "application_gateway_https_frontend_port" {
 
@@ -329,7 +399,9 @@ variable "ssl_certificate_name" {
 
 }
 
+variable "backend_address_pool_fqdn" {
 
+}
 
 
 # virtual machine

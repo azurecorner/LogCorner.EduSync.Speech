@@ -1,4 +1,6 @@
-
+# create a child zone (appgw.cloud-devops-craft.com ) of cloud-devops-craft.com 
+# and create A record with gateway public IP address
+# apim using appgw => https://youtu.be/0chTnPQiRkc?si=WLTsGE87If-T-8Ul
 resource "azurerm_application_gateway" "application_gateway" {
   location            = var.resource_group_location
   name                = var.application_gateway_name
@@ -9,7 +11,7 @@ resource "azurerm_application_gateway" "application_gateway" {
     min_capacity = 0
   }
   backend_address_pool {
-    fqdns = [var.functionapp_backend_address_pool_fqdn]
+    fqdns = [var.backend_address_pool_fqdn]
     name  = var.application_gateway_backend_pool_name
   }
   backend_http_settings {

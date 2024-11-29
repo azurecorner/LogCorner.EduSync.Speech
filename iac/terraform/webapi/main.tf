@@ -14,6 +14,11 @@ locals {
       nsgrules                    = var.nsgrules_aks
       subnet_ids                  = [module.virtual_network.subnet_aks_id]
     }
+    nsg-agw = {
+      network_security_group_name = "nsg-agw"
+      nsgrules                    = var.nsgrules_appgw
+      subnet_ids                  = [module.virtual_network.subnet_appgw_id]
+    }
     nsg_vm = {
       network_security_group_name = "nsg_vm"
       nsgrules                    = var.nsgrules_vm
@@ -168,7 +173,8 @@ resource "azurerm_public_ip" "app_gateway_ip" {
   resource_group_name = var.resource_group_name
   sku                 = "Standard"
   allocation_method   = "Static"
-  depends_on = [ azurerm_resource_group.resource_group ]
+  zones               = ["1", "2", "3"]
+  depends_on          = [azurerm_resource_group.resource_group]
 }
 
 data "azurerm_key_vault_certificate" "certificate" {
@@ -178,42 +184,42 @@ data "azurerm_key_vault_certificate" "certificate" {
   depends_on = [module.key_vault]
 }
 
-module "application_gateway" {
-  source                    = "./modules/application_gateway"
-  resource_group_name       = var.resource_group_name
-  resource_group_location   = var.resource_group_location
-  virtual_network_subnet_id = module.virtual_network.subnet_appgw_id
-  key_vault_secret_id       = data.azurerm_key_vault_certificate.certificate.secret_id
-  user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
-  public_ip_address_id      = azurerm_public_ip.app_gateway_ip.id
+# module "application_gateway" {
+#   source                    = "./modules/application_gateway"
+#   resource_group_name       = var.resource_group_name
+#   resource_group_location   = var.resource_group_location
+#   virtual_network_subnet_id = module.virtual_network.subnet_appgw_id
+#   key_vault_secret_id       = data.azurerm_key_vault_certificate.certificate.secret_id
+#   user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
+#   public_ip_address_id      = azurerm_public_ip.app_gateway_ip.id
 
 
-  application_gateway_name = var.application_gateway_name
+#   application_gateway_name = var.application_gateway_name
 
-  application_gateway_backend_pool_name = var.application_gateway_backend_pool_name
+#   application_gateway_backend_pool_name = var.application_gateway_backend_pool_name
 
-  application_gateway_backend_settings_name = var.application_gateway_backend_settings_name
+#   application_gateway_backend_settings_name = var.application_gateway_backend_settings_name
 
-  application_gateway_probe_name = var.application_gateway_probe_name
+#   application_gateway_probe_name = var.application_gateway_probe_name
 
-  application_gateway_https_frontend_port = var.application_gateway_https_frontend_port
+#   application_gateway_https_frontend_port = var.application_gateway_https_frontend_port
 
-  frontend_ip_configuration_name = var.frontend_ip_configuration_name
+#   frontend_ip_configuration_name = var.frontend_ip_configuration_name
 
-  https_listener_name = var.https_listener_name
+#   https_listener_name = var.https_listener_name
 
-  ssl_certificate_name = var.ssl_certificate_name
+#   ssl_certificate_name = var.ssl_certificate_name
 
-  gateway_ip_configuration_name = var.gateway_ip_configuration_name
+#   gateway_ip_configuration_name = var.gateway_ip_configuration_name
 
-  functionapp_backend_address_pool_fqdn =  "webpagetest.org" //module.web_app.linux_web_app_default_hostname
-  tags = (merge(var.default_tags, tomap({
-    type = "application_gateway"
-    })
-  ))
+#   backend_address_pool_fqdn =  var.backend_address_pool_fqdn
+#   tags = (merge(var.default_tags, tomap({
+#     type = "application_gateway"
+#     })
+#   ))
 
-  depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.key_vault]
-}
+#   depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.key_vault]
+# }
 
 
 
@@ -222,20 +228,20 @@ module "virtual_machine" {
   source = "./modules/virtual_machine"
   count  = 1 // number of virtual machines
 
-  resource_group_name         = var.resource_group_name
-  resource_group_location     = var.resource_group_location
-  subnet_id                   = module.virtual_network.subnet_vm_id
+  resource_group_name     = var.resource_group_name
+  resource_group_location = var.resource_group_location
+  subnet_id               = module.virtual_network.subnet_vm_id
   tags = (merge(var.default_tags, tomap({
-   type = "virtual_machine"
+    type = "virtual_machine"
     })
-   ))
+  ))
   public_ip_name              = "VM-DATASYNC-${var.public_ip_name}-${format("%03d", count.index + 1)}"
   network_security_group_name = "VM-DATASYNC-${var.network_security_group_name}-${format("%03d", count.index + 1)}"
   network_interface_name      = "VM-DATASYNC-${var.network_interface_name}-${format("%03d", count.index + 1)}"
   virtual_machine_name        = "VM-DATASYNC-${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
   computer_name               = "${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
   username                    = var.vm_username
-  depends_on = [module.virtual_network]
+  depends_on                  = [module.virtual_network]
 }
 
 # resource "azurerm_private_dns_a_record" "private_dns_a_record_client_vm" {

@@ -79,7 +79,7 @@ ssl_certificate_name = "logcorner-datasync-cert"
 
 gateway_ip_configuration_name = "app-gateway-ip-configuration"
 
-
+backend_address_pool_fqdn ="api.cloud-devops-craft.com"
 # Define the name of the virtual machine
 
 vm_username = "logcorner"

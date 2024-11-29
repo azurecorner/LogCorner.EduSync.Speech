@@ -1,0 +1,61 @@
+name: Renew a letsencrypt certificate and deploy it to azure keyvault
+on:
+  # push:
+  #   branches: [ federaion-oidc ]
+  workflow_dispatch:
+
+permissions:
+      id-token: write
+      contents: read
+env:
+  ACME_DIRECTORY: LE_STAGE
+  ACME_CONTACT: "leyegora@gmail.com"
+  CERTIFICATE_NAME: "*.cloud-devops-craft.com"
+  KEYVAULT_NAME: "kv-shared-edusync-dev"
+  RESOURCE_GROUP_NAME: "rg-edusync-dev"
+  STORAGE_ACCOUNT_NAME: "certifrenewstorage"
+  STORAGE_CONTAINER_NAME: "certificatecontainer"
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  TENANT_ID: ${{ secrets.TENANT_ID }}
+  SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+
+
+jobs:
+  Renew_certificate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      
+      - name: Install powershell modules
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Az.Accounts, Az.KeyVault, Az.Resources,  AzureRM.Profile, Az.Storage, Posh-ACME -Force 
+          Get-Module Posh-ACME -ListAvailable
+        shell: pwsh
+      - name: Install AzCopy
+        run: |
+            wget https://azcopyvnext.azureedge.net/release20190301/azcopy_linux_amd64_10.0.8.tar.gz && tar xvzf ./azcopy_linux_amd64_10.0.8.tar.gz && rm ./azcopy_linux_amd64_10.0.8.tar.gz && cp ./azcopy_linux_amd64_10.0.8/azcopy ./ && rm -rf ./azcopy_linux_amd64_10.0.8 && ./azcopy --version
+      
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ env.CLIENT_ID }}
+          tenant-id: ${{ env.TENANT_ID }}
+          subscription-id: ${{ env.SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Get Access Token
+        id: authenticate-to-azure
+        run: |
+         
+          $azureAccessToken = (Get-AzAccessToken -ResourceUrl "https://management.core.windows.net/").Token;
+          echo "AZURE_ACCESS_TOKEN= $azureAccessToken" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+    
+      - name: Order or Renew Certificate
+        run: ./RenewAcmeCertificate.ps1 -AcmeDirectory ${{ env.ACME_DIRECTORY }} -AcmeContact ${{ env.ACME_CONTACT }}  -CertificateName ${{ env.CERTIFICATE_NAME }}  -SubscriptionId ${{ env.SUBSCRIPTION_ID }} -azureAccessToken ${{steps.authenticate-to-azure.outputs.AZURE_ACCESS_TOKEN}}  -resourceGroupName  ${{env.RESOURCE_GROUP_NAME}}  -storageAccountName ${{env.STORAGE_ACCOUNT_NAME}} -storageContainerName ${{env.STORAGE_CONTAINER_NAME}}
+        shell: pwsh
+      - name: Import Certificate to azure keyvault
+        run: ./ImportAcmeCertificateToKeyVault.ps1 -CertificateName ${{ env.CERTIFICATE_NAME }} -KeyVaultName ${{env.KEYVAULT_NAME}} -resourceGroupName ${{env.RESOURCE_GROUP_NAME}} -AcmeDirectory ${{ env.ACME_DIRECTORY }}   
+        shell: pwsh
+    
