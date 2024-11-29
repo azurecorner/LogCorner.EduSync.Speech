@@ -1,5 +1,5 @@
 param( 
-   [SecureString] $pfxPassword ="Gophette1#12"
+   [SecureString] $pfxPassword
  )
 $domain="cloud-devops-craft.com"
 # Create the root signing cert
