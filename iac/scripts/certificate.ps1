@@ -9,6 +9,10 @@ if ($pfxPassword -isnot [System.Security.SecureString]) {
 
 $domain="cloud-devops-craft.com"
 # Create the root signing cert
+# Get the current working directory
+$currentPath = Get-Location
+
+Write-Host "path = $currentPath"
 
 Write-Host "Create the root signing cert"
 $root = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
@@ -28,15 +32,15 @@ $ssl = New-SelfSignedCertificate -Type Custom -DnsName "*.cloud-devops-craft.com
 
     # Export CER of the root and SSL certs
 Write-Host "Export CER of the root and SSL certs"
-Export-Certificate -Type CERT -Cert $root -FilePath .\scripts\ssl\datasync-signing-root.cer
-Export-Certificate -Type CERT -Cert $ssl -FilePath .\scripts\ssl\datasync-ssl.cer
+Export-Certificate -Type CERT -Cert $root -FilePath $currentPath\ssl\datasync-signing-root.cer
+Export-Certificate -Type CERT -Cert $ssl -FilePath $currentPath\ssl\datasync-ssl.cer
 
 # Export PFX of the root and SSL certs
 Write-Host "Export PFX of the root and SSL certs"
 
-Export-PfxCertificate -Cert $root -FilePath .\scripts\ssl\datasync-signing-root.pfx `
+Export-PfxCertificate -Cert $root -FilePath $currentPath\ssl\datasync-signing-root.pfx `
     -Password (read-host -AsSecureString -Prompt "password")
-Export-PfxCertificate -Cert $ssl -FilePath .\scripts\ssl\datasync-ssl.pfx `
+Export-PfxCertificate -Cert $ssl -FilePath $currentPath\ssl\datasync-ssl.pfx `
     -ChainOption BuildChain -Password (read-host -AsSecureString -Prompt "password")
 
 
@@ -44,7 +48,7 @@ Export-PfxCertificate -Cert $ssl -FilePath .\scripts\ssl\datasync-ssl.pfx `
     # Variables
 $vaultName = "kv-shared-edusync-dev"     # Replace with your Key Vault name
 $certificateName = "logcorner-datasync-cert"  # Replace with desired certificate name in Key Vault
-$pfxFilePath = ".\scripts\ssl\datasync-ssl.pfx" # Path to your PFX file
+$pfxFilePath = "$currentPath\ssl\datasync-ssl.pfx" # Path to your PFX file
 #####$pfxPassword = Read-Host -AsSecureString -Prompt "Enter PFX password" # Securely input PFX password
 
 # Upload the PFX certificate to Azure Key Vault
@@ -55,7 +59,7 @@ Import-AzKeyVaultCertificate -VaultName $vaultName `
 
 # Upload the PFX certificate root to Azure Key Vault
 $certificateName = "logcorner-datasync-cert-root"  # Replace with desired certificate name in Key Vault
-$pfxFilePath = ".\scripts\ssl\datasync-signing-root.pfx" # Path to your PFX file
+$pfxFilePath = "$currentPath\ssl\datasync-signing-root.pfx" # Path to your PFX file
 #####$pfxPassword = Read-Host -AsSecureString -Prompt "Enter PFX password" # Securely input PFX password
 
 # Upload the PFX certificate to Azure Key Vault
