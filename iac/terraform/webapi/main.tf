@@ -54,7 +54,7 @@ resource "azurerm_user_assigned_identity" "user_assigned_identity" {
 
 
 module "virtual_network" {
-  source                  = "./modules/vnet"
+  source                  = "./modules/virtual_network"
   resource_group_location = azurerm_resource_group.resource_group.location
   resource_group_name     = azurerm_resource_group.resource_group.name
   depends_on              = [azurerm_resource_group.resource_group]
