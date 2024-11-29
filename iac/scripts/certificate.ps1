@@ -1,6 +1,12 @@
 param( 
-   [SecureString] $pfxPassword
+   [SecureString] $pfxPassword 
  )
+
+ # Convert plain text to SecureString if necessary
+if ($pfxPassword -isnot [System.Security.SecureString]) {
+    $pfxPassword = ConvertTo-SecureString $pfxPassword -AsPlainText -Force
+}
+
 $domain="cloud-devops-craft.com"
 # Create the root signing cert
 $root = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
