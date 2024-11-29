@@ -9,22 +9,31 @@ if ($pfxPassword -isnot [System.Security.SecureString]) {
 
 $domain="cloud-devops-craft.com"
 # Create the root signing cert
+
+Write-Host "Create the root signing cert"
 $root = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
     -Subject "CN=cloud-devops-craft-com-signing-root" -KeyExportPolicy Exportable `
     -HashAlgorithm sha256 -KeyLength 4096 `
     -CertStoreLocation "Cert:\CurrentUser\My" -KeyUsageProperty Sign `
     -KeyUsage CertSign -NotAfter (get-date).AddYears(5)
 # Create the wildcard SSL cert.
+
+Write-Host "Create the wildcard SSL cert"
 $ssl = New-SelfSignedCertificate -Type Custom -DnsName "*.cloud-devops-craft.com","cloud-devops-craft.com" `
     -KeySpec Signature `
     -Subject "CN=*.cloud-devops-craft.com" -KeyExportPolicy Exportable `
     -HashAlgorithm sha256 -KeyLength 2048 `
     -CertStoreLocation "Cert:\CurrentUser\My" `
     -Signer $root
-# Export CER of the root and SSL certs
+
+    # Export CER of the root and SSL certs
+Write-Host "Export CER of the root and SSL certs"
 Export-Certificate -Type CERT -Cert $root -FilePath .\scripts\ssl\datasync-signing-root.cer
 Export-Certificate -Type CERT -Cert $ssl -FilePath .\scripts\ssl\datasync-ssl.cer
+
 # Export PFX of the root and SSL certs
+Write-Host "Export PFX of the root and SSL certs"
+
 Export-PfxCertificate -Cert $root -FilePath .\scripts\ssl\datasync-signing-root.pfx `
     -Password (read-host -AsSecureString -Prompt "password")
 Export-PfxCertificate -Cert $ssl -FilePath .\scripts\ssl\datasync-ssl.pfx `
