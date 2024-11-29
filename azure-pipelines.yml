@@ -32,6 +32,6 @@ steps:
   inputs:
     azureSubscription: 'BICEP-SP'
     ScriptType: 'FilePath'
-    ScriptPath: '$(System.DefaultWorkingDirectory)/iac/scripts/certificate.ps1'
+    ScriptPath: '$(System.DefaultWorkingDirectory)\iac\scripts\certificate.ps1'
     ScriptArguments: '-pfxPassword $(ConvertTo-SecureString $(pfxPassword) -AsPlainText -Force)'
     azurePowerShellVersion: 'LatestVersion'
