@@ -13,7 +13,7 @@ data "azurerm_key_vault_certificate" "api_certificate" {
 }
 
 data "azurerm_key_vault_certificate" "api_certificate_root" {
-  name         = "datasync-signin-root"
+  name         = "logcorner-datasync-cert-root"
   key_vault_id = module.key_vault.key_vault_id
 
   depends_on = [module.key_vault]

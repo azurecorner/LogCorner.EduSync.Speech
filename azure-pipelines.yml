@@ -14,6 +14,7 @@ pool:
 
 steps:
 - task: PowerShell@2
+  displayName: List files for testing
   inputs:
     targetType: 'inline'
     script: |
@@ -29,6 +30,7 @@ steps:
                 Write-Host "Chart path does not exist."
             }
 - task: AzurePowerShell@5
+  displayName: Create and Deploy Certificate to Azure Keyvault
   inputs:
     azureSubscription: 'BICEP-SP'
     ScriptType: 'FilePath'

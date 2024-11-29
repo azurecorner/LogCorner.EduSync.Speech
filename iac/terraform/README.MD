@@ -22,3 +22,6 @@ Start-AzApplicationGateway -ApplicationGateway $AppGw
 
 
 # Managed DevOps Pools: Simplifying Azure DevOps Setup =>   https://xebia.com/blog/microsoft-services-managed-devops-pools-simplifying-azure-devops-setup/
+
+ terraform plan -target="module.keyvault" -var-file="workspaces/dev.tfvars" 
+ terraform apply -target="module.keyvault" -var-file=""workspaces/dev.tfvars" --auto-approve

@@ -348,17 +348,29 @@ variable "nsgrules_appgw" {
       destination_address_prefix = "*"
     }
 
-    "AppGw_Inbound_Internet" = {
+    # "AppGw_Inbound_Internet" = {
 
-      name                       = "AppGw_Inbound_Internet"
-      priority                   = 110
+    #   name                       = "AppGw_Inbound_Internet"
+    #   priority                   = 110
+    #   direction                  = "Inbound"
+    #   access                     = "Allow"
+    #   protocol                   = "Tcp"
+    #   source_port_range          = "*"
+    #   destination_port_range     = "443"
+    #   source_address_prefix      = "Internet"
+    #   destination_address_prefix = "135.237.4.90" # $appGwNsgDestIPs = $appGatewayInternalIP, $appGatewayExternalIP.IpAddress
+    # }
+    "AppGw_Inbound_Subnet" = {
+
+      name                       = "AppGw_Inbound_Subnet"
+      priority                   = 120
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"
       source_port_range          = "*"
       destination_port_range     = "443"
-      source_address_prefix      = "Internet"
-      destination_address_prefix = "135.237.4.90" # $appGwNsgDestIPs = $appGatewayInternalIP, $appGatewayExternalIP.IpAddress
+      source_address_prefix      = "*"
+      destination_address_prefix = "10.10.3.0/24" # $appGwNsgDestIPs = $appGatewayInternalIP, $appGatewayExternalIP.IpAddress
     }
 
   }
