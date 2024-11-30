@@ -244,3 +244,43 @@ module "virtual_machine" {
   depends_on                  = [module.virtual_network]
 }
 
+
+
+
+# resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
+#   name                = "datasync-la"
+#   resource_group_name = var.resource_group_name
+#   location            = var.resource_group_location
+#   sku                 = "PerGB2018"
+#   retention_in_days   = 30
+#   depends_on          = [azurerm_resource_group.resource_group]
+# }
+
+# resource "azurerm_application_insights" "application_insights" {
+#   name                = "datasync-app-insight"
+#   resource_group_name = var.resource_group_name
+#   location            = var.resource_group_location
+#   workspace_id        = azurerm_log_analytics_workspace.log_analytics_workspace.id
+#   application_type    = "web"
+#   depends_on          = [azurerm_resource_group.resource_group, azurerm_log_analytics_workspace.log_analytics_workspace]
+# }
+
+# variable "funcapp_log_categories_retention" {
+#   type = map(object({
+#     enabled = bool
+#   }))
+
+# }
+
+
+# module "ingest_app_diagnostic_settings" {
+#   source                    = "./modules/monitoring"
+#   diagnostics_settings_name = "aks-ds"
+#   resource_id               = module.logcorner-kubernetes_service.
+#   resource_group_name       = var.resource_group_name
+#   resource_group_location   = var.resource_group_location
+#   law_id                    = azurerm_log_analytics_workspace.log_analytics_workspace.id
+#   log_categories_retention  = var.funcapp_log_categories_retention
+#   retention_days            = 30
+#   depends_on                = [azurerm_log_analytics_workspace.log_analytics_workspace, azurerm_application_insights.application_insights]
+# }
