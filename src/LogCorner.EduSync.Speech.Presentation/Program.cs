@@ -57,6 +57,8 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
     builder.Services.AddScoped<IEventPublisher, EventPublisher>();
     builder.Services.AddSharedKernel();
 
+    builder.Services.AddHealthChecks();
+
     //builder.Services.AddCors(options =>
     //{
     //    builder.Services.AddCors(options =>
@@ -92,6 +94,7 @@ static void ConfigureApplicationBuilder(WebApplication app)
         app.UsePathBase(new PathString(pathBase));
     }
 
+    app.MapHealthChecks("/healthz");
     app.UseAuthorization();
 
     app.MapControllers();
