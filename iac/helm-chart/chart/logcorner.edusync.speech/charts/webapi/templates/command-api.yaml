@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "aks-command-api.fullname" . }}-deployment
+  namespace: default
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -20,6 +21,25 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.targetPort }}
+        # readinessProbe:
+        #   httpGet:
+        #     path: /healthz # Update with your app's health endpoint
+        #     port: 80
+        #     scheme: HTTP
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
+        #   timeoutSeconds: 2
+        #   failureThreshold: 3
+        #   successThreshold: 1
+        # livenessProbe:
+        #   httpGet:
+        #     path: /healthz # Update with your app's health endpoint
+        #     port: 80
+        #     scheme: HTTP
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 15
+        #   timeoutSeconds: 2
+        #   failureThreshold: 3
         env:
         - name: TITLE
           value: "{{ .Values.env.title }}"
@@ -52,6 +72,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "aks-command-api.fullname" . }}-service
+  namespace: default
 spec:
   type: {{ .Values.service.type }}
   ports:

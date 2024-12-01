@@ -133,6 +133,7 @@ curl http://10.10.1.7/speech-command-http-api/WeatherForecast
 
  kubectl exec -it curl-test -n helm -- curl http://logcorner-command-http-api-service/WeatherForecast
 
+ kubectl exec -it curl-test -n default --curl http://10.0.223.78/health
 
   kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/WeatherForecast
 
@@ -190,3 +191,5 @@ curl -X 'POST' \
 }'
 
 https://developer.cloud-devops-craft.com
+
+https://api.cloud-devops-craft.com/external/WeatherForecast/1

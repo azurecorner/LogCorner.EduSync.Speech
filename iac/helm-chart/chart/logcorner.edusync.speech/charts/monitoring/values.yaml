@@ -1,6 +1,6 @@
 secret:
   sqlserverdb_password: "MyC0m9l&xP@ssw0rd"
-namespace: helm
+namespace: default
 image:
   initsqljob:
     repository: logcornerhub/logcorner-edusync-speech-mssql-tools

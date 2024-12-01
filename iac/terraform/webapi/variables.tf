@@ -437,3 +437,23 @@ variable "network_interface_name" {
 variable "virtual_machine_name" {
   type = string
 }
+
+
+# monitoring
+
+variable "log_analytics_workspace_name" {
+  type    = string
+  default = "law-edusync-dev"
+}
+
+variable "log_analytics_workspace_sku" {
+  type    = string
+  default = "PerGB2018"
+
+}
+
+variable "application_insights_name" {
+  type    = string
+  default = "appinsights-edusync-dev"
+
+}
