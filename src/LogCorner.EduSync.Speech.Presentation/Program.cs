@@ -7,7 +7,10 @@ using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.Domain.IRepository;
 using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
 using LogCorner.EduSync.Speech.Infrastructure;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,7 +60,8 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
     builder.Services.AddScoped<IEventPublisher, EventPublisher>();
     builder.Services.AddSharedKernel();
 
-    builder.Services.AddHealthChecks();
+    builder.Services.AddHealthChecks()
+                    .AddDbContextCheck<DataBaseContext>();
 
     //builder.Services.AddCors(options =>
     //{
@@ -94,7 +98,7 @@ static void ConfigureApplicationBuilder(WebApplication app)
         app.UsePathBase(new PathString(pathBase));
     }
 
-    app.MapHealthChecks("/healthz");
+    app.MapHealthChecks("/api/healthz");
     app.UseAuthorization();
 
     app.MapControllers();

@@ -178,7 +178,7 @@ variable "api_management_name" {
 }
 
 variable "sku_name" {
-  default = "Developer_1"
+  default ="Premium" #"Developer_1"
 }
 
 variable "publisher_name" {
