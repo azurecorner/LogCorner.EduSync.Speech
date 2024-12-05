@@ -98,7 +98,7 @@ static void ConfigureApplicationBuilder(WebApplication app)
         app.UsePathBase(new PathString(pathBase));
     }
 
-    app.MapHealthChecks("/api/healthz");
+   // app.MapHealthChecks("/api/healthz");
     app.UseAuthorization();
 
     app.MapControllers();
