@@ -88,12 +88,12 @@ static void ConfigureApplicationBuilder(WebApplication app)
     }
     app.UseCors("CorsPolicy");
     app.UseHttpsRedirection();
-    //string? pathBase = app.Configuration["pathBase"];
+    string? pathBase = app.Configuration["pathBase"];
 
-    //if (!string.IsNullOrWhiteSpace(pathBase))
-    //{
-    //    app.UsePathBase(new PathString(pathBase));
-    //}
+    if (!string.IsNullOrWhiteSpace(pathBase))
+    {
+        app.UsePathBase(new PathString(pathBase));
+    }
 
     // app.MapHealthChecks("/api/healthz");
     app.UseAuthorization();
