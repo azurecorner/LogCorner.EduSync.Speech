@@ -141,30 +141,30 @@ module "key_vault" {
   depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.virtual_network]
 }
 
-# module "sql_server" {
-#   source                                                      = "./modules/database"
-#   resource_group_name                                         = var.resource_group_name
-#   resource_group_location                                     = local.mssql_server_localion
-#   mssql_server_name                                           = var.mssql_server_name
-#   mssql_server_version                                        = var.mssql_server_version
-#   mssql_server_firewall_rules                                 = var.mssql_server_firewall_rules
-#   mssql_database_sku_name                                     = var.mssql_database_sku_name
-#   mssql_database_long_term_retention_policy_monthly_retention = var.mssql_database_long_term_retention_policy_monthly_retention
-#   mssql_database_long_term_retention_policy_week_of_year      = var.mssql_database_long_term_retention_policy_week_of_year
-#   mssql_database_read_scale                                   = var.mssql_database_read_scale
+module "sql_server" {
+  source                                                      = "./modules/database"
+  resource_group_name                                         = var.resource_group_name
+  resource_group_location                                     = local.mssql_server_localion
+  mssql_server_name                                           = var.mssql_server_name
+  mssql_server_version                                        = var.mssql_server_version
+  mssql_server_firewall_rules                                 = var.mssql_server_firewall_rules
+  mssql_database_sku_name                                     = var.mssql_database_sku_name
+  mssql_database_long_term_retention_policy_monthly_retention = var.mssql_database_long_term_retention_policy_monthly_retention
+  mssql_database_long_term_retention_policy_week_of_year      = var.mssql_database_long_term_retention_policy_week_of_year
+  mssql_database_read_scale                                   = var.mssql_database_read_scale
 
-#   mssql_database_storage_account_type = var.mssql_database_storage_account_type
-#   mssql_database_zone_redundant       = var.mssql_database_zone_redundant
+  mssql_database_storage_account_type = var.mssql_database_storage_account_type
+  mssql_database_zone_redundant       = var.mssql_database_zone_redundant
 
-#   tags = (merge(var.default_tags, tomap({
-#     type = "key_vault"
-#     })
-#   ))
-#   key_vault_id   = module.key_vault.key_vault_id
-#   sql_db_name    = var.sql_db_name
-#   admin_username = var.admin_username
-#   depends_on     = [module.virtual_network, module.key_vault]
-# }
+  tags = (merge(var.default_tags, tomap({
+    type = "key_vault"
+    })
+  ))
+  key_vault_id   = module.key_vault.key_vault_id
+  sql_db_name    = var.sql_db_name
+  admin_username = var.admin_username
+  depends_on     = [module.virtual_network, module.key_vault]
+}
 
 
 resource "azurerm_public_ip" "app_gateway_ip" {

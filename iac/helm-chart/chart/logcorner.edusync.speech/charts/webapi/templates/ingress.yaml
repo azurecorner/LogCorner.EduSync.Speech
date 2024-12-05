@@ -11,7 +11,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /aks-command-api(/|$)(.*)
+      - path: /speech-command-http-api(/|$)(.*)
         pathType: Prefix
         backend:
           service:

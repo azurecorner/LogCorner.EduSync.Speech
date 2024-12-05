@@ -1,6 +1,6 @@
 param(
     [string]$ChartName = "logcorner.edusync.speech",
-    [string]$IMAGE_TAG = "1154",
+    [string]$IMAGE_TAG = "1160",
     [string]$NAMESPACE = "ingress-nginx",
     [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
     [string]$CLUSTER_NAME = "aks-edusync-dev",
@@ -108,18 +108,26 @@ if (-not $existingRecord) {
     Write-Host "Record already exists: $RecordName -> $PRIVATE_IP" -ForegroundColor Yellow
 }
 
-Write-Host "Running dns resolution between $PrivateDnsZoneName and $PRIVATE_IP  ..." -ForegroundColor Green
+Write-Host "Running dns resolution between $PrivateDnsZoneName and logcorner-command-http-api-deployment-64788ccdbb-zqmpw  ..." -ForegroundColor Green
 kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- nslookup ingress.cloud-devops-craft.com
 
 Write-Host "Running test ..." -ForegroundColor Green
 
 Write-Host "Getting all WeatherForecast ..." -ForegroundColor Green
 
-kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/aks-command-api/WeatherForecast
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/WeatherForecast
 
 Write-Host "`nGetting  WeatherForecast by id ..." -ForegroundColor Green
 
-kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/aks-command-api/WeatherForecast/1
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/WeatherForecast/1
+
+
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/Health/status
+
+
+<# kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://$PRIVATE_IP/aks-command-api/api/healthz
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://$PRIVATE_IP/api/healthz
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://$PRIVATE_IP/aks-command-api/healthz #>
 
 # kubectl exec -it curl-test -n default -- curl http://$PRIVATE_IP/aks-command-api/WeatherForecast
 

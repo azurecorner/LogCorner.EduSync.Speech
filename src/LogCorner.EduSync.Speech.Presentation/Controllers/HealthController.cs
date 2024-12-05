@@ -7,16 +7,16 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    public class HealthController : ControllerBase
+    public class HealthSatusController : ControllerBase
     {
         private readonly HealthCheckService _healthCheckService;
 
-        public HealthController(HealthCheckService healthCheckService)
+        public HealthSatusController(HealthCheckService healthCheckService)
         {
             _healthCheckService = healthCheckService;
         }
 
-        [HttpGet("status")]
+        [HttpGet(Name = "GetHealthSatus")]
         public async Task<IActionResult> GetHealth()
         {
             // Run all registered health checks
