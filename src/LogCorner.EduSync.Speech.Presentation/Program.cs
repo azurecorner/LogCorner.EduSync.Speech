@@ -7,10 +7,7 @@ using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.Domain.IRepository;
 using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
 using LogCorner.EduSync.Speech.Infrastructure;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
-
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,14 +88,14 @@ static void ConfigureApplicationBuilder(WebApplication app)
     }
     app.UseCors("CorsPolicy");
     app.UseHttpsRedirection();
-    string? pathBase = app.Configuration["pathBase"];
+    //string? pathBase = app.Configuration["pathBase"];
 
-    if (!string.IsNullOrWhiteSpace(pathBase))
-    {
-        app.UsePathBase(new PathString(pathBase));
-    }
+    //if (!string.IsNullOrWhiteSpace(pathBase))
+    //{
+    //    app.UsePathBase(new PathString(pathBase));
+    //}
 
-   // app.MapHealthChecks("/api/healthz");
+    // app.MapHealthChecks("/api/healthz");
     app.UseAuthorization();
 
     app.MapControllers();

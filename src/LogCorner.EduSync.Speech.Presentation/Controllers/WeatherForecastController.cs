@@ -3,7 +3,7 @@
 namespace WebApplication2.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/WeatherForecast")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -18,7 +18,7 @@ namespace WebApplication2.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -40,7 +40,6 @@ namespace WebApplication2.Controllers
                 TemperatureC = Random.Shared.Next(-20, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })?.SingleOrDefault(m => m.Id == id);
-
         }
     }
 
