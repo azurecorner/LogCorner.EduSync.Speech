@@ -25,7 +25,7 @@ namespace WebApplication2.Controllers
             _healthCheckService = healthCheckService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -37,7 +37,7 @@ namespace WebApplication2.Controllers
             .ToArray();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("by-id/{id}")]
         public WeatherForecast? Get(int id)
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
