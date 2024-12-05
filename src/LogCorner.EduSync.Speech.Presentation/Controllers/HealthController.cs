@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Text.Json;
 
+[ApiController]
 [Route("api/health")]
 public class HealthStatusController : ControllerBase
 {
