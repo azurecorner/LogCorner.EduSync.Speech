@@ -22,68 +22,31 @@ namespace WebApplication2.Controllers
             _healthCheckService = healthCheckService;
         }
 
-        //[HttpGet()]
-        //public IEnumerable<WeatherForecast> Get()
-        //{
-        //    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        //    {
-        //        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-        //        TemperatureC = Random.Shared.Next(-20, 55),
-        //        Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        //    })
-        //    .ToArray();
-        //}
-
-        //[HttpGet("{id}")]
-        //public WeatherForecast? Get(int id)
-        //{
-        //    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        //    {
-        //        Id = index,
-        //        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-        //        TemperatureC = Random.Shared.Next(-20, 55),
-        //        Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        //    })?.SingleOrDefault(m => m.Id == id);
-        //}
-
         [HttpGet()]
-        public IActionResult Get()
+        public IEnumerable<WeatherForecast> Get()
         {
-            return Ok(new { status = "Healthy", message = "Application is running." });
-        }
-
-        // Liveness Probe Endpoint
-        [HttpGet("live")]
-        public IActionResult GetLiveness()
-        {
-            return Ok(new { status = "Healthy", message = "Application is running." });
-        }
-
-        // Readiness Probe Endpoint
-        [HttpGet("ready")]
-        public async Task<IActionResult> GetReadiness()
-        {
-            var report = await _healthCheckService.CheckHealthAsync();
-
-            if (report.Status == HealthStatus.Healthy)
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
-                return Ok(new { status = "Ready", message = "Application is ready to serve requests." });
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, new
-                {
-                    status = "Unready",
-                    message = "Application is not ready.",
-                    checks = report.Entries.Select(entry => new
-                    {
-                        name = entry.Key,
-                        status = entry.Value.Status.ToString(),
-                        description = entry.Value.Description ?? string.Empty
-                    })
-                });
-            }
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            })
+            .ToArray();
         }
+
+        [HttpGet("{id}")]
+        public WeatherForecast? Get(int id)
+        {
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Id = index,
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            })?.SingleOrDefault(m => m.Id == id);
+        }
+
+
     }
 
     public class WeatherForecast
