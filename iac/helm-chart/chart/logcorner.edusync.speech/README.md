@@ -123,6 +123,12 @@ helm install ingress-nginx ingress-nginx/ingress-nginx \
 
 kubectl exec -it curl-test -n helm -- /bin/sh
 
+
+# sqlcmd
+kubectl exec -it sqlcmd-pod -n default -- /bin/sh
+kubectl exec -it sqlcmd-pod -- sqlcmd -S mssql-server-edusync-dev.database.windows.net -U mssql-admin-user -P "HKTsXJSrN4uhUMNm%}rbS" -d backend-db-edusync-dev
+
+
 kubectl exec -it curl-test -n helm -- curl http://logcorner-command-http-api-service/WeatherForecast
 
 kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx

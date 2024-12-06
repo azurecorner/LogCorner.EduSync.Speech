@@ -1,6 +1,6 @@
 param(
     [string]$ChartName = "logcorner.edusync.speech",
-    [string]$IMAGE_TAG = "1160",
+    [string]$IMAGE_TAG = "1180",
     [string]$NAMESPACE = "ingress-nginx",
     [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
     [string]$CLUSTER_NAME = "aks-edusync-dev",
@@ -115,38 +115,30 @@ Write-Host "Running test ..." -ForegroundColor Green
 
 Write-Host "Getting all WeatherForecast ..." -ForegroundColor Green
 
-kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/WeatherForecast
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/api/WeatherForecast
 
 Write-Host "`nGetting  WeatherForecast by id ..." -ForegroundColor Green
 
 kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/WeatherForecast/1
 
+ Write-Host "`nGetting all HealthCheck ..." -ForegroundColor Green
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/api/health/
 
-kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/Health/status
+Write-Host "`nGetting all HealthCheck is live ..." -ForegroundColor Green
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/api/health/live
 
-
-<# kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://$PRIVATE_IP/aks-command-api/api/healthz
-kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://$PRIVATE_IP/api/healthz
-kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://$PRIVATE_IP/aks-command-api/healthz #>
-
-# kubectl exec -it curl-test -n default -- curl http://$PRIVATE_IP/aks-command-api/WeatherForecast
-
-
-<# $ChartName = "logcorner.edusync.speech"
-kubectl exec -it curl-test -n default -- curl http://10.10.1.7/aks-command-api/WeatherForecast
-# Use --reuse-values to keep any existing values (if needed)
-helm upgrade --install logcorner-command $ChartName `
-    --set global.tag=$IMAGE_TAG
- #>
+Write-Host "`nGetting all HealthCheck is ready ..." -ForegroundColor Green
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/api/health/ready 
 
 
-#  kubectl exec -it curl-test -n default -- curl -X 'POST' \
-#  'http://10.10.1.7/aks-command-api/api/speech' \
-#  -H 'accept: */*' \
-#  -H 'Content-Type: application/json' \
-#  -d '{
-#  "title": "3_Lorem Ipsum is simply dummy text",
-#  "description": "3_Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'\''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ",
-#  "url": "http://3_test.com",
-#  "type": 3
-# }'
+<# 
+ kubectl exec -it curl-test -n default -- curl -X 'POST' \
+ 'http://10.10.1.7/speech-command-http-api/api/speech' \
+ -H 'accept: */*' \
+ -H 'Content-Type: application/json' \
+ -d '{
+ "title": "3_Lorem Ipsum is simply dummy text",
+ "description": "3_Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'\''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ",
+ "url": "http://3_test.com",
+ "type": 3
+}' #>
