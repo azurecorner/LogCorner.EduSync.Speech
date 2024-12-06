@@ -78,18 +78,18 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
 
             if (report.Status == HealthStatus.Healthy)
             {
-                return Ok(new { status = "Ready", message = "Application is ready to serve requests." });
+                return Ok(new { Status = "Ready", Message = "Application is ready to serve requests." });
             }
             else
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, new
                 {
-                    status = "Unready",
-                    message = "Application is not ready.",
+                    Status = "Unready",
+                    Message = "Application is not ready.",
                     checks = report.Entries.Select(entry => new
                     {
                         name = entry.Key,
-                        status = entry.Value.Status.ToString(),
+                        Status = entry.Value.Status.ToString(),
                         description = entry.Value.Description ?? string.Empty
                     })
                 });
@@ -97,11 +97,11 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         }
 
         [HttpGet("health/{code}")]
-        public async Task<IActionResult> GetReadiness(string code)
+        public async Task<HealthData> GetReadiness(string code)
         {
             if (code == "live")
             {
-                return Ok(new { status = "Healthy", message = "Application is running." });
+                return new HealthData { Status = "Healthy", Message = "Application is running." };
             }
             if (code == "ready")
             {
@@ -109,24 +109,38 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
 
                 if (report.Status == HealthStatus.Healthy)
                 {
-                    return Ok(new { status = "Ready", message = "Application is ready to serve requests." });
+                    return new HealthData  { Status = "Ready", Message = "Application is ready to serve requests." };
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status503ServiceUnavailable, new
+                    return  new HealthData
                     {
-                        status = "Unready",
-                        message = "Application is not ready.",
-                        checks = report.Entries.Select(entry => new
+                        Status = "Unready",
+                        Message = "Application is not ready.",
+                        Checks = report.Entries.Select(entry => new HealthCheck
                         {
-                            name = entry.Key,
-                            status = entry.Value.Status.ToString(),
-                            description = entry.Value.Description ?? string.Empty
+                            Name = entry.Key,
+                            Status = entry.Value.Status.ToString(),
+                            Description = entry.Value.Description ?? string.Empty
                         })
-                    });
+                    };
                 }
             }
-            return BadRequest(new { status = "Invalid", message = "Invalid health check code." });
+            return new HealthData  { Status = "Invalid", Message = "Invalid health check code." };
         }
+    }
+
+    public class HealthData
+    {
+        public string Status { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public IEnumerable<HealthCheck> Checks { get; set; } = Enumerable.Empty<HealthCheck>();
+    }
+
+    public class HealthCheck
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }
