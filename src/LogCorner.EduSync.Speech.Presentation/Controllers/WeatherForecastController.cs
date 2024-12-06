@@ -7,10 +7,7 @@ namespace WebApplication2.Controllers
     [Route("api/WeatherForecast")]
     public class WeatherForecastController : ControllerBase
     {
-
         private readonly HealthCheckService _healthCheckService;
-
-   
 
         private static readonly string[] Summaries = new[]
         {
@@ -25,7 +22,7 @@ namespace WebApplication2.Controllers
             _healthCheckService = healthCheckService;
         }
 
-        [HttpGet("all")]
+        [HttpGet()]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -37,7 +34,7 @@ namespace WebApplication2.Controllers
             .ToArray();
         }
 
-        [HttpGet("by-id/{id}")]
+        [HttpGet("{id}")]
         public WeatherForecast? Get(int id)
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
