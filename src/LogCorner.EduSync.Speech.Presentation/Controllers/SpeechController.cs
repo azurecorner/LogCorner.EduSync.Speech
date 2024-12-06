@@ -3,6 +3,7 @@ using LogCorner.EduSync.Speech.Application.Interfaces;
 using LogCorner.EduSync.Speech.Presentation.Dtos;
 using LogCorner.EduSync.Speech.Presentation.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace LogCorner.EduSync.Speech.Presentation.Controllers
 {
@@ -12,12 +13,14 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         private readonly ICreateSpeechUseCase _createSpeechUseCase;
         private readonly IUpdateSpeechUseCase _updateSpeechUseCase;
         private readonly IDeleteSpeechUseCase _deleteSpeechUseCase;
+        private readonly HealthCheckService _healthCheckService;
 
-        public SpeechController(ICreateSpeechUseCase createSpeechUseCase, IUpdateSpeechUseCase updateSpeechUseCase, IDeleteSpeechUseCase deleteSpeechUseCase)
+        public SpeechController(ICreateSpeechUseCase createSpeechUseCase, IUpdateSpeechUseCase updateSpeechUseCase, IDeleteSpeechUseCase deleteSpeechUseCase, HealthCheckService healthCheckService)
         {
             _createSpeechUseCase = createSpeechUseCase;
             _updateSpeechUseCase = updateSpeechUseCase;
             _deleteSpeechUseCase = deleteSpeechUseCase;
+            _healthCheckService = healthCheckService;
         }
 
         [HttpPost]
@@ -66,6 +69,64 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
 
             await _deleteSpeechUseCase.Handle(command);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetReadiness()
+        {
+            var report = await _healthCheckService.CheckHealthAsync();
+
+            if (report.Status == HealthStatus.Healthy)
+            {
+                return Ok(new { status = "Ready", message = "Application is ready to serve requests." });
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new
+                {
+                    status = "Unready",
+                    message = "Application is not ready.",
+                    checks = report.Entries.Select(entry => new
+                    {
+                        name = entry.Key,
+                        status = entry.Value.Status.ToString(),
+                        description = entry.Value.Description ?? string.Empty
+                    })
+                });
+            }
+        }
+
+        [HttpGet("health/{code}")]
+        public async Task<IActionResult> GetReadiness(string code)
+        {
+            if (code == "live")
+            {
+                return Ok(new { status = "Healthy", message = "Application is running." });
+            }
+            if (code == "ready")
+            {
+                var report = await _healthCheckService.CheckHealthAsync();
+
+                if (report.Status == HealthStatus.Healthy)
+                {
+                    return Ok(new { status = "Ready", message = "Application is ready to serve requests." });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status503ServiceUnavailable, new
+                    {
+                        status = "Unready",
+                        message = "Application is not ready.",
+                        checks = report.Entries.Select(entry => new
+                        {
+                            name = entry.Key,
+                            status = entry.Value.Status.ToString(),
+                            description = entry.Value.Description ?? string.Empty
+                        })
+                    });
+                }
+            }
+            return BadRequest(new { status = "Invalid", message = "Invalid health check code." });
         }
     }
 }
