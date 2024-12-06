@@ -59,7 +59,7 @@ steps:
     command: 'build'
     Dockerfile: '/**/LogCorner.EduSync.Speech.Presentation/Dockerfile'
     buildContext: 'src'
-    arguments: '-t $(repository).azurecr.io/$(imageName):$(Build.BuildId)'
+    arguments: '-t $(repository).azurecr.io/$(imageName):$(Build.BuildId)  --no-cache'
 - task: AzureCLI@2
   enabled: true
   displayName: Docker Push
