@@ -8,6 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 namespace LogCorner.EduSync.Speech.Presentation.Controllers
 {
     [Route("api/speech")]
+    [ApiController]
     public class SpeechController : ControllerBase
     {
         private readonly ICreateSpeechUseCase _createSpeechUseCase;
