@@ -1,6 +1,6 @@
 param(
     [string]$ChartName = "logcorner.edusync.speech",
-    [string]$IMAGE_TAG = "1180",
+    [string]$IMAGE_TAG = "1185",
     [string]$NAMESPACE = "ingress-nginx",
     [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
     [string]$CLUSTER_NAME = "aks-edusync-dev",
@@ -142,3 +142,7 @@ kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-d
  "url": "http://3_test.com",
  "type": 3
 }' #>
+
+
+# kubectl run debug --image=busybox --restart=Never -it -- /bin/sh
+#  How to monitor Containers in Kubernetes using Prometheus & cAdvisor & Grafana? CPU, Memory, Network =>    https://youtu.be/dMca4jHaft8?si=c8FD25BMhUarhShq

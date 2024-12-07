@@ -9,11 +9,13 @@ data:
   prometheus.yml: |
     global:
       scrape_interval: 15s
+
     scrape_configs:
       - job_name: 'logcorner-command-http-api'
         metrics_path: /metrics
         static_configs:
-          - targets: ['logcorner-command-http-api-service:8080']  # Using the service name to discover the pod
+          - targets: ['logcorner-command-http-api-service:80']  # Using the service name to discover the pod
+
 ---
 apiVersion: apps/v1
 kind: Deployment

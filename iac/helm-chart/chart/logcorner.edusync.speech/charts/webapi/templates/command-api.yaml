@@ -20,7 +20,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.global.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.service.targetPort }}
+        - containerPort: {{ .Values.service.containerPort }}
         readinessProbe:
           httpGet:
             path: /speech-command-http-api/api/health/ready # Update with your app's health endpoint
@@ -76,7 +76,7 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-  - port: {{ .Values.service.port }}
-    targetPort: {{ .Values.service.targetPort }}
+  - port: {{ .Values.service.port }}  # Expose port 80 to external access
+    targetPort: {{ .Values.service.targetPort }}   # Map to port 8080 inside the pod
   selector:
     app: {{ include "aks-command-api.fullname" . }}
