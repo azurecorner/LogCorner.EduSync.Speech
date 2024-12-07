@@ -8,6 +8,9 @@ using LogCorner.EduSync.Speech.Domain.IRepository;
 using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
 using LogCorner.EduSync.Speech.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +63,44 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
     builder.Services.AddHealthChecks()
                     .AddDbContextCheck<DataBaseContext>();
 
+    //OPEN TELEMETRY
+
+
+        var otel = builder.Services.AddOpenTelemetry();
+
+    // Configure OpenTelemetry Resources with the application name
+    otel.ConfigureResource(resource => resource
+        .AddService(serviceName: builder.Environment.ApplicationName));
+
+    // Add Metrics for ASP.NET Core and our custom metrics and export to Prometheus
+    otel.WithMetrics(metrics => metrics
+        // Metrics provider from OpenTelemetry
+        .AddAspNetCoreInstrumentation()
+        //.AddMeter(greeterMeter.Name)
+        // Metrics provides by ASP.NET Core in .NET 8
+        .AddMeter("Microsoft.AspNetCore.Hosting")
+        .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+        .AddPrometheusExporter());
+
+    // Add Tracing for ASP.NET Core and our custom ActivitySource and export to Jaeger
+    otel.WithTracing(tracing =>
+    {
+        tracing.AddAspNetCoreInstrumentation();
+        tracing.AddHttpClientInstrumentation();
+        //tracing.AddSource(greeterActivitySource.Name);
+        //if (tracingOtlpEndpoint != null)
+        //{
+        //    tracing.AddOtlpExporter(otlpOptions =>
+        //    {
+        //        otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint);
+        //    });
+        //}
+        //else
+        //{
+            tracing.AddConsoleExporter();
+        //}
+    });
+
     //builder.Services.AddCors(options =>
     //{
     //    builder.Services.AddCors(options =>
@@ -97,6 +138,7 @@ static void ConfigureApplicationBuilder(WebApplication app)
 
     // app.MapHealthChecks("/api/healthz");
     app.UseAuthorization();
-
+    // Configure the Prometheus scraping endpoint
+    app.MapPrometheusScrapingEndpoint();
     app.MapControllers();
 }
