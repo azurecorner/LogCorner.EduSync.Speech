@@ -146,3 +146,5 @@ kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-d
 
 # kubectl run debug --image=busybox --restart=Never -it -- /bin/sh
 #  How to monitor Containers in Kubernetes using Prometheus & cAdvisor & Grafana? CPU, Memory, Network =>    https://youtu.be/dMca4jHaft8?si=c8FD25BMhUarhShq
+# https://datasynchro.dev/posts/how-to-set-up-kubernetes-service-discovery-in-prometheus/ 
+# https://github.com/datasynchro/prometheus-k8s-service-discovery/tree/master

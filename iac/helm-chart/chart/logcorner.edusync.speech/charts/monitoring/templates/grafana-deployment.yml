@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-config
+  namespace: monitoring
   labels:
     app: prometheus
 data:
@@ -14,13 +15,21 @@ data:
       - job_name: 'logcorner-command-http-api'
         metrics_path: /metrics
         static_configs:
-          - targets: ['logcorner-command-http-api-service:80']  # Using the service name to discover the pod
-
+          - targets: ['logcorner-command-http-api-service.default.svc.cluster.local:80']  # Using the service name to discover the pod
+      - job_name: 'kubernetes-nodes'
+        kubernetes_sd_configs:
+          - role: node
+    
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+     
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
+  namespace: monitoring
   labels:
     app: prometheus
 spec:
@@ -33,6 +42,7 @@ spec:
       labels:
         app: prometheus
     spec:
+      serviceAccountName: prometheus # 🔥 Use the new service account here
       containers:
         - name: prometheus
           image: prom/prometheus:v2.43.0
@@ -45,11 +55,13 @@ spec:
         - name: prometheus-config
           configMap:
             name: prometheus-config
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: prometheus
+  namespace: monitoring
 spec:
   selector:
     app: prometheus
@@ -63,6 +75,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
+  namespace: monitoring
   labels:
     app: grafana
 spec:
@@ -100,6 +113,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: grafana
+  namespace: monitoring
 spec:
   selector:
     app: grafana
@@ -113,7 +127,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-datasources
-  namespace: default
+  namespace: monitoring
 data:
   prometheus.yml: |
     apiVersion: 1
