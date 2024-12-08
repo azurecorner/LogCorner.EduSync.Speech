@@ -97,7 +97,7 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
         //}
         //else
         //{
-            tracing.AddConsoleExporter();
+          //  tracing.AddConsoleExporter();
         //}
     });
 
