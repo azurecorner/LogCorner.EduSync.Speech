@@ -72,6 +72,7 @@ steps:
       echo $accessToken | docker login $(repository).azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin
       docker push $(repository).azurecr.io/$(imageName):$(Build.BuildId)
 - task: AzurePowerShell@5
+  enabled: false
   inputs:
     azureSubscription: 'BICEP-SP'
     ScriptType: 'FilePath'

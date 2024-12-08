@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "aks-command-api.fullname" . }}-deployment
+  namespace: default
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -19,7 +20,26 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.global.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.service.targetPort }}
+        - containerPort: {{ .Values.service.containerPort }}
+        readinessProbe:
+          httpGet:
+            path: /speech-command-http-api/api/health/ready # Update with your app's health endpoint
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 60
+          failureThreshold: 3
+          successThreshold: 1
+        livenessProbe:
+          httpGet:
+            path: /speech-command-http-api/api/health/live # Update with your app's health endpoint
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          timeoutSeconds: 2
+          failureThreshold: 3
         env:
         - name: TITLE
           value: "{{ .Values.env.title }}"
@@ -52,10 +72,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "aks-command-api.fullname" . }}-service
+  namespace: default
 spec:
   type: {{ .Values.service.type }}
   ports:
-  - port: {{ .Values.service.port }}
-    targetPort: {{ .Values.service.targetPort }}
+  - port: {{ .Values.service.port }}  # Expose port 80 to external access
+    targetPort: {{ .Values.service.targetPort }}   # Map to port 8080 inside the pod
   selector:
     app: {{ include "aks-command-api.fullname" . }}

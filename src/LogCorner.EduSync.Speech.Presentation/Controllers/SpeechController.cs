@@ -3,21 +3,25 @@ using LogCorner.EduSync.Speech.Application.Interfaces;
 using LogCorner.EduSync.Speech.Presentation.Dtos;
 using LogCorner.EduSync.Speech.Presentation.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace LogCorner.EduSync.Speech.Presentation.Controllers
 {
     [Route("api/speech")]
+    [ApiController]
     public class SpeechController : ControllerBase
     {
         private readonly ICreateSpeechUseCase _createSpeechUseCase;
         private readonly IUpdateSpeechUseCase _updateSpeechUseCase;
         private readonly IDeleteSpeechUseCase _deleteSpeechUseCase;
+        private readonly HealthCheckService _healthCheckService;
 
-        public SpeechController(ICreateSpeechUseCase createSpeechUseCase, IUpdateSpeechUseCase updateSpeechUseCase, IDeleteSpeechUseCase deleteSpeechUseCase)
+        public SpeechController(ICreateSpeechUseCase createSpeechUseCase, IUpdateSpeechUseCase updateSpeechUseCase, IDeleteSpeechUseCase deleteSpeechUseCase, HealthCheckService healthCheckService)
         {
             _createSpeechUseCase = createSpeechUseCase;
             _updateSpeechUseCase = updateSpeechUseCase;
             _deleteSpeechUseCase = deleteSpeechUseCase;
+            _healthCheckService = healthCheckService;
         }
 
         [HttpPost]

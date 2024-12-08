@@ -177,12 +177,12 @@ resource "azurerm_public_ip" "app_gateway_ip" {
   depends_on          = [azurerm_resource_group.resource_group]
 }
 
-data "azurerm_key_vault_certificate" "certificate" {
-  name         = "logcorner-datasync-cert"
-  key_vault_id = module.key_vault.key_vault_id
+# data "azurerm_key_vault_certificate" "certificate" {
+#   name         = "logcorner-datasync-cert"
+#   key_vault_id = module.key_vault.key_vault_id
 
-  depends_on = [module.key_vault]
-}
+#   depends_on = [module.key_vault]
+# }
 
 # module "application_gateway" {
 #   source                    = "./modules/application_gateway"
@@ -224,23 +224,41 @@ data "azurerm_key_vault_certificate" "certificate" {
 
 
 
-module "virtual_machine" {
-  source = "./modules/virtual_machine"
-  count  = 1 // number of virtual machines
+# module "virtual_machine" {
+#   source = "./modules/virtual_machine"
+#   count  = 1 // number of virtual machines
 
-  resource_group_name     = var.resource_group_name
-  resource_group_location = var.resource_group_location
-  subnet_id               = module.virtual_network.subnet_vm_id
-  tags = (merge(var.default_tags, tomap({
-    type = "virtual_machine"
-    })
-  ))
-  public_ip_name              = "VM-DATASYNC-${var.public_ip_name}-${format("%03d", count.index + 1)}"
-  network_security_group_name = "VM-DATASYNC-${var.network_security_group_name}-${format("%03d", count.index + 1)}"
-  network_interface_name      = "VM-DATASYNC-${var.network_interface_name}-${format("%03d", count.index + 1)}"
-  virtual_machine_name        = "VM-DATASYNC-${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
-  computer_name               = "${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
-  username                    = var.vm_username
-  depends_on                  = [module.virtual_network]
+#   resource_group_name     = var.resource_group_name
+#   resource_group_location = var.resource_group_location
+#   subnet_id               = module.virtual_network.subnet_vm_id
+#   tags = (merge(var.default_tags, tomap({
+#     type = "virtual_machine"
+#     })
+#   ))
+#   public_ip_name              = "VM-DATASYNC-${var.public_ip_name}-${format("%03d", count.index + 1)}"
+#   network_security_group_name = "VM-DATASYNC-${var.network_security_group_name}-${format("%03d", count.index + 1)}"
+#   network_interface_name      = "VM-DATASYNC-${var.network_interface_name}-${format("%03d", count.index + 1)}"
+#   virtual_machine_name        = "VM-DATASYNC-${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
+#   computer_name               = "${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
+#   username                    = var.vm_username
+#   depends_on                  = [module.virtual_network]
+# }
+
+
+resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
+  name                = var.log_analytics_workspace_name
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  sku                 = var.log_analytics_workspace_sku
+  retention_in_days   = 30
+  depends_on          = [azurerm_resource_group.resource_group]
 }
 
+resource "azurerm_application_insights" "application_insights" {
+  name                = var.application_insights_name
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  workspace_id        = azurerm_log_analytics_workspace.log_analytics_workspace.id
+  application_type    = "web"
+  depends_on          = [azurerm_resource_group.resource_group, azurerm_log_analytics_workspace.log_analytics_workspace]
+}

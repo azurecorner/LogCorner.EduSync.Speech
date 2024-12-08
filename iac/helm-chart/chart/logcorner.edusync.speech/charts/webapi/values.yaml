@@ -8,6 +8,7 @@ service:
   type: ClusterIP
   port: 80
   targetPort: 8080
+  containerPort: 8080
 
 env:
   title: "Welcome to Azure Kubernetes Service (AKS)"
@@ -38,4 +39,4 @@ secret:
     version: "1.0.0"
     product: "mssql"
   data:
-    DB_PASSWORD: "A=6Ng@CyG3_fKn0ohXuz"  # Sensitive data can be overridden securely during deployment
+    DB_PASSWORD: "HPSxJSrN4uhUMNm%}rbS"  # Sensitive data can be overridden securely during deployment

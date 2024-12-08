@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hello-world-ingress
+  name: edusync-ingress
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
@@ -11,7 +11,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /aks-command-api(/|$)(.*)
+      - path: /speech-command-http-api(/|$)(.*)
         pathType: Prefix
         backend:
           service:

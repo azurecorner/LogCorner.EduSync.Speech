@@ -1,0 +1,96 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apis_webapi_weatherforecast_path": {
+            "value": null
+        },
+        "identityProviders_aad_clientSecret": {
+            "value": null
+        },
+        "subscriptions_674d76865698680075070001_displayName": {
+            "value": null
+        },
+        "subscriptions_674d76875698680075070002_displayName": {
+            "value": null
+        },
+        "subscriptions_674d934b46346114a4889805_displayName": {
+            "value": null
+        },
+        "subscriptions_674ed81566f11705107f8674_displayName": {
+            "value": null
+        },
+        "users_1_lastName": {
+            "value": null
+        },
+        "actionGroups_email_name": {
+            "value": null
+        },
+        "metricAlerts_email_name": {
+            "value": null
+        },
+        "sites_datasync_web_app_001_name": {
+            "value": null
+        },
+        "sites_func_app_datasync_001_name": {
+            "value": null
+        },
+        "privateEndpoints_apim_pe_name": {
+            "value": null
+        },
+        "privateEndpoints_func_app_pe_name": {
+            "value": null
+        },
+        "virtualMachines_jumbo_box_001_name": {
+            "value": null
+        },
+        "bastionHosts_datasync_bastion_name": {
+            "value": null
+        },
+        "virtualNetworks_datasync_vnet_name": {
+            "value": null
+        },
+        "storageAccounts_stdarasync001_name": {
+            "value": null
+        },
+        "serverfarms_ASP_RGAPIMLEARNING_b25d_name": {
+            "value": null
+        },
+        "serverfarms_ASP_RGAPIMLEARNING_b50b_name": {
+            "value": null
+        },
+        "components_app_insight_datasync_name": {
+            "value": null
+        },
+        "publicIPAddresses_datasync_vnet_ip_name": {
+            "value": null
+        },
+        "workspaces_datasync_la_name": {
+            "value": null
+        },
+        "service_datasync_apim_learning_name": {
+            "value": null
+        },
+        "networkInterfaces_jumbo_box_001331_z1_name": {
+            "value": null
+        },
+        "networkSecurityGroups_jumbo_box_001_nsg_name": {
+            "value": null
+        },
+        "privateDnsZones_privatelink_azure_api_net_name": {
+            "value": null
+        },
+        "privateDnsZones_privatelink_azurewebsites_net_name": {
+            "value": null
+        },
+        "actionGroups_Application_Insights_Smart_Detection_name": {
+            "value": null
+        },
+        "webtests_datasync_apim_learning_app_insight_datasync_name": {
+            "value": null
+        },
+        "smartdetectoralertrules_failure_anomalies___app_insight_datasync_name": {
+            "value": null
+        }
+    }
+}
