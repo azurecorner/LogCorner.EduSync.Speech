@@ -96,8 +96,11 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
         //    });
         //}
         //else
-        //{
-          //  tracing.AddConsoleExporter();
+        // {
+        if (builder.Environment.EnvironmentName == "Development")
+        {
+            tracing.AddConsoleExporter();
+        }
         //}
     });
 
@@ -122,11 +125,11 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
 static void ConfigureApplicationBuilder(WebApplication app)
 {
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
+    //if (app.Environment.IsDevelopment())
+    //{
         app.UseSwagger();
         app.UseSwaggerUI();
-    }
+   // }
     app.UseCors("CorsPolicy");
     app.UseHttpsRedirection();
     string? pathBase = app.Configuration["pathBase"];
