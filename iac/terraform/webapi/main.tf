@@ -222,27 +222,25 @@ resource "azurerm_public_ip" "app_gateway_ip" {
 # }
 
 
+module "virtual_machine" {
+  source = "./modules/virtual_machine"
+  count  = 1 // number of virtual machines
 
-
-# module "virtual_machine" {
-#   source = "./modules/virtual_machine"
-#   count  = 1 // number of virtual machines
-
-#   resource_group_name     = var.resource_group_name
-#   resource_group_location = var.resource_group_location
-#   subnet_id               = module.virtual_network.subnet_vm_id
-#   tags = (merge(var.default_tags, tomap({
-#     type = "virtual_machine"
-#     })
-#   ))
-#   public_ip_name              = "VM-DATASYNC-${var.public_ip_name}-${format("%03d", count.index + 1)}"
-#   network_security_group_name = "VM-DATASYNC-${var.network_security_group_name}-${format("%03d", count.index + 1)}"
-#   network_interface_name      = "VM-DATASYNC-${var.network_interface_name}-${format("%03d", count.index + 1)}"
-#   virtual_machine_name        = "VM-DATASYNC-${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
-#   computer_name               = "${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
-#   username                    = var.vm_username
-#   depends_on                  = [module.virtual_network]
-# }
+  resource_group_name     = var.resource_group_name
+  resource_group_location = var.resource_group_location
+  subnet_id               = module.virtual_network.subnet_apim_id
+  tags = (merge(var.default_tags, tomap({
+    type = "virtual_machine"
+    })
+  ))
+  public_ip_name              = "VM-DATASYNC-${var.public_ip_name}-${format("%03d", count.index + 1)}"
+  network_security_group_name = "VM-DATASYNC-${var.network_security_group_name}-${format("%03d", count.index + 1)}"
+  network_interface_name      = "VM-DATASYNC-${var.network_interface_name}-${format("%03d", count.index + 1)}"
+  virtual_machine_name        = "VM-DATASYNC-${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
+  computer_name               = "${var.virtual_machine_name}-${format("%03d", count.index + 1)}"
+  username                    = var.vm_username
+  depends_on                  = [module.virtual_network]
+}
 
 
 resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {

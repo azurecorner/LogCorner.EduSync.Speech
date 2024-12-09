@@ -18,24 +18,11 @@ spec:
             name: logcorner-command-http-api-service
             port:
               number: 80
-      - path: /hello-world-one(/|$)(.*)
+      
+       - path: /swagger(/|$)(.*)  # Add Swagger path
         pathType: Prefix
         backend:
           service:
-            name: aks-helloworld-one
-            port:
-              number: 80
-      - path: /hello-world-two(/|$)(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: aks-helloworld-two
-            port:
-              number: 80
-      - path: /(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: aks-helloworld-one
+            name: logcorner-command-http-api-service
             port:
               number: 80

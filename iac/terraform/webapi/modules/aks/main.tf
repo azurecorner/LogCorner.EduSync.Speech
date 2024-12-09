@@ -17,6 +17,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_name
   resource_group_name = var.resource_group_name
   dns_prefix          = random_pet.azurerm_kubernetes_cluster_dns_prefix.id
+  kubernetes_version  = "1.31.2"
 
   identity {
     type = "SystemAssigned"

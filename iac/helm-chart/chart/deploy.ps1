@@ -1,6 +1,6 @@
 param(
     [string]$ChartName = "logcorner.edusync.speech",
-    [string]$IMAGE_TAG = "1185",
+    [string]$IMAGE_TAG = "1194",
     [string]$NAMESPACE = "ingress-nginx",
     [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
     [string]$CLUSTER_NAME = "aks-edusync-dev",
@@ -113,13 +113,17 @@ kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- nslookup ingress.cloud-devo
 
 Write-Host "Running test ..." -ForegroundColor Green
 
+Write-Host "Getting swagger ..." -ForegroundColor Green
+
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/swagger/index.html
+
 Write-Host "Getting all WeatherForecast ..." -ForegroundColor Green
 
 kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/api/WeatherForecast
 
-Write-Host "`nGetting  WeatherForecast by id ..." -ForegroundColor Green
+# Write-Host "`nGetting  WeatherForecast by id ..." -ForegroundColor Green
 
-kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/WeatherForecast/1
+# kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/WeatherForecast/1
 
  Write-Host "`nGetting all HealthCheck ..." -ForegroundColor Green
 kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/speech-command-http-api/api/health/
