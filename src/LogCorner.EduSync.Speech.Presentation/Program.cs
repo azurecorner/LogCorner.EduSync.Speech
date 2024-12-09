@@ -122,11 +122,17 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
 static void ConfigureApplicationBuilder(WebApplication app)
 {
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
+    //if (app.Environment.IsDevelopment())
+    //{
         app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+        //app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+            c.RoutePrefix = "swagger";  // Ensure this matches the path you're trying to access
+        });
+
+    //}
     app.UseCors("CorsPolicy");
     app.UseHttpsRedirection();
     string? pathBase = app.Configuration["pathBase"];
