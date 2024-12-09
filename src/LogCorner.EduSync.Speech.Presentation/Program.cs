@@ -97,7 +97,10 @@ static void ConfigureServiceCollection(WebApplicationBuilder builder)
         //}
         //else
         //{
+        if (builder.Environment.EnvironmentName == "Development")
+        {
             tracing.AddConsoleExporter();
+        }
         //}
     });
 
