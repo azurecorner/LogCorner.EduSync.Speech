@@ -230,7 +230,7 @@ module "virtual_machine" {
 
   resource_group_name     = var.resource_group_name
   resource_group_location = var.resource_group_location
-  subnet_id               = module.virtual_network.subnet_vm_id
+  subnet_id               = module.virtual_network.subnet_apim_id
   tags = (merge(var.default_tags, tomap({
     type = "virtual_machine"
     })
