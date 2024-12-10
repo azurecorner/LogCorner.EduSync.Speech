@@ -139,11 +139,11 @@ Write-Host "Running test ..." -ForegroundColor Green
 
 Write-Host "Getting all WeatherForecast ..." -ForegroundColor Green
 
-kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com/aks-command-api/WeatherForecast
+kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com/aks-command-api/api/WeatherForecast
 
 Write-Host "`nGetting  WeatherForecast by id ..." -ForegroundColor Green
 
-kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com/aks-command-api/WeatherForecast/1
+kubectl exec -it curl-test -n helm -- curl http://ingress.cloud-devops-craft.com/aks-command-api/api/WeatherForecast/1
 
 # kubectl exec -it curl-test -n helm -- curl http://$PRIVATE_IP/aks-command-api/WeatherForecast
 
