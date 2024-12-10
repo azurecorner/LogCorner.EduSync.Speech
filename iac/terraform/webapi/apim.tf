@@ -44,7 +44,7 @@ resource "azurerm_api_management_api_operation" "api_management_api_operation_qu
   resource_group_name = azurerm_api_management.apim.resource_group_name
   display_name        = "Get Weather Forecast"
   method              = "GET"
-  url_template        = "/WeatherForecast" # Endpoint path relative to the base URL
+  url_template        = "/api/WeatherForecast" # Endpoint path relative to the base URL
   response {
     status_code = 200
     description = "Successful response"
@@ -62,7 +62,7 @@ resource "azurerm_api_management_api_operation" "api_management_api_operation_qu
   resource_group_name = var.resource_group_name
   display_name        = "Get WeatherForecast by Id"
   method              = "GET"
-  url_template        = "/WeatherForecast/{id}"
+  url_template        = "/api/WeatherForecast/{id}"
   description         = "Get WeatherForecast by Id."
 
   template_parameter {
