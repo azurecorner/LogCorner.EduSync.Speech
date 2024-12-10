@@ -262,3 +262,5 @@ __pycache__/
 iac/terraform/webapi/.terraform.tfstate.lock.info
 iac/helm-chart/chart/logcorner.edusync.speech/charts/webapi.rar
 iac/export/terraform.tfstate
+iac/scripts/ssl/
+

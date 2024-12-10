@@ -2,12 +2,13 @@
 resource "azurerm_application_gateway" "application_gateway" {
   enable_http2        = true
   location            = var.resource_group_location
-  name                = "appgw-edusync-dev-001"
+  name                = var.application_gateway_name
   resource_group_name = var.resource_group_name
   zones               = ["1", "2", "3"]
   autoscale_configuration {
     max_capacity = 10
     min_capacity = 0
+    
   }
   backend_address_pool {
     ip_addresses = azurerm_api_management.apim.private_ip_addresses
@@ -179,3 +180,32 @@ resource "azurerm_dns_a_record" "dns_a_record_management" {
 
 
 
+resource "azurerm_monitor_diagnostic_setting" "monitor_diagnostic_setting_appgw" {
+  name               = "${var.application_gateway_name}-ds"
+  target_resource_id = azurerm_application_gateway.application_gateway.id
+
+  # Destination for logs and metrics
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
+
+  # Log settings
+  enabled_log {
+    category = "ApplicationGatewayAccessLog"
+
+  }
+
+  enabled_log {
+    category = "ApplicationGatewayPerformanceLog"
+
+  }
+
+  enabled_log {
+    category = "ApplicationGatewayFirewallLog"
+
+  }
+
+  # Metric settings
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+  }
+}

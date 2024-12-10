@@ -177,52 +177,6 @@ resource "azurerm_public_ip" "app_gateway_ip" {
   depends_on          = [azurerm_resource_group.resource_group]
 }
 
-data "azurerm_key_vault_certificate" "certificate" {
-  name         = "logcorner-datasync-cert"
-  key_vault_id = module.key_vault.key_vault_id
-
-  depends_on = [module.key_vault]
-}
-
-# module "application_gateway" {
-#   source                    = "./modules/application_gateway"
-#   resource_group_name       = var.resource_group_name
-#   resource_group_location   = var.resource_group_location
-#   virtual_network_subnet_id = module.virtual_network.subnet_appgw_id
-#   key_vault_secret_id       = data.azurerm_key_vault_certificate.certificate.secret_id
-#   user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
-#   public_ip_address_id      = azurerm_public_ip.app_gateway_ip.id
-
-
-#   application_gateway_name = var.application_gateway_name
-
-#   application_gateway_backend_pool_name = var.application_gateway_backend_pool_name
-
-#   application_gateway_backend_settings_name = var.application_gateway_backend_settings_name
-
-#   application_gateway_probe_name = var.application_gateway_probe_name
-
-#   application_gateway_https_frontend_port = var.application_gateway_https_frontend_port
-
-#   frontend_ip_configuration_name = var.frontend_ip_configuration_name
-
-#   https_listener_name = var.https_listener_name
-
-#   ssl_certificate_name = var.ssl_certificate_name
-
-#   gateway_ip_configuration_name = var.gateway_ip_configuration_name
-
-#   backend_address_pool_fqdn =  var.backend_address_pool_fqdn
-#   tags = (merge(var.default_tags, tomap({
-#     type = "application_gateway"
-#     })
-#   ))
-
-#   depends_on = [azurerm_user_assigned_identity.user_assigned_identity, module.key_vault]
-# }
-
-
-
 
 module "virtual_machine" {
   source = "./modules/virtual_machine"
@@ -244,43 +198,49 @@ module "virtual_machine" {
   depends_on                  = [module.virtual_network]
 }
 
+resource "azurerm_public_ip" "bastion_pip" {
+  name                = "pip-bastion"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_bastion_host" "bastion_host" {
+  name                = "bastion-host"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  sku                 = "Standard"
+  scale_units         = 2
+
+  copy_paste_enabled     = true
+  file_copy_enabled      = true
+  shareable_link_enabled = true
+  tunneling_enabled      = true
+
+  ip_configuration {
+    name                 = "config-01"
+    subnet_id            = module.virtual_network.subnet_bastion_id
+    public_ip_address_id = azurerm_public_ip.bastion_pip.id
+  }
+}
 
 
 
-# resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
-#   name                = "datasync-la"
-#   resource_group_name = var.resource_group_name
-#   location            = var.resource_group_location
-#   sku                 = "PerGB2018"
-#   retention_in_days   = 30
-#   depends_on          = [azurerm_resource_group.resource_group]
-# }
+resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
+  name                = var.log_analytics_workspace_name
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  sku                 = var.log_analytics_workspace_sku
+  retention_in_days   = 30
+  depends_on          = [azurerm_resource_group.resource_group]
+}
 
-# resource "azurerm_application_insights" "application_insights" {
-#   name                = "datasync-app-insight"
-#   resource_group_name = var.resource_group_name
-#   location            = var.resource_group_location
-#   workspace_id        = azurerm_log_analytics_workspace.log_analytics_workspace.id
-#   application_type    = "web"
-#   depends_on          = [azurerm_resource_group.resource_group, azurerm_log_analytics_workspace.log_analytics_workspace]
-# }
-
-# variable "funcapp_log_categories_retention" {
-#   type = map(object({
-#     enabled = bool
-#   }))
-
-# }
-
-
-# module "ingest_app_diagnostic_settings" {
-#   source                    = "./modules/monitoring"
-#   diagnostics_settings_name = "aks-ds"
-#   resource_id               = module.logcorner-kubernetes_service.
-#   resource_group_name       = var.resource_group_name
-#   resource_group_location   = var.resource_group_location
-#   law_id                    = azurerm_log_analytics_workspace.log_analytics_workspace.id
-#   log_categories_retention  = var.funcapp_log_categories_retention
-#   retention_days            = 30
-#   depends_on                = [azurerm_log_analytics_workspace.log_analytics_workspace, azurerm_application_insights.application_insights]
-# }
+resource "azurerm_application_insights" "application_insights" {
+  name                = var.application_insights_name
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  workspace_id        = azurerm_log_analytics_workspace.log_analytics_workspace.id
+  application_type    = "web"
+  depends_on          = [azurerm_resource_group.resource_group, azurerm_log_analytics_workspace.log_analytics_workspace]
+}

@@ -27,3 +27,7 @@ output "subnet_private_id" {
 output "subnet_integration_id" {
   value = azurerm_subnet.integration.id
 }
+
+output "subnet_bastion_id" {
+  value = azurerm_subnet.bastion_subnet.id
+}

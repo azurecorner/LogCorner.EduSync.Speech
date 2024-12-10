@@ -7,6 +7,20 @@ resource "azurerm_public_ip" "public_ip" {
 }
 
 # Create network interface
+# resource "azurerm_network_interface" "network_interface" {
+#   name                = var.network_interface_name
+#   location            = var.resource_group_location
+#   resource_group_name = var.resource_group_name
+
+#   ip_configuration {
+#     name                          = "${var.network_interface_name}_configuration"
+#     subnet_id                     = var.subnet_id
+#     private_ip_address_allocation = "Dynamic"
+#     public_ip_address_id          = azurerm_public_ip.public_ip.id
+#   }
+
+# }
+
 resource "azurerm_network_interface" "network_interface" {
   name                = var.network_interface_name
   location            = var.resource_group_location
@@ -16,9 +30,7 @@ resource "azurerm_network_interface" "network_interface" {
     name                          = "${var.network_interface_name}_configuration"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
-
 }
 
 # Generate random text for a unique storage account name
@@ -67,7 +79,7 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
 
   computer_name  = var.computer_name
   admin_username = var.username
-  admin_password = "Password1234!"
+  admin_password = "Gophette1#123"
   tags           = var.tags
 }
 

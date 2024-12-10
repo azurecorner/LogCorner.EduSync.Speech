@@ -66,3 +66,10 @@ resource "azurerm_subnet" "integration" {
 }
 
 
+# Create subnets
+resource "azurerm_subnet" "bastion_subnet" {
+  name                 = "AzureBastionSubnet"
+   resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.apim-aks.name
+  address_prefixes     = ["10.10.0.0/25"]
+}

@@ -174,7 +174,7 @@ variable "subnet_id" {
 }
 
 variable "api_management_name" {
-  default = "apim-edusync-dev-10"
+  default = "apim-edusync-dev-13"
 }
 
 variable "sku_name" {
@@ -367,8 +367,9 @@ variable "nsgrules_appgw" {
 //application gateway
 
 variable "application_gateway_name" {
-
+  default = "appgw-edusync-dev-001"
 }
+
 
 variable "application_gateway_backend_pool_name" {
 
@@ -424,4 +425,23 @@ variable "network_interface_name" {
 
 variable "virtual_machine_name" {
   type = string
+}
+
+# monitoring
+
+variable "log_analytics_workspace_name" {
+  type    = string
+  default = "law-edusync-dev"
+}
+
+variable "log_analytics_workspace_sku" {
+  type    = string
+  default = "PerGB2018"
+
+}
+
+variable "application_insights_name" {
+  type    = string
+  default = "appinsights-edusync-dev"
+
 }

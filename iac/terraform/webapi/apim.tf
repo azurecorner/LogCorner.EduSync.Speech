@@ -247,6 +247,108 @@ resource "azurerm_private_dns_a_record" "private_dns_a_record_portal" {
 }
 
 
+resource "azurerm_api_management_logger" "api_management_logger" {
+  name                = "example-apimlogger"
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = var.resource_group_name
+
+  application_insights {
+    instrumentation_key = azurerm_application_insights.application_insights.instrumentation_key
+  }
+}
+
+resource "azurerm_api_management_diagnostic" "api_management_diagnostic" {
+  identifier               = "applicationinsights"
+  resource_group_name      = var.resource_group_name
+  api_management_name      = azurerm_api_management.apim.name
+  api_management_logger_id = azurerm_api_management_logger.api_management_logger.id
+
+  sampling_percentage       = 5.0
+  always_log_errors         = true
+  log_client_ip             = true
+  verbosity                 = "verbose"
+  http_correlation_protocol = "W3C"
+
+  frontend_request {
+    body_bytes = 32
+    headers_to_log = [
+      "content-type",
+      "accept",
+      "origin",
+    ]
+  }
+
+  frontend_response {
+    body_bytes = 32
+    headers_to_log = [
+      "content-type",
+      "content-length",
+      "origin",
+    ]
+  }
+
+  backend_request {
+    body_bytes = 32
+    headers_to_log = [
+      "content-type",
+      "accept",
+      "origin",
+    ]
+  }
+
+  backend_response {
+    body_bytes = 32
+    headers_to_log = [
+      "content-type",
+      "content-length",
+      "origin",
+    ]
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "monitor_diagnostic_setting_apim" {
+  name               = "apim-diagnostic-settings"
+  target_resource_id = azurerm_api_management.apim.id
+
+  # Destination for logs and metrics
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
+
+  # Log settings
+
+  enabled_log {
+    category = "GatewayLogs"
+   
+  }
+#   enabled_log {
+#     category = "developerportal"
+#   }
+
+#  enabled_log {
+#     category = "websockets"
+#  }
+  # enabled_log {
+  #   category = "DeveloperPortalLogs"
+   
+  # }
+
+
+  # enabled_log {
+  #   category = "AuditEvent"
+  # }
+
+  metric {
+    category = "AllMetrics"
+  }
+
+  # Metric settings
+  # metric {
+  #   category = "AllMetrics"
+  #   enabled  = true
+  # }
+}
+
+
+
 output "apim_principal_id" {
   value = azurerm_api_management.apim.identity[0].principal_id
 }
