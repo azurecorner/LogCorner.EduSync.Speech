@@ -1,4 +1,4 @@
-@LogCorner.EduSync.Speech.Presentation_HostAddress = http://localhost:5086
+@LogCorner.EduSync.Speech.Presentation_HostAddress = http://localhost:5174
 
 GET {{LogCorner.EduSync.Speech.Presentation_HostAddress}}/weatherforecast/
 Accept: application/json
