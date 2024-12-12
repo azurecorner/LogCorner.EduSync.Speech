@@ -1,6 +1,6 @@
 param(
     [string]$ChartName = "logcorner.edusync.speech",
-    [string]$IMAGE_TAG = "1212",
+    [string]$IMAGE_TAG = "1217",
     [string]$NAMESPACE = "ingress-nginx",
     [string]$RESOURCE_GROUP_NAME = "rg-edusync-dev",
     [string]$CLUSTER_NAME = "aks-edusync-dev",

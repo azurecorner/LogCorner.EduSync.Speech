@@ -2,6 +2,9 @@
 # https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/mutual-tls-deploy-aks-api-management
 # Integrate Azure API Management (Internal Mode) with Application Gateway =>  https://youtu.be/8asofOkNaIU?si=9-LURyscMBz0PjC5  and https://youtu.be/JWcMsYBC34I?si=on0ynxy-N7KL4h1C
 
+variable "swagger_file" {
+  default = "C:\\Users\\LEYE-GORA\\source\\repos\\EVENT DRIVEN ARCHITECTURE- FULL MICROSOFT\\LogCorner.EduSync.Speech.Command\\src\\LogCorner.EduSync.Speech.Presentation\\LogCorner-EduSync-Speech-Presentation-OpenApi.json"
+}
 resource "azurerm_api_management" "apim" {
   name                = var.api_management_name
   location            = var.resource_group_location
@@ -24,18 +27,25 @@ resource "azurerm_api_management" "apim" {
 
 }
 
-# Define the API within Azure API Management
+#Define the API within Azure API Management
 resource "azurerm_api_management_api" "query-http-api" {
   name                = "query-http-api"
   resource_group_name = azurerm_api_management.apim.resource_group_name
   api_management_name = azurerm_api_management.apim.name
-  revision            = "1"
+  revision            = "2"
   display_name        = "Query HTTP API"
   path                = "external" # Path under API Management
   protocols           = ["https", "http"]
   service_url         = "http://ingress.cloud-devops-craft.com/aks-command-api" # Base URL of the backend service
-}
+  
+  subscription_required = false
+  import {
+    content_format = "openapi+json"
+    content_value  = file(var.swagger_file)
+  }
 
+}
+/* 
 # Define the API operation for the WeatherForecast endpoint
 resource "azurerm_api_management_api_operation" "api_management_api_operation_query" {
   operation_id        = "getWeatherForecast"
@@ -74,10 +84,10 @@ resource "azurerm_api_management_api_operation" "api_management_api_operation_qu
   response {
     status_code = 200
   }
-}
+} */
 
 
-# Define the API within Azure API Management
+/* # Define the API within Azure API Management
 resource "azurerm_api_management_api" "command-http-api" {
   name                = "command-http-api"
   resource_group_name = azurerm_api_management.apim.resource_group_name
@@ -158,7 +168,7 @@ resource "azurerm_api_management_api_operation" "command-http-api-operation_dele
       content_type = "application/json"
     }
   }
-}
+} */
 
 
 resource "azurerm_api_management_product" "product" {
@@ -171,20 +181,20 @@ resource "azurerm_api_management_product" "product" {
   published             = true
 }
 
-resource "azurerm_api_management_product_api" "product_query_http_api" {
-  api_name            = azurerm_api_management_api.query-http-api.name
-  product_id          = azurerm_api_management_product.product.product_id
-  api_management_name = azurerm_api_management.apim.name
-  resource_group_name = var.resource_group_name
-}
+# resource "azurerm_api_management_product_api" "product_query_http_api" {
+#   api_name            = azurerm_api_management_api.query-http-api.name
+#   product_id          = azurerm_api_management_product.product.product_id
+#   api_management_name = azurerm_api_management.apim.name
+#   resource_group_name = var.resource_group_name
+# }
 
-
+/* 
 resource "azurerm_api_management_product_api" "product_command_http_api" {
   api_name            = azurerm_api_management_api.command-http-api.name
   product_id          = azurerm_api_management_product.product.product_id
   api_management_name = azurerm_api_management.apim.name
   resource_group_name = var.resource_group_name
-}
+} */
 
 # custom domain
 resource "azurerm_api_management_custom_domain" "api_management_custom_domain" {

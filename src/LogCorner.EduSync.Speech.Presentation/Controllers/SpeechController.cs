@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LogCorner.EduSync.Speech.Presentation.Controllers
 {
+	[ApiController]
     [Route("api/speech")]
     public class SpeechController : ControllerBase
     {

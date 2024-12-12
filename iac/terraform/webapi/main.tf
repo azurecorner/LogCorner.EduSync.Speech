@@ -178,7 +178,7 @@ resource "azurerm_public_ip" "app_gateway_ip" {
 }
 
 
-module "virtual_machine" {
+/* module "virtual_machine" {
   source = "./modules/virtual_machine"
   count  = 1 // number of virtual machines
 
@@ -223,7 +223,7 @@ resource "azurerm_bastion_host" "bastion_host" {
     subnet_id            = module.virtual_network.subnet_bastion_id
     public_ip_address_id = azurerm_public_ip.bastion_pip.id
   }
-}
+} */
 
 
 
