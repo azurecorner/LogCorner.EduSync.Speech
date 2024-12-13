@@ -12,7 +12,8 @@ resource "azurerm_api_management" "apim" {
   publisher_name      = var.publisher_name
   publisher_email     = var.publisher_email
 
-  sku_name = var.sku_name
+  //sku_name = var.sku_name
+  sku_name = "Developer_1" # Ensure this is correct
 
   virtual_network_type = "Internal"
 
@@ -26,6 +27,7 @@ resource "azurerm_api_management" "apim" {
   depends_on = [module.network_security_groups]
 
 }
+
 
 #Define the API within Azure API Management
 resource "azurerm_api_management_api" "query-http-api" {

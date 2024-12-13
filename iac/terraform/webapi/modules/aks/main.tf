@@ -40,6 +40,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
     load_balancer_sku = var.load_balancer_sku
   }
 
+key_vault_secrets_provider {
+    secret_rotation_enabled = true
+  }
   tags = var.tags
 }
 

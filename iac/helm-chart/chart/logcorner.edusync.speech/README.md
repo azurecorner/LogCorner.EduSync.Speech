@@ -190,3 +190,16 @@ curl -X 'POST' \
 }'
 
 https://developer.cloud-devops-craft.com
+
+# secrets from keyault
+# https://youtu.be/8l9LRcUw3pA?si=rqLCDOlz8wr4m4AJ
+<!-- helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
+helm repo update
+helm install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver --namespace kube-system -->
+
+kubectl get pods -n kube-system -l 'app in (secrets-store-csi-driver,secrets-store-provider-azure)'
+
+
+kubectl exec busybox-secrets-store-inline-user-msi -- ls /mnt/secrets-store/
+
+kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/logcorner-datasync-cert
