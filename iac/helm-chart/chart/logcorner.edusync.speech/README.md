@@ -134,12 +134,12 @@ curl http://10.10.1.7/speech-command-http-api/WeatherForecast
  kubectl exec -it curl-test -n helm -- curl http://logcorner-command-http-api-service/WeatherForecast
 
 
-  kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/WeatherForecast
+kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/WeatherForecast
 
-   kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/hello-world-two
-    kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/hello-world-one
+kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/hello-world-two
+kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/hello-world-one
 
-     kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/aks-command-api/WeatherForecast
+kubectl exec -it curl-test -n helm -- curl http://10.10.1.7/aks-command-api/WeatherForecast
 
    # ingress tutorial
 
@@ -193,13 +193,24 @@ https://developer.cloud-devops-craft.com
 
 # secrets from keyault
 # https://youtu.be/8l9LRcUw3pA?si=rqLCDOlz8wr4m4AJ
+# mslearn => https://learn.microsoft.com/en-us/azure/aks/csi-secrets-store-nginx-tls 
+# mslearn => https://learn.microsoft.com/en-us/azure/aks/csi-secrets-store-identity-access?tabs=azure-portal&pivots=access-with-a-user-assigned-managed-identity
+# fix it using => https://medium.com/hedgus/azure-key-vault-provider-for-secrets-store-csi-driver-in-an-azure-kubernetes-service-aks-56de3fe6c9b4
 <!-- helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
 helm repo update
 helm install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver --namespace kube-system -->
 
 kubectl get pods -n kube-system -l 'app in (secrets-store-csi-driver,secrets-store-provider-azure)'
+kubectl get pods -n kube-system -l 'app in (secrets-store-csi-driver,secrets-store-provider-azure)'
 
 
 kubectl exec busybox-secrets-store-inline-user-msi -- ls /mnt/secrets-store/
 
-kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/logcorner-datasync-cert
+kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/logcorner-datasync-cert-001
+
+kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/dbpassword
+
+
+kubectl exec busybox-secrets-store-inline-user-msi -- ls /mnt/secrets-store/
+kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/username
+kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/password

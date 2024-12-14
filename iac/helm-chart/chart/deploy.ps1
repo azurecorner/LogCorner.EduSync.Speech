@@ -14,7 +14,8 @@ $WORKLOAD_NAMESPACE = "default"
 az aks get-credentials --resource-group $RESOURCE_GROUP_NAME --name $CLUSTER_NAME --overwrite-existing
 kubectl get deployments --all-namespaces=true
 # az network vnet check-ip-address --name $VNET_NAME -g $RESOURCE_GROUP_NAME --ip-address $PRIVATE_IP
-
+Write-Host "Verify the Azure Key Vault provider for Secrets Store CSI Driver installation..." -ForegroundColor Green
+kubectl get pods -n kube-system -l 'app in (secrets-store-csi-driver,secrets-store-provider-azure)'
 # Add the ingress-nginx Helm repository if not already added
 Write-Host "Adding the ingress-nginx repository..." -ForegroundColor Green
  # Add the ingress-nginx repository

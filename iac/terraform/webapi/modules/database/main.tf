@@ -57,7 +57,7 @@ resource "azurerm_mssql_database" "mssql_database" {
 
 resource "azurerm_key_vault_secret" "key_vault_secret" {
   key_vault_id = var.key_vault_id
-  name         = "SqlServer--Password"
+  name         = "dbpassword"
   value        = random_password.admin_password[0].result
 
   depends_on = [random_password.admin_password]
