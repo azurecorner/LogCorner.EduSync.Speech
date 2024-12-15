@@ -33,8 +33,9 @@ helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx  `
 --namespace $NAMESPACE  `
 --create-namespace  `
 --set controller.service.type=LoadBalancer  `
---set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true" 
-    
+--set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="true"   `
+--set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz   `
+-f extra-volumes.yaml
 # Test an internal IP address
 # Monitor the ingress service
 Write-Host "Monitoring ingress-nginx-controller service..." -ForegroundColor Green
@@ -116,7 +117,7 @@ Write-Host "Running test ..." -ForegroundColor Green
 
 Write-Host "Getting all WeatherForecast ..." -ForegroundColor Green
 
-kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/aks-command-api/api/WeatherForecast
+kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl -v -k https://ingress.cloud-devops-craft.com/aks-command-api/api/WeatherForecast
 
 Write-Host "`nGetting  WeatherForecast by id ..." -ForegroundColor Green
 

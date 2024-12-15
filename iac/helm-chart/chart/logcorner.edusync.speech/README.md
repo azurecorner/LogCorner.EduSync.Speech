@@ -214,3 +214,11 @@ kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/dbp
 kubectl exec busybox-secrets-store-inline-user-msi -- ls /mnt/secrets-store/
 kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/username
 kubectl exec busybox-secrets-store-inline-user-msi -- cat /mnt/secrets-store/password
+
+
+kubectl exec busybox-certificate-store-inline-user-msi -- ls /mnt/certificate-store/
+
+
+kubectl exec busybox-certificate-store-inline-user-msi -- cat /mnt/certificate-store/logcorner-datasync-cert
+kubectl exec busybox-certificate-store-inline-user-msi -- cat /mnt/certificate-store/logcorner-datasync-cert.crt
+kubectl exec busybox-certificate-store-inline-user-msi -- cat /mnt/certificate-store/logcorner-datasync-cert.key
