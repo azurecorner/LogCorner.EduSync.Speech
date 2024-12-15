@@ -9,6 +9,10 @@ param(
    )
 
 $WORKLOAD_NAMESPACE = "default"
+$TENANT_ID = "f12a747a-cddf-4426-96ff-ebe055e215a3"
+write-host "Getting the user-assigned identity ID for the Azure Key Vault provider for Secrets Store CSI Driver..." -ForegroundColor Green
+$AZURE_KEYVAULT_SECRETS_PROVIDER_USER_ASSIGNED_IDENTITYID=az identity show --resource-group MC_rg-edusync-dev_aks-edusync-dev_eastus --name azurekeyvaultsecretsprovider-aks-edusync-dev --query 'clientId'
+write-host "User-assigned identity ID: $AZURE_KEYVAULT_SECRETS_PROVIDER_USER_ASSIGNED_IDENTITYID" -ForegroundColor Green
 
 #First, we need a private IP address that the NGINX ingress controller will accept requests from. So, choose a private IP address and verify that it’s available. In this case, the IP address I choose is
 az aks get-credentials --resource-group $RESOURCE_GROUP_NAME --name $CLUSTER_NAME --overwrite-existing
@@ -72,7 +76,9 @@ if ($status -ne "Running") {
 
 # helm upgrade --install logcorner-command  $ChartName
 helm upgrade --install logcorner-command $ChartName `
-    --set global.tag=$IMAGE_TAG
+    --set global.tag=$IMAGE_TAG `
+    --set global.tenantId=$TENANT_ID `
+    --set global.userAssignedIdentityID=$AZURE_KEYVAULT_SECRETS_PROVIDER_USER_ASSIGNED_IDENTITYID
 
 
 write-host "Waiting for the logcorner-command pod to be ready... " -ForegroundColor Green
@@ -125,10 +131,10 @@ kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-d
  Write-Host "`nGetting all HealthCheck ..." -ForegroundColor Green
 kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/aks-command-api/api/health/
 
-Write-Host "`nGetting all HealthCheck is live ..." -ForegroundColor Green
+Write-Host "`nGetting all live HealthCheck ..." -ForegroundColor Green
 kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/aks-command-api/api/health/live
 
-Write-Host "`nGetting all HealthCheck is ready ..." -ForegroundColor Green
+Write-Host "`nGetting all ready HealthCheck ..." -ForegroundColor Green
 kubectl exec -it curl-test -n $WORKLOAD_NAMESPACE -- curl http://ingress.cloud-devops-craft.com/aks-command-api/api/health/ready 
 
 

@@ -1,6 +1,12 @@
-secretProviderClassName: azure-tls
-secretName: dbpassword
+providerClass:
+  secret:
+    providerClassName: azure-kvname-user-msi
+    secretName: dbpassword
+  certificate:
+    providerClassName: azure-tls
+    secretName: ingress-tls-csi
 keyvaultName: kv-shared-edusync-dev
 certificateName: logcorner-datasync-cert
-tenantId: f12a747a-cddf-4426-96ff-ebe055e215a3
+# userAssignedIdentityID: 7c819af3-6709-4291-9bce-4a960e815de4 
+#tenantId: f12a747a-cddf-4426-96ff-ebe055e215a3     
 
