@@ -20,7 +20,7 @@ namespace LogCorner.EduSync.Speech.Application.EventSourcing
         private readonly IEventStoreRepository _eventStoreRepository;
         private readonly IEventSerializer _eventSerializer;
         private readonly IJsonSerializer _serializer;
-        private readonly IEventPublisher _eventPublisher;
+       // private readonly IEventPublisher _eventPublisher;
 
         private readonly ITraceService _traceService;
         private readonly IResiliencyService _resiliencyService;
@@ -29,12 +29,12 @@ namespace LogCorner.EduSync.Speech.Application.EventSourcing
         private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
         public EventSourcingHandler(IUnitOfWork unitOfWork, IEventStoreRepository eventStoreRepository,
-            IEventSerializer eventSerializer, IEventPublisher eventPublisher, IJsonSerializer serializer, ITraceService traceService, IResiliencyService resiliencyService)
+            IEventSerializer eventSerializer,/* IEventPublisher eventPublisher,*/ IJsonSerializer serializer, ITraceService traceService, IResiliencyService resiliencyService)
         {
             _unitOfWork = unitOfWork;
             _eventStoreRepository = eventStoreRepository;
             _eventSerializer = eventSerializer;
-            _eventPublisher = eventPublisher;
+          //  _eventPublisher = eventPublisher;
             _serializer = serializer;
             _traceService = traceService;
             _resiliencyService = resiliencyService;

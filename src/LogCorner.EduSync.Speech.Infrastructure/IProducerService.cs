@@ -1,4 +1,6 @@
-﻿namespace LogCorner.EduSync.Speech.Infrastructure
+﻿using System.Threading.Tasks;
+
+namespace LogCorner.EduSync.Speech.Infrastructure
 {
     public interface IProducerService
     {

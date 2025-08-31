@@ -57,7 +57,7 @@ namespace LogCorner.EduSync.Speech.Presentation
             services.AddTransient<IJsonProvider, JsonDotNetProvider>();
 
             // services.AddProducer("localhost:9092", Configuration);
-            services.AddScoped<IEventPublisher, EventPublisher>();
+          //  services.AddScoped<IEventPublisher, EventPublisher>();
             services.AddSharedKernel();
 
             services.AddCors(options =>

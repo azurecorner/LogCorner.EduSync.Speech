@@ -1,4 +1,7 @@
-﻿namespace LogCorner.EduSync.Speech.Infrastructure
+﻿using System;
+using System.Threading.Tasks;
+
+namespace LogCorner.EduSync.Speech.Infrastructure
 {
     public class ProducerService : IProducerService
     {
