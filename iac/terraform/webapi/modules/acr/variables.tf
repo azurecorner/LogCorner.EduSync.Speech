@@ -17,21 +17,21 @@ variable "sku" {
 
 }
 variable "kubernetes_cluster_identity" {
-
+  
 }
 
 
 variable "default_tags" {
   type = object({
-    environment = string
+    environment       = string
     deployed_by = string
   })
-  default = {
-    environment = ""
-    deployed_by = ""
+   default = {
+   environment = ""
+  deployed_by = ""
   }
 }
 
 variable "tags" {
-
+  
 }

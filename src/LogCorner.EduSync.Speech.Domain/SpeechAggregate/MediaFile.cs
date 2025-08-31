@@ -1,4 +1,5 @@
 ﻿using LogCorner.EduSync.Speech.Domain.Exceptions;
+using System;
 
 namespace LogCorner.EduSync.Speech.Domain.SpeechAggregate
 {

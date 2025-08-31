@@ -1,0 +1,450 @@
+{
+  "settings": {
+    "components": {
+      "code": true,
+      "binaries": false
+    },
+    "targetId": "",
+    "targetDisplayName": ".NET 9.0"
+  },
+  "analysisStartTime": "2025-08-31T08:23:15.5151724Z",
+  "analysisEndTime": "2025-08-31T08:23:29.8734884Z",
+  "privacyModeHelpUrl": "https://go.microsoft.com/fwlink/?linkid=2270980",
+  "stats": {
+    "summary": {
+      "projects": 6,
+      "issues": 5,
+      "incidents": 18,
+      "effort": 18
+    },
+    "charts": {
+      "severity": {
+        "Mandatory": 5,
+        "Optional": 6,
+        "Potential": 7,
+        "Information": 0
+      },
+      "category": {
+        "NuGet": 14,
+        "Project": 4
+      }
+    }
+  },
+  "projects": [
+    {
+      "path": "LogCorner.EduSync.Speech.Application\\LogCorner.EduSync.Speech.Application.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 3,
+      "ruleInstances": [
+        {
+          "incidentId": "e01b8468-200b-4c85-ad55-2659a9e45c4f",
+          "ruleId": "NuGet.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Application\\LogCorner.EduSync.Speech.Application.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.Extensions.Http.Polly, 7.0.1\n\nRecommendation:\n\nMicrosoft.Extensions.Http.Polly 9.0.8",
+              "protected": "Microsoft.Extensions.Http.Polly, 7.0.1\n\nRecommendation:\n\nMicrosoft.Extensions.Http.Polly 9.0.8"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Application\\LogCorner.EduSync.Speech.Application.csproj",
+            "snippet": "Microsoft.Extensions.Http.Polly, 7.0.1\n\nRecommendation:\n\nMicrosoft.Extensions.Http.Polly 9.0.8",
+            "protectedSnippet": "Microsoft.Extensions.Http.Polly, 7.0.1\n\nRecommendation:\n\nMicrosoft.Extensions.Http.Polly 9.0.8",
+            "label": "Microsoft.Extensions.Http.Polly 7.0.1"
+          }
+        },
+        {
+          "incidentId": "f5a18285-c64d-4abf-abac-e1f5781642e2",
+          "ruleId": "NuGet.0005",
+          "projectPath": "LogCorner.EduSync.Speech.Application\\LogCorner.EduSync.Speech.Application.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "OpenTelemetry.Exporter.Jaeger, 1.3.1\n\nRecommendation:\n\nJaeger backends have added native support for ingesting traces in OTLP format. Please go through their doc for more details: https://www.jaegertracing.io/docs/1.48/apis/#opentelemetry-protocol-stable\n\nYou could refer to this example on how to send traces to Jaeger using OTLP Exporter: https://github.com/open-telemetry/opentelemetry-dotnet/tree/e330e57b04fa3e51fe5d63b52bfff891fb5b7961/docs/trace/getting-started-jaeger\nReplacement: OpenTelemetry.Exporter.OpenTelemetryProtocol, 1.12.0",
+              "protected": "OpenTelemetry.Exporter.Jaeger, 1.3.1\n\nRecommendation:\n\nJaeger backends have added native support for ingesting traces in OTLP format. Please go through their doc for more details: https://www.jaegertracing.io/docs/1.48/apis/#opentelemetry-protocol-stable\n\nYou could refer to this example on how to send traces to Jaeger using OTLP Exporter: https://github.com/open-telemetry/opentelemetry-dotnet/tree/e330e57b04fa3e51fe5d63b52bfff891fb5b7961/docs/trace/getting-started-jaeger\nReplacement: OpenTelemetry.Exporter.OpenTelemetryProtocol, 1.12.0"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Application\\LogCorner.EduSync.Speech.Application.csproj",
+            "snippet": "OpenTelemetry.Exporter.Jaeger, 1.3.1\n\nRecommendation:\n\nJaeger backends have added native support for ingesting traces in OTLP format. Please go through their doc for more details: https://www.jaegertracing.io/docs/1.48/apis/#opentelemetry-protocol-stable\n\nYou could refer to this example on how to send traces to Jaeger using OTLP Exporter: https://github.com/open-telemetry/opentelemetry-dotnet/tree/e330e57b04fa3e51fe5d63b52bfff891fb5b7961/docs/trace/getting-started-jaeger\nReplacement: OpenTelemetry.Exporter.OpenTelemetryProtocol, 1.12.0",
+            "protectedSnippet": "OpenTelemetry.Exporter.Jaeger, 1.3.1\n\nRecommendation:\n\nJaeger backends have added native support for ingesting traces in OTLP format. Please go through their doc for more details: https://www.jaegertracing.io/docs/1.48/apis/#opentelemetry-protocol-stable\n\nYou could refer to this example on how to send traces to Jaeger using OTLP Exporter: https://github.com/open-telemetry/opentelemetry-dotnet/tree/e330e57b04fa3e51fe5d63b52bfff891fb5b7961/docs/trace/getting-started-jaeger\nReplacement: OpenTelemetry.Exporter.OpenTelemetryProtocol, 1.12.0",
+            "label": "OpenTelemetry.Exporter.Jaeger 1.3.1"
+          }
+        },
+        {
+          "incidentId": "16e21793-fc01-4508-b090-e859b250bc70",
+          "ruleId": "Project.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Application\\LogCorner.EduSync.Speech.Application.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current: net7.0\nNew: net9.0",
+              "protected": "Current: net7.0\nNew: net9.0"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Application\\LogCorner.EduSync.Speech.Application.csproj",
+            "snippet": "Current: net7.0\nNew: net9.0",
+            "protectedSnippet": "Current: net7.0\nNew: net9.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "LogCorner.EduSync.Speech.Domain\\LogCorner.EduSync.Speech.Domain.csproj",
+      "startingProject": true,
+      "issues": 0,
+      "storyPoints": 0,
+      "ruleInstances": []
+    },
+    {
+      "path": "LogCorner.EduSync.Speech.Domain.UnitTests\\LogCorner.EduSync.Speech.Domain.UnitTests.csproj",
+      "startingProject": true,
+      "issues": 1,
+      "storyPoints": 1,
+      "ruleInstances": [
+        {
+          "incidentId": "51d24247-f27b-449b-bc05-7fa3436462a2",
+          "ruleId": "Project.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Domain.UnitTests\\LogCorner.EduSync.Speech.Domain.UnitTests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current: net7.0\nNew: net9.0",
+              "protected": "Current: net7.0\nNew: net9.0"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Domain.UnitTests\\LogCorner.EduSync.Speech.Domain.UnitTests.csproj",
+            "snippet": "Current: net7.0\nNew: net9.0",
+            "protectedSnippet": "Current: net7.0\nNew: net9.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "LogCorner.EduSync.Speech.Infrastructure\\LogCorner.EduSync.Speech.Infrastructure.csproj",
+      "startingProject": true,
+      "issues": 2,
+      "storyPoints": 3,
+      "ruleInstances": [
+        {
+          "incidentId": "2c63ba23-8b11-49c3-9607-1f0637a6e722",
+          "ruleId": "NuGet.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Infrastructure\\LogCorner.EduSync.Speech.Infrastructure.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.EntityFrameworkCore, 7.0.1\n\nRecommendation:\n\nMicrosoft.EntityFrameworkCore 9.0.8",
+              "protected": "Microsoft.EntityFrameworkCore, 7.0.1\n\nRecommendation:\n\nMicrosoft.EntityFrameworkCore 9.0.8"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Infrastructure\\LogCorner.EduSync.Speech.Infrastructure.csproj",
+            "snippet": "Microsoft.EntityFrameworkCore, 7.0.1\n\nRecommendation:\n\nMicrosoft.EntityFrameworkCore 9.0.8",
+            "protectedSnippet": "Microsoft.EntityFrameworkCore, 7.0.1\n\nRecommendation:\n\nMicrosoft.EntityFrameworkCore 9.0.8",
+            "label": "Microsoft.EntityFrameworkCore 7.0.1"
+          }
+        },
+        {
+          "incidentId": "2e7b1e71-4b71-42b0-879a-3c8d703fda76",
+          "ruleId": "NuGet.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Infrastructure\\LogCorner.EduSync.Speech.Infrastructure.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.EntityFrameworkCore.SqlServer, 7.0.1\n\nRecommendation:\n\nMicrosoft.EntityFrameworkCore.SqlServer 9.0.8",
+              "protected": "Microsoft.EntityFrameworkCore.SqlServer, 7.0.1\n\nRecommendation:\n\nMicrosoft.EntityFrameworkCore.SqlServer 9.0.8"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Infrastructure\\LogCorner.EduSync.Speech.Infrastructure.csproj",
+            "snippet": "Microsoft.EntityFrameworkCore.SqlServer, 7.0.1\n\nRecommendation:\n\nMicrosoft.EntityFrameworkCore.SqlServer 9.0.8",
+            "protectedSnippet": "Microsoft.EntityFrameworkCore.SqlServer, 7.0.1\n\nRecommendation:\n\nMicrosoft.EntityFrameworkCore.SqlServer 9.0.8",
+            "label": "Microsoft.EntityFrameworkCore.SqlServer 7.0.1"
+          }
+        },
+        {
+          "incidentId": "adb92f93-b9b9-4c89-ac80-e5b2b1dd6dce",
+          "ruleId": "Project.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Infrastructure\\LogCorner.EduSync.Speech.Infrastructure.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current: net7.0\nNew: net9.0",
+              "protected": "Current: net7.0\nNew: net9.0"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Infrastructure\\LogCorner.EduSync.Speech.Infrastructure.csproj",
+            "snippet": "Current: net7.0\nNew: net9.0",
+            "protectedSnippet": "Current: net7.0\nNew: net9.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+      "startingProject": true,
+      "issues": 5,
+      "storyPoints": 11,
+      "ruleInstances": [
+        {
+          "incidentId": "2c8d16a4-00dd-46be-b346-05118d29c8cd",
+          "ruleId": "NuGet.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.AspNetCore.Http.Connections.Client, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.Http.Connections.Client 9.0.8",
+              "protected": "Microsoft.AspNetCore.Http.Connections.Client, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.Http.Connections.Client 9.0.8"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Microsoft.AspNetCore.Http.Connections.Client, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.Http.Connections.Client 9.0.8",
+            "protectedSnippet": "Microsoft.AspNetCore.Http.Connections.Client, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.Http.Connections.Client 9.0.8",
+            "label": "Microsoft.AspNetCore.Http.Connections.Client 7.0.1"
+          }
+        },
+        {
+          "incidentId": "a0327a5b-0e69-4076-8392-93e215384562",
+          "ruleId": "NuGet.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.AspNetCore.SignalR.Client, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.SignalR.Client 9.0.8",
+              "protected": "Microsoft.AspNetCore.SignalR.Client, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.SignalR.Client 9.0.8"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Microsoft.AspNetCore.SignalR.Client, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.SignalR.Client 9.0.8",
+            "protectedSnippet": "Microsoft.AspNetCore.SignalR.Client, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.SignalR.Client 9.0.8",
+            "label": "Microsoft.AspNetCore.SignalR.Client 7.0.1"
+          }
+        },
+        {
+          "incidentId": "4df33186-14e5-4c57-8756-71e0e8584f4c",
+          "ruleId": "NuGet.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.AspNetCore.SignalR.Client.Core, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.SignalR.Client.Core 9.0.8",
+              "protected": "Microsoft.AspNetCore.SignalR.Client.Core, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.SignalR.Client.Core 9.0.8"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Microsoft.AspNetCore.SignalR.Client.Core, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.SignalR.Client.Core 9.0.8",
+            "protectedSnippet": "Microsoft.AspNetCore.SignalR.Client.Core, 7.0.1\n\nRecommendation:\n\nMicrosoft.AspNetCore.SignalR.Client.Core 9.0.8",
+            "label": "Microsoft.AspNetCore.SignalR.Client.Core 7.0.1"
+          }
+        },
+        {
+          "incidentId": "4131abc2-0315-4927-aba2-b61b86f96127",
+          "ruleId": "NuGet.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.Extensions.Configuration.Abstractions, 7.0.0\n\nRecommendation:\n\nMicrosoft.Extensions.Configuration.Abstractions 9.0.8",
+              "protected": "Microsoft.Extensions.Configuration.Abstractions, 7.0.0\n\nRecommendation:\n\nMicrosoft.Extensions.Configuration.Abstractions 9.0.8"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Microsoft.Extensions.Configuration.Abstractions, 7.0.0\n\nRecommendation:\n\nMicrosoft.Extensions.Configuration.Abstractions 9.0.8",
+            "protectedSnippet": "Microsoft.Extensions.Configuration.Abstractions, 7.0.0\n\nRecommendation:\n\nMicrosoft.Extensions.Configuration.Abstractions 9.0.8",
+            "label": "Microsoft.Extensions.Configuration.Abstractions 7.0.0"
+          }
+        },
+        {
+          "incidentId": "b787b0a7-ab9b-476d-afbf-c4d6fc44225e",
+          "ruleId": "NuGet.0001",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets, 1.17.0\n\nRecommendation:\n\nNo supported version found",
+              "protected": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets, 1.17.0\n\nRecommendation:\n\nNo supported version found"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets, 1.17.0\n\nRecommendation:\n\nNo supported version found",
+            "protectedSnippet": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets, 1.17.0\n\nRecommendation:\n\nNo supported version found",
+            "label": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets 1.17.0"
+          }
+        },
+        {
+          "incidentId": "97532f4a-4a34-4fc9-ae25-07c3bec817b6",
+          "ruleId": "NuGet.0004",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Azure.Identity, 1.8.0",
+              "protected": "Azure.Identity, 1.8.0"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Azure.Identity, 1.8.0",
+            "protectedSnippet": "Azure.Identity, 1.8.0",
+            "label": "Azure.Identity 1.8.0"
+          }
+        },
+        {
+          "incidentId": "dfa008d3-633c-44b9-80db-ce072c82a532",
+          "ruleId": "NuGet.0004",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.Identity.Client, 4.48.1",
+              "protected": "Microsoft.Identity.Client, 4.48.1"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Microsoft.Identity.Client, 4.48.1",
+            "protectedSnippet": "Microsoft.Identity.Client, 4.48.1",
+            "label": "Microsoft.Identity.Client 4.48.1"
+          }
+        },
+        {
+          "incidentId": "caee22df-372f-48b6-affc-463a9ff275a4",
+          "ruleId": "NuGet.0005",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.Identity.Client, 4.48.1\n\nRecommendation:\n\nMove to latest Microsoft.Identity.Client. See https://aka.ms/msal/LTS for details.",
+              "protected": "Microsoft.Identity.Client, 4.48.1\n\nRecommendation:\n\nMove to latest Microsoft.Identity.Client. See https://aka.ms/msal/LTS for details."
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Microsoft.Identity.Client, 4.48.1\n\nRecommendation:\n\nMove to latest Microsoft.Identity.Client. See https://aka.ms/msal/LTS for details.",
+            "protectedSnippet": "Microsoft.Identity.Client, 4.48.1\n\nRecommendation:\n\nMove to latest Microsoft.Identity.Client. See https://aka.ms/msal/LTS for details.",
+            "label": "Microsoft.Identity.Client 4.48.1"
+          }
+        },
+        {
+          "incidentId": "70551833-0e5a-4407-beda-bba030f4ab33",
+          "ruleId": "NuGet.0005",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.Identity.Web, 1.25.10\n\nRecommendation:\n\nMove to Microsoft.Identity.Web.* latest. See https://aka.ms/IdWeb/LTS for details.",
+              "protected": "Microsoft.Identity.Web, 1.25.10\n\nRecommendation:\n\nMove to Microsoft.Identity.Web.* latest. See https://aka.ms/IdWeb/LTS for details."
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Microsoft.Identity.Web, 1.25.10\n\nRecommendation:\n\nMove to Microsoft.Identity.Web.* latest. See https://aka.ms/IdWeb/LTS for details.",
+            "protectedSnippet": "Microsoft.Identity.Web, 1.25.10\n\nRecommendation:\n\nMove to Microsoft.Identity.Web.* latest. See https://aka.ms/IdWeb/LTS for details.",
+            "label": "Microsoft.Identity.Web 1.25.10"
+          }
+        },
+        {
+          "incidentId": "39a56e28-dfdd-4bed-9a82-1dd66d3a21a0",
+          "ruleId": "NuGet.0005",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "OpenTelemetry.Exporter.Jaeger, 1.3.1\n\nRecommendation:\n\nJaeger backends have added native support for ingesting traces in OTLP format. Please go through their doc for more details: https://www.jaegertracing.io/docs/1.48/apis/#opentelemetry-protocol-stable\n\nYou could refer to this example on how to send traces to Jaeger using OTLP Exporter: https://github.com/open-telemetry/opentelemetry-dotnet/tree/e330e57b04fa3e51fe5d63b52bfff891fb5b7961/docs/trace/getting-started-jaeger\nReplacement: OpenTelemetry.Exporter.OpenTelemetryProtocol, 1.12.0",
+              "protected": "OpenTelemetry.Exporter.Jaeger, 1.3.1\n\nRecommendation:\n\nJaeger backends have added native support for ingesting traces in OTLP format. Please go through their doc for more details: https://www.jaegertracing.io/docs/1.48/apis/#opentelemetry-protocol-stable\n\nYou could refer to this example on how to send traces to Jaeger using OTLP Exporter: https://github.com/open-telemetry/opentelemetry-dotnet/tree/e330e57b04fa3e51fe5d63b52bfff891fb5b7961/docs/trace/getting-started-jaeger\nReplacement: OpenTelemetry.Exporter.OpenTelemetryProtocol, 1.12.0"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "OpenTelemetry.Exporter.Jaeger, 1.3.1\n\nRecommendation:\n\nJaeger backends have added native support for ingesting traces in OTLP format. Please go through their doc for more details: https://www.jaegertracing.io/docs/1.48/apis/#opentelemetry-protocol-stable\n\nYou could refer to this example on how to send traces to Jaeger using OTLP Exporter: https://github.com/open-telemetry/opentelemetry-dotnet/tree/e330e57b04fa3e51fe5d63b52bfff891fb5b7961/docs/trace/getting-started-jaeger\nReplacement: OpenTelemetry.Exporter.OpenTelemetryProtocol, 1.12.0",
+            "protectedSnippet": "OpenTelemetry.Exporter.Jaeger, 1.3.1\n\nRecommendation:\n\nJaeger backends have added native support for ingesting traces in OTLP format. Please go through their doc for more details: https://www.jaegertracing.io/docs/1.48/apis/#opentelemetry-protocol-stable\n\nYou could refer to this example on how to send traces to Jaeger using OTLP Exporter: https://github.com/open-telemetry/opentelemetry-dotnet/tree/e330e57b04fa3e51fe5d63b52bfff891fb5b7961/docs/trace/getting-started-jaeger\nReplacement: OpenTelemetry.Exporter.OpenTelemetryProtocol, 1.12.0",
+            "label": "OpenTelemetry.Exporter.Jaeger 1.3.1"
+          }
+        },
+        {
+          "incidentId": "25bf7f86-f57b-4140-abda-51b5267fbb3a",
+          "ruleId": "Project.0002",
+          "projectPath": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current: net7.0\nNew: net9.0",
+              "protected": "Current: net7.0\nNew: net9.0"
+            },
+            "kind": "File",
+            "path": "LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+            "snippet": "Current: net7.0\nNew: net9.0",
+            "protectedSnippet": "Current: net7.0\nNew: net9.0"
+          }
+        }
+      ]
+    },
+    {
+      "path": "LogCorner.EduSync.Speech.SharedKernel\\LogCorner.EduSync.Speech.SharedKernel.csproj",
+      "startingProject": true,
+      "issues": 0,
+      "storyPoints": 0,
+      "ruleInstances": []
+    }
+  ],
+  "rules": {
+    "NuGet.0002": {
+      "id": "NuGet.0002",
+      "description": "NuGet package upgrade is recommended for selected target framework.\n\nStandard .NET packages are recommended to have versions matching version of .NET that project targets.\n\nSome other packages also are known to work better for selected target frameworks.",
+      "label": "NuGet package upgrade is recommended",
+      "severity": "Potential",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262530",
+          "isCustom": false
+        }
+      ]
+    },
+    "Project.0002": {
+      "id": "Project.0002",
+      "description": "Project\u0027s target framework(s) needs to be changed to the new target framework that you selected for this upgrade.\n\nDuring upgrade target framework will be adjusted to corresponding platform when applicable. In some cases project would result in multiple target frameworks after the upgrade if it was using features that now have their own platforms in moderrn .NET frameworks (windows, iOS, Android etc).",
+      "label": "Project\u0027s target framework(s) needs to be changed",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Overview of porting from .NET Framework to .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265227",
+          "isCustom": false
+        },
+        {
+          "title": ".NET project SDKs",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265226",
+          "isCustom": false
+        }
+      ]
+    },
+    "NuGet.0005": {
+      "id": "NuGet.0005",
+      "description": "NuGet package is deprecated.\n\nGo to its documentation and if there is a guidance for replacement of functionality provided by this package.",
+      "label": "NuGet package is deprecated",
+      "severity": "Optional",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262531",
+          "isCustom": false
+        }
+      ]
+    },
+    "NuGet.0001": {
+      "id": "NuGet.0001",
+      "description": "NuGet package is incompatible with selected target framework.\n\nPackage needs to be upgraded to a version supporting selected project target framework. If there no new package versions supporting new target framework, different package needs to be used and all code needs to be upgraded to new API.",
+      "label": "NuGet package is incompatible",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262529",
+          "isCustom": false
+        }
+      ]
+    },
+    "NuGet.0004": {
+      "id": "NuGet.0004",
+      "description": "NuGet package contains security vulnerabilities.\n\nPackage needs to be upgraded to a newer version that addresses known security vulnerabilities.",
+      "label": "NuGet package contains security vulnerability",
+      "severity": "Optional",
+      "effort": 1
+    }
+  }
+}

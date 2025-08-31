@@ -18,7 +18,7 @@ variable "command_http_api_service_url" {
 }
 
 variable "virtual_network_name" {
-  default = "apim-aks-vnet"
+default = "apim-aks-vnet"
 }
 
 variable "subnet_id" {
@@ -26,17 +26,17 @@ variable "subnet_id" {
 }
 
 variable "api_management_name" {
-  default = "logcorner-apim-agic-speech"
+  default ="logcorner-apim-agic-speech"
 }
 
 variable "sku_name" {
-  default = "Developer_1"
+  default ="Developer_1"
 }
 
 variable "publisher_name" {
-  default = "logconer"
+  default ="logconer"
 }
 
 variable "publisher_email" {
-  default = "tocane.techhnologies@gmail.com"
+  default=  "tocane.techhnologies@gmail.com"
 }

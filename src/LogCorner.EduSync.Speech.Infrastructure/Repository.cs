@@ -1,6 +1,7 @@
 ﻿using LogCorner.EduSync.Speech.Domain.IRepository;
 using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace LogCorner.EduSync.Speech.Infrastructure
 {

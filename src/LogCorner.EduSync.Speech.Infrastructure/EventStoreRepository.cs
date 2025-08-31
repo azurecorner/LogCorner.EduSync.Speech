@@ -2,6 +2,9 @@
 using LogCorner.EduSync.Speech.Domain.Exceptions;
 using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LogCorner.EduSync.Speech.Infrastructure
 {

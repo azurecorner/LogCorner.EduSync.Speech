@@ -1,4 +1,6 @@
-﻿namespace LogCorner.EduSync.Speech.Domain.SpeechAggregate
+﻿using System;
+
+namespace LogCorner.EduSync.Speech.Domain.SpeechAggregate
 {
     public static class AggregateId
     {

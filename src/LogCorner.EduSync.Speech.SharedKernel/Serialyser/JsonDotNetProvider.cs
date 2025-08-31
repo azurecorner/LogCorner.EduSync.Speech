@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 
 namespace LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser
 {

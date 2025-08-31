@@ -1,21 +1,9 @@
 
-data "azurerm_client_config" "current" {}
+# Reference to the current subscription.  Used when creating role assignments
+data "azurerm_subscription" "current" {}
 
-data "azuread_service_principal" "service_principal" {
-  display_name = var.service_principal_name
+# The main resource group for this deployment
+/* data "azurerm_resource_group" "resource_group" {
+  name = var.resource_group_name
 }
-
-data "azurerm_key_vault_certificate" "api_certificate" {
-  name         = "logcorner-datasync-cert"
-  key_vault_id = module.key_vault.key_vault_id
-
-  depends_on = [module.key_vault]
-}
-
-data "azurerm_key_vault_certificate" "api_certificate_root" {
-  name         = "logcorner-datasync-cert-root"
-  key_vault_id = module.key_vault.key_vault_id
-
-  depends_on = [module.key_vault]
-}
-
+ */

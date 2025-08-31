@@ -19,6 +19,6 @@ namespace LogCorner.EduSync.Speech.Presentation.Dtos
         public string Url { get; set; }
 
         [Required(ErrorMessage = "Please provide a Type")]
-        public int Type { get; set; }
+        public int TypeId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
+using System.Threading.Tasks;
 
 namespace LogCorner.EduSync.Speech.Domain.IRepository
 {

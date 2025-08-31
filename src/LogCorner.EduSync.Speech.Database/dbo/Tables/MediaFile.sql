@@ -6,3 +6,5 @@
     CONSTRAINT [FK_MediaFile_Speech] FOREIGN KEY ([SpeechID]) REFERENCES [dbo].[Speech] ([ID])
 );
 
+
+

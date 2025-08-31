@@ -1,4 +1,6 @@
-﻿namespace LogCorner.EduSync.Speech.Command.SharedKernel.Events
+﻿using System;
+
+namespace LogCorner.EduSync.Speech.Command.SharedKernel.Events
 {
     public class SpeechTypeChangedEvent : Event
     {

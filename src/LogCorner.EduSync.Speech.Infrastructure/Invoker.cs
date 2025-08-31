@@ -1,4 +1,5 @@
 ﻿using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
+using System;
 using System.Reflection;
 
 namespace LogCorner.EduSync.Speech.Infrastructure

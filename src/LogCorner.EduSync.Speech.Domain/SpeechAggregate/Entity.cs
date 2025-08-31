@@ -1,4 +1,7 @@
-﻿namespace LogCorner.EduSync.Speech.Domain.SpeechAggregate
+﻿using System;
+using System.Collections.Generic;
+
+namespace LogCorner.EduSync.Speech.Domain.SpeechAggregate
 {
     public abstract class Entity<T> : IEquatable<Entity<T>>
     {

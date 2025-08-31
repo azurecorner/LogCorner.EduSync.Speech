@@ -1,4 +1,5 @@
 ﻿using LogCorner.EduSync.Speech.Application.Interfaces;
+using System;
 
 namespace LogCorner.EduSync.Speech.Application.Commands
 {
