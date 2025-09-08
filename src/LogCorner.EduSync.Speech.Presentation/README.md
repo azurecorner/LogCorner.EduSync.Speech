@@ -25,29 +25,11 @@ kubectl create secret tls logcorner-ingress-tls --namespace qa --key logcorner-i
 
 https://kubernetes.docker.com/speech-command-http-api/swagger/index.html
 
-# create
 {
   "title": "this is a title",
   "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
   "url": "http://test.com",
   "typeId": 1
-}
-
-# update
-
-{
-  "id": "97d37b4b-0823-418d-919c-1244eda7d91b",
-  "title": "mod this is a title",
-  "description": "mod_ Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-  "url": "http://update.com",
-  "typeId": 2,
-  "version": 0
-}
-
-# delete
-{
-  "id": "97d37b4b-0823-418d-919c-1244eda7d91b",
-  "version": 4
 }
 
 https://github.com/serilog/serilog-sinks-opentelemetry
