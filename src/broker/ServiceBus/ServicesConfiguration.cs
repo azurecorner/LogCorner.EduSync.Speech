@@ -1,5 +1,4 @@
 ﻿using LogCorner.EduSync.Speech.Command.SharedKernel;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LogCorner.EduSync.Speech.ServiceBus
@@ -8,8 +7,8 @@ namespace LogCorner.EduSync.Speech.ServiceBus
     {
         public static void AddServiceBus(this IServiceCollection services/*, IConfiguration configuration*/)
         {
-          //  services.AddMediatR(Assembly.GetExecutingAssembly());
-          //  services.AddTransient<INotifierMediatorService, NotifierMediatorService>();
+            //  services.AddMediatR(Assembly.GetExecutingAssembly());
+            //  services.AddTransient<INotifierMediatorService, NotifierMediatorService>();
             services.AddSharedKernel();
             //services.AddSingleton<IKafkaClusterManager, KafkaClusterManager>();
             //services.AddSingleton<IKafkaClusterManager, KafkaClusterManager>();
@@ -44,10 +43,8 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             //    }
             //);
 
-
             services.AddSingleton<IServiceBusProducer, AzureServiceBus>();
             services.AddSingleton<IServiceBusReceiver, AzureServiceBus>();
-
         }
     }
 }

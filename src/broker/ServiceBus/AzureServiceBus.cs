@@ -1,17 +1,14 @@
 ﻿using Azure.Core;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
-using LogCorner.EduSync.Speech.Command.SharedKernel.Events;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using Microsoft.Extensions.Configuration;
 using System.Net.Mime;
 using System.Text.Json;
 
-using System.Threading.Tasks;
 namespace LogCorner.EduSync.Speech.ServiceBus
 {
-
-    public class AzureServiceBus : /*IAzureServiceBus */ IServiceBusProducer , IServiceBusReceiver
+    public class AzureServiceBus : /*IAzureServiceBus */ IServiceBusProducer, IServiceBusReceiver
     {
         // https://learn.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme?view=azure-dotnet
         // name of your Service Bus queue
@@ -35,7 +32,7 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
         public IConfiguration Configuration { get; }
 
-        public AzureServiceBus( IJsonSerializer eventSerializer,IConfiguration configuration)
+        public AzureServiceBus(IJsonSerializer eventSerializer, IConfiguration configuration)
         {
             Configuration = configuration;
 
@@ -44,10 +41,8 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             Console.WriteLine($"*******************-UserAssignedClientId: {userAssignedClientId}");
         }
 
-
         public async Task<List<T>> ReceiveMessage<T>()
         {
-
             List<T> messages = new List<T>();
 
             var clientOptions = new ServiceBusClientOptions()
@@ -133,19 +128,14 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
                 // Complete the message (it will be removed from the queue)
                 await args.CompleteMessageAsync(args.Message);
-
-
-
             }
-                // Error handler for any issues during message processing
-                Task ErrorHandler(ProcessErrorEventArgs args)
-                {
-                    Console.WriteLine($"Error processing message: {args.Exception.ToString()}");
-                    return Task.CompletedTask;
-                }
+            // Error handler for any issues during message processing
+            Task ErrorHandler(ProcessErrorEventArgs args)
+            {
+                Console.WriteLine($"Error processing message: {args.Exception.ToString()}");
+                return Task.CompletedTask;
             }
-
- 
+        }
 
         public async Task SendAsync(string topic, string @event)
         {
@@ -206,7 +196,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
         public async Task ReceiveAsync(string[] topics, CancellationToken stoppingToken, bool runAlways = true)
         {
-
             //List<T> messages = new List<T>();
 
             var clientOptions = new ServiceBusClientOptions()
@@ -292,9 +281,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
                 // Complete the message (it will be removed from the queue)
                 await args.CompleteMessageAsync(args.Message);
-
-
-
             }
             // Error handler for any issues during message processing
             Task ErrorHandler(ProcessErrorEventArgs args)
@@ -304,6 +290,4 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             }
         }
     }
-    }
-
-
+}

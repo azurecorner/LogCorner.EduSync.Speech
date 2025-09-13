@@ -1,6 +1,5 @@
 using LogCorner.EduSync.Speech.Consumer;
 using LogCorner.EduSync.Speech.ServiceBus;
-using Microsoft.Extensions.Configuration;
 
 namespace LogCorner.EduSync.Speech.WorkerService
 {

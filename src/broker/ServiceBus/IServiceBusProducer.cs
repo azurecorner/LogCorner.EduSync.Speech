@@ -4,5 +4,4 @@
     {
         Task SendAsync(string topic, string @event);
     }
-
 }

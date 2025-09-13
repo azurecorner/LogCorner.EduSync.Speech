@@ -47,7 +47,7 @@ namespace LogCorner.EduSync.Speech.Application.EventSourcing
             }
 
             IDictionary<string, string> headers = new Dictionary<string, string>();
-          //  _traceService.AddActivityToHeader(activity, headers, Propagator);
+            //  _traceService.AddActivityToHeader(activity, headers, Propagator);
 
             var serializedBody = _eventSerializer.SerializeEvent(@event);
 
@@ -70,7 +70,7 @@ namespace LogCorner.EduSync.Speech.Application.EventSourcing
             };
             // _traceService.SetActivityTags(activity, tags);
             //////////////////// await _resiliencyService.ExponentialExceptionRetry.ExecuteAsync(async () => await _eventPublisher.PublishAsync(Topics.Speech, jsonString));
-             await _eventPublisher.PublishAsync(Topics.Speech, jsonString);
+            await _eventPublisher.PublishAsync(Topics.Speech, jsonString);
         }
     }
 }

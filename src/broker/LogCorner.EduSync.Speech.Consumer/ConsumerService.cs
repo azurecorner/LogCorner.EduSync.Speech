@@ -5,12 +5,12 @@ namespace LogCorner.EduSync.Speech.Consumer;
 public class ConsumerService : IConsumerService
 {
     private readonly IServiceBusReceiver _serviceBus;
-  //  private readonly IKafkaClusterManager _clusterManager;
+    //  private readonly IKafkaClusterManager _clusterManager;
 
     public ConsumerService(IServiceBusReceiver serviceBus)
     {
         _serviceBus = serviceBus;
-      //  _clusterManager = clusterManager;
+        //  _clusterManager = clusterManager;
     }
 
     public async Task DoWorkAsync(CancellationToken stoppingToken)
