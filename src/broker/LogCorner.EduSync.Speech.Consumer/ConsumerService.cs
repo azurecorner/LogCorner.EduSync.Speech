@@ -5,22 +5,22 @@ namespace LogCorner.EduSync.Speech.Consumer;
 public class ConsumerService : IConsumerService
 {
     private readonly IServiceBusReceiver _serviceBus;
-    private readonly IKafkaClusterManager _clusterManager;
+  //  private readonly IKafkaClusterManager _clusterManager;
 
-    public ConsumerService(IServiceBusReceiver serviceBus, IKafkaClusterManager clusterManager)
+    public ConsumerService(IServiceBusReceiver serviceBus)
     {
         _serviceBus = serviceBus;
-        _clusterManager = clusterManager;
+      //  _clusterManager = clusterManager;
     }
 
     public async Task DoWorkAsync(CancellationToken stoppingToken)
     {
         var topics = new[] { "speech", "synchro" };
 
-        foreach (var topic in topics)
-        {
-            await _clusterManager.EnsureTopicExistAsync(topic);
-        }
+        //foreach (var topic in topics)
+        //{
+        //    await _clusterManager.EnsureTopicExistAsync(topic);
+        //}
 
         await _serviceBus.ReceiveAsync(topics, stoppingToken);
     }

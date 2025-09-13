@@ -46,7 +46,8 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
 
             services.AddSingleton<IServiceBusProducer, AzureServiceBus>();
-            
+            services.AddSingleton<IServiceBusReceiver, AzureServiceBus>();
+
         }
     }
 }
