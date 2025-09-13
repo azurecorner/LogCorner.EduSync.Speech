@@ -1,7 +1,7 @@
-﻿namespace LogCorner.EduSync.Speech.ServiceBus
-{
-    public interface IKafkaClusterManager
-    {
-        Task EnsureTopicExistAsync(string topicName);
-    }
-}
+﻿//namespace LogCorner.EduSync.Speech.ServiceBus
+//{
+//    public interface IKafkaClusterManager
+//    {
+//        Task EnsureTopicExistAsync(string topicName);
+//    }
+//}

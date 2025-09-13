@@ -1,11 +1,11 @@
 ﻿using LogCorner.EduSync.Speech.Application.Exceptions;
 using LogCorner.EduSync.Speech.Application.Interfaces;
+using LogCorner.EduSync.Speech.Application.UseCases;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Events;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.Domain.IRepository;
 using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
 using LogCorner.EduSync.Speech.Infrastructure;
-using OpenTelemetry.Context.Propagation;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -18,21 +18,21 @@ namespace LogCorner.EduSync.Speech.Application.EventSourcing
         private readonly IEventStoreRepository _eventStoreRepository;
         private readonly IEventSerializer _eventSerializer;
         private readonly IJsonSerializer _serializer;
-       // private readonly IEventPublisher _eventPublisher;
+        private readonly IEventPublisher _eventPublisher;
 
         //private readonly ITraceService _traceService;
         //private readonly IResiliencyService _resiliencyService;
         private static readonly ActivitySource Activity = new("command-api");
 
-        private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
+        //private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
         public EventSourcingHandler(IUnitOfWork unitOfWork, IEventStoreRepository eventStoreRepository,
-            IEventSerializer eventSerializer,/* IEventPublisher eventPublisher,*/ IJsonSerializer serializer/*, ITraceService traceService, IResiliencyService resiliencyService*/)
+            IEventSerializer eventSerializer, IEventPublisher eventPublisher, IJsonSerializer serializer/*, ITraceService traceService, IResiliencyService resiliencyService*/)
         {
             _unitOfWork = unitOfWork;
             _eventStoreRepository = eventStoreRepository;
             _eventSerializer = eventSerializer;
-          //  _eventPublisher = eventPublisher;
+            _eventPublisher = eventPublisher;
             _serializer = serializer;
             //_traceService = traceService;
             //_resiliencyService = resiliencyService;
@@ -68,8 +68,9 @@ namespace LogCorner.EduSync.Speech.Application.EventSourcing
                 {"@event.EventId", @event.EventId},
                 {"@event.Payload", serializedBody}
             };
-           // _traceService.SetActivityTags(activity, tags);
+            // _traceService.SetActivityTags(activity, tags);
             //////////////////// await _resiliencyService.ExponentialExceptionRetry.ExecuteAsync(async () => await _eventPublisher.PublishAsync(Topics.Speech, jsonString));
+             await _eventPublisher.PublishAsync(Topics.Speech, jsonString);
         }
     }
 }

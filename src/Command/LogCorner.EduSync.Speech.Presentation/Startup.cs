@@ -8,7 +8,8 @@ using LogCorner.EduSync.Speech.Domain.IRepository;
 using LogCorner.EduSync.Speech.Domain.SpeechAggregate;
 using LogCorner.EduSync.Speech.Infrastructure;
 using LogCorner.EduSync.Speech.Presentation.Exceptions;
-using LogCorner.EduSync.Speech.Resiliency;
+using LogCorner.EduSync.Speech.Producer;
+using LogCorner.EduSync.Speech.ServiceBus;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -56,8 +57,8 @@ namespace LogCorner.EduSync.Speech.Presentation
             services.AddTransient<IDomainEventRebuilder, DomainEventRebuilder>();
             services.AddTransient<IJsonProvider, JsonDotNetProvider>();
 
-            // services.AddProducer("localhost:9092", Configuration);
-          //  services.AddScoped<IEventPublisher, EventPublisher>();
+             services.AddProducer("localhost:9092", Configuration);
+           services.AddScoped<IEventPublisher, EventPublisher>();
             services.AddSharedKernel();
 
             services.AddCors(options =>
@@ -73,9 +74,9 @@ namespace LogCorner.EduSync.Speech.Presentation
             services.AddCustomAuthentication(Configuration);
 
             services.AddCustomSwagger(Configuration);
-            services.AddResiliencyServices();
+            // services.AddResiliencyServices();
             // services.AddOpenTelemetry(Configuration);
-
+            services.AddServiceBus();
             services.AddControllers();
         }
 

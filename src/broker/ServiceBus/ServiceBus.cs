@@ -23,4 +23,7 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             await _serviceBusProvider.ReceiveAsync(topics, stoppingToken);
         }
     }
+
+
+
 }

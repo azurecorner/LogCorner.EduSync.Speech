@@ -69,17 +69,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
-    <PackageReference Include="Azure.Identity" Version="1.15.0" />
-    <PackageReference Include="LogCorner.EduSync.Speech.Resiliency" Version="3.0.0" />
-    <PackageReference Include="LogCorner.EduSync.Speech.Telemetry" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Connections.Client" Version="9.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.76.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="3.14.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
+    <PackageReference Include="Azure.Identity" Version="1.16.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Connections.Client" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.77.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.14.1" />
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.4" />
@@ -88,24 +84,11 @@
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
-    <!--OPEN TELMETRY-->
-    <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.0.0-rc7" />
-    <!-- OpenTelemetry API & SDK -->
-    <PackageReference Include="OpenTelemetry.Api" Version="1.12.0" />
-    <PackageReference Include="OpenTelemetry" Version="1.12.0" />
-    <!-- OpenTelemetry instrumentation packages -->
-    <!-- OpenTelemetry OTLP exporter.
-         Note that logs support is currently in a separate package because the OTLP log data model is still deemed beta -->
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
-    <!-- Misc .NET specific SDK extensions -->
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.12.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.12.0" />
-    <!--KAFKA-->
-    <PackageReference Include="Confluent.Kafka" Version="2.11.1" />
+    
     <PackageReference Include="MediatR" Version="13.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\broker\ServiceBus\LogCorner.EduSync.Speech.ServiceBus.csproj" />
     <ProjectReference Include="..\LogCorner.EduSync.Speech.Application\LogCorner.EduSync.Speech.Application.csproj" />
   </ItemGroup>
   <ItemGroup>
