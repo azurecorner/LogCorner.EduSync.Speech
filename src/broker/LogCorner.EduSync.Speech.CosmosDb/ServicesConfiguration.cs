@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Logistic.Infrastructure.cosmos
+namespace LogCorner.EduSync.Speech.CosmosDb
 {
-    public static class InfrastructureCosmosDependencies
+    public static class ServicesConfiguration
     {
         public static IServiceCollection RegisterCosmosDependencies(this IServiceCollection services, IConfiguration Configuration)
         {

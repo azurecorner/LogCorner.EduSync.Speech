@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LogCorner.EduSync.Speech.CosmosDb\LogCorner.EduSync.Speech.CosmosDb.csproj" />
+    <ProjectReference Include="..\LogCorner.EduSync.Speech.Projection\LogCorner.EduSync.Speech.Repository.csproj" />
     <ProjectReference Include="..\ServiceBus\LogCorner.EduSync.Speech.ServiceBus.csproj" />
   </ItemGroup>
 </Project>

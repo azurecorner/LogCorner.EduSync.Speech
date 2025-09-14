@@ -2,5 +2,6 @@
 
 public interface IServiceBusReceiver
 {
-    Task ReceiveAsync(string[] topics, CancellationToken stoppingToken, bool runAlways = true);
+    Task<List<T>> ReceiveAsync<T>(string[] topics, CancellationToken stoppingToken, bool runAlways = true);
+
 }

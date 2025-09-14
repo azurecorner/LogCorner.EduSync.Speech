@@ -1,4 +1,4 @@
-﻿namespace Logistic.Infrastructure.cosmos
+﻿namespace LogCorner.EduSync.Speech.CosmosDb
 {
     public interface IDataService
     {

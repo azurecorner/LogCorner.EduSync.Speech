@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 
-namespace Logistic.Infrastructure.cosmos
+namespace LogCorner.EduSync.Speech.CosmosDb
 {
     public sealed class DataService(CosmosClient client, IConfiguration configurationOptions) : IDataService
     {
@@ -19,7 +19,7 @@ namespace Logistic.Infrastructure.cosmos
                 // Ensure the container exists
                 ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(
                     id: ContainerName,
-                    partitionKeyPath: "/Client"
+                    partitionKeyPath: "/id"
                 );
 
                 Container container = database.GetContainer(ContainerName);
