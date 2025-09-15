@@ -16,8 +16,8 @@
     <Title>The Speech Micro Service Command Shared Kernel</Title>
     <Company>Gora LEYE</Company>
     <Description>The Speech Micro Service Command Shared kernel contains a set of tools to serialize and deserialize events</Description>
-    <PackageIcon>logcorner.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon></PackageIcon>
+    <PackageReadmeFile></PackageReadmeFile>
     <PackageTags>cqrs;event driven;serialization;</PackageTags>
     <PackageReleaseNotes>update package metadata</PackageReleaseNotes>
   </PropertyGroup>
@@ -25,14 +25,5 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="logcorner.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Update="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+ 
 </Project>
