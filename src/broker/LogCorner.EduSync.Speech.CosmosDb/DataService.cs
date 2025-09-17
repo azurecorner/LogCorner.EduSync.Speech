@@ -12,35 +12,35 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 
         public async Task CreateAsync<T>(Func<string, Task> writeOutputAsync, T item, string partitionKeyValue)
         {
-            try
-            {
-                Database database = client.GetDatabase(databaseName);
+            //try
+            //{
+            Database database = client.GetDatabase(databaseName);
 
-                // Ensure the container exists
-                ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(
-                    id: ContainerName,
-                    partitionKeyPath: "/id"
-                );
+            // Ensure the container exists
+            ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(
+                id: ContainerName,
+                partitionKeyPath: "/id"
+            );
 
-                Container container = database.GetContainer(ContainerName);
+            Container container = database.GetContainer(ContainerName);
 
-                // Upsert item with partition key
-                ItemResponse<T> response = await container.UpsertItemAsync(
-                    item: item,
-                    partitionKey: new PartitionKey(partitionKeyValue)
-                );
+            // Upsert item with partition key
+            ItemResponse<T> response = await container.UpsertItemAsync(
+                item: item,
+                partitionKey: new PartitionKey(partitionKeyValue)
+            );
 
-                // Logging
-                await writeOutputAsync($"Upserted item ID: {response.Resource}");
-                await writeOutputAsync($"Status code: {response.StatusCode}");
-                await writeOutputAsync($"Request charge: {response.RequestCharge:0.00}");
-                await writeOutputAsync($"Status Code: {response.ActivityId}");
-                Console.WriteLine("DataService::CreateAsync => successfull ");
-            }
-            catch (Exception ex)
-            {
-                await writeOutputAsync($"Error: {ex.Message}");
-            }
+            // Logging
+            await writeOutputAsync($"Upserted item ID: {response.Resource}");
+            await writeOutputAsync($"Status code: {response.StatusCode}");
+            await writeOutputAsync($"Request charge: {response.RequestCharge:0.00}");
+            await writeOutputAsync($"Status Code: {response.ActivityId}");
+            Console.WriteLine("DataService::CreateAsync => successfull ");
+            //}
+            //catch (Exception ex)
+            //{
+            //    await writeOutputAsync($"Error: {ex.Message}");
+            //}
         }
 
         public async Task<T> ReadAsync<T>(Func<string, Task> writeOutputAync, string id, string partitionKey)

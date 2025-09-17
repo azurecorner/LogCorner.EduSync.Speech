@@ -1,12 +1,9 @@
 ﻿using Azure.Core;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
-using LogCorner.EduSync.Speech.Command.SharedKernel.Events;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
-using LogCorner.EduSync.Speech.ServiceBus.Mediator;
 using Microsoft.Extensions.Configuration;
 using System.Net.Mime;
-using System.Text.Json;
 
 namespace LogCorner.EduSync.Speech.ServiceBus
 {
@@ -35,7 +32,7 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
         public IConfiguration Configuration { get; }
 
-        public AzureServiceBus(IEventSerializer eventSerializer, IJsonSerializer jsonSerializer,IConfiguration configuration)
+        public AzureServiceBus(IEventSerializer eventSerializer, IJsonSerializer jsonSerializer, IConfiguration configuration)
         {
             //_eventSerializer = eventSerializer;
             _jsonSerializer = jsonSerializer;
@@ -185,15 +182,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
                     // var message = JsonSerializer.Deserialize<T>(messageBody);
                     var message = _jsonSerializer.Deserialize<T>(messageBody);
 
-                    /////////////////////////
-
-                    //var eventStore = _jsonSerializer.Deserialize<EventStore>(messageBody);
-                    //var @event = _eventSerializer.DeserializeEvent<Event>(eventStore.PayLoad, eventStore.TypeName);
-
-                    //var projection = Invoker.CreateInstanceOfProjection<SpeechProjection>();
-                    //projection.Project(@event);
-
-                    ////////////////////////
                     if (message != null)
                     {
                         messages.Add(message);  // Add the deserialized message to the list

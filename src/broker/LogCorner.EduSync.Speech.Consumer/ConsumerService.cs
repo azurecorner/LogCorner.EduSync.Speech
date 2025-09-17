@@ -2,8 +2,8 @@
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.CosmosDb;
 using LogCorner.EduSync.Speech.Projection;
+using LogCorner.EduSync.Speech.Repository;
 using LogCorner.EduSync.Speech.ServiceBus;
-using Microsoft.Azure.Amqp;
 using Microsoft.Extensions.Logging;
 
 namespace LogCorner.EduSync.Speech.Consumer;
@@ -17,7 +17,7 @@ public class ConsumerService : IConsumerService
     private readonly IEventSerializer _eventSerializer;
     private readonly IJsonSerializer _jsonSerializer;
 
-    public ConsumerService(IServiceBusReceiver serviceBus, ILogger<ConsumerService> logger,  IDataService dataService, IEventSerializer eventSerializer)
+    public ConsumerService(IServiceBusReceiver serviceBus, ILogger<ConsumerService> logger, IDataService dataService, IEventSerializer eventSerializer)
     {
         _serviceBus = serviceBus;
         _logger = logger;
@@ -38,11 +38,19 @@ public class ConsumerService : IConsumerService
             var projection = Invoker.CreateInstanceOfProjection<SpeechProjection>();
             projection.Project(@event);
 
+            var speech = Mapper.ToSpeech(projection);
+
+            if (speech == null)
+            {
+                _logger.LogWarning("Mapper.ToSpeech returned null for projection");
+                return;
+            }
+
             // Process the delivery message (passing it to your data service)
-            await _dataService.CreateAsync<SpeechProjection>(async (message) =>
+            await _dataService.CreateAsync<LogCorner.EduSync.Speech.Repository.Speech>(async (message) =>
             {
                 _logger.LogInformation("Processing message: {message}", message);
-            }, projection, projection.Id.ToString());
+            }, speech, speech.id);
         }
     }
 }
