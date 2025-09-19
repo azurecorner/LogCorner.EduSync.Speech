@@ -69,7 +69,7 @@ namespace LogCorner.EduSync.Speech.Projection
 
         public bool IsDeleted { get; private set; }
 
-        public SpeechProjectionTest( Guid id, string title, string description, string url, SpeechTypeEnum type, long version, bool isDeleted)
+        public SpeechProjectionTest(Guid id, string title, string description, string url, SpeechTypeEnum type, long version, bool isDeleted)
         {
             Id = id;
             Title = title;
@@ -79,6 +79,5 @@ namespace LogCorner.EduSync.Speech.Projection
             IsDeleted = isDeleted;
             Version = version;
         }
-        
     }
 }

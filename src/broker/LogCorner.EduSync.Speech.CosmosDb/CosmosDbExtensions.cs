@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogCorner.EduSync.Speech.CosmosDb
+﻿namespace LogCorner.EduSync.Speech.CosmosDb
 {
     using Microsoft.Azure.Cosmos;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
 
@@ -89,5 +82,4 @@ namespace LogCorner.EduSync.Speech.CosmosDb
             }
         }
     }
-
 }

@@ -1,6 +1,4 @@
-﻿using LogCorner.EduSync.Speech.Command.SharedKernel;
-using LogCorner.EduSync.Speech.Command.SharedKernel.Events;
-using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
+﻿using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.CosmosDb;
 using LogCorner.EduSync.Speech.Projection;
 using LogCorner.EduSync.Speech.Repository;
@@ -25,71 +23,20 @@ public class ConsumerService : IConsumerService
         _eventSerializer = eventSerializer;
     }
 
-    //public async Task DoWorkAsync(CancellationToken stoppingToken)
-    //{
-    //    var topics = new[] { "speech", "synchro" };
-
-    //    var result = await _serviceBus.ReceiveAsync<EventStore>(topics, stoppingToken);
-    //    foreach (var item in result)
-    //    {
-    //        _logger.LogInformation($"Received message - Id: {item.Id}, Client: {item.Name}, WeightKg: {item.AggregateId}, Status: {item.PayLoad}");
-    //        var @event = _eventSerializer.DeserializeEvent<Event>(item.PayLoad, item.TypeName);
-
-    //        var projection = Invoker.CreateInstanceOfProjection<SpeechProjection>();
-    //        projection.Project(@event);
-
-    //        var speech = Mapper.ToSpeech(projection);
-
-    //        if (speech == null)
-    //        {
-    //            _logger.LogWarning("Mapper.ToSpeech returned null for projection");
-    //            return;
-    //        }
-
-    //        // Process the delivery message (passing it to your data service)
-    //        await _dataService.CreateAsync<object>(async (message) =>
-    //        {
-    //            _logger.LogInformation("Processing message: {message}", message);
-    //        }, speech, projection.Id.ToString());
-    //    }
-    //}
-    public async Task DoWorkAsync(CancellationToken stoppingToken)
+    /*public async Task DoWorkAsync(CancellationToken stoppingToken)
     {
+        var topics = new[] { "speech", "synchro" };
 
+        var result = await _serviceBus.ReceiveAsync<EventStore>(topics, stoppingToken);
+        foreach (var item in result)
+        {
+            _logger.LogInformation($"Received message - Id: {item.Id}, Client: {item.Name}, WeightKg: {item.AggregateId}, Status: {item.PayLoad}");
+            var @event = _eventSerializer.DeserializeEvent<Event>(item.PayLoad, item.TypeName);
 
-        //// create a test projection with dummy data
-        //var projection = new SpeechProjectionTest(
-        //     Guid.NewGuid(),
-        //    "Test Title",
-        //    "Test Description",
-        //   "http://example.com/speech",
-        //   new SpeechTypeEnum(1, "Type 1"),
-        //   0,
-        //    false);
+            var projection = Invoker.CreateInstanceOfProjection<SpeechProjection>();
+            projection.Project(@event);
 
-
-        //// update projection title  with dummy data
-        //var projection = new SpeechProjectionTest(
-        //     new Guid("a47662d0-844a-46b0-9ae5-07b049c7d1dc"),
-        //    "Test Title Mod",
-        //    null,
-        //   null,
-        //   null,
-        //   0,
-        //    false);
-
-        // update projection description  with dummy data
-        var projection = new SpeechProjectionTest(
-             new Guid("a47662d0-844a-46b0-9ae5-07b049c7d1dc"),
-            null,
-            "Test Description MOD",
-           null,
-           null,
-           0,
-            false);
-
-
-        var speech = Mapper.ToSpeech(projection);
+            var speech = Mapper.ToSpeech(projection);
 
             if (speech == null)
             {
@@ -103,8 +50,62 @@ public class ConsumerService : IConsumerService
                 _logger.LogInformation("Processing message: {message}", message);
             }, speech, projection.Id.ToString());
         }
+    }*/
+
+    public async Task DoWorkAsync(CancellationToken stoppingToken)
+    {
+        // create a test projection with dummy data
+        //var projection = new SpeechProjectionTest(
+        //     Guid.NewGuid(),
+        //    "Test Title",
+        //    "Test Description",
+        //   "http://example.com/speech",
+        //   new SpeechTypeEnum(2, "Type 2"),
+        //   0,
+        //    false);
+
+        //// update projection title  with dummy data
+        //var projection = new SpeechProjectionTest(
+        //     new Guid("a47662d0-844a-46b0-9ae5-07b049c7d1dc"),
+        //    "Test Title Mod",
+        //    null,
+        //   null,
+        //   null,
+        //   0,
+        //    false);
+
+        //// update projection description  with dummy data
+        //var projection = new SpeechProjectionTest(
+        //     new Guid("addc157b-b127-4258-a9c1-bd7865a39c2f"),
+        //    null,
+        //    "Test Description MOD",
+        //   null,
+        //   null,
+        //   0,
+        //    false);
+
+        // update projection url  with dummy data
+        var projection = new SpeechProjectionTest(
+             new Guid("addc157b-b127-4258-a9c1-bd7865a39c2f"),
+            null,
+            null,
+           "http://mod.com/speech",
+           null,
+           0,
+            false);
+
+        var speech = Mapper.ToSpeech(projection);
+
+        if (speech == null)
+        {
+            _logger.LogWarning("Mapper.ToSpeech returned null for projection");
+            return;
+        }
+
+        // Process the delivery message (passing it to your data service)
+        await _dataService.CreateAsync<object>(async (message) =>
+        {
+            _logger.LogInformation("Processing message: {message}", message);
+        }, speech, projection.Id.ToString());
     }
-
-  
-
-    
+}

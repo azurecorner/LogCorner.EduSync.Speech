@@ -1,6 +1,6 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using LogCorner.EduSync.Speech.CosmosDb.Helpers;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
-using System.Reflection;
 
 namespace LogCorner.EduSync.Speech.CosmosDb
 {
@@ -11,44 +11,11 @@ namespace LogCorner.EduSync.Speech.CosmosDb
         private string databaseName = configurationOptions["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
         private string ContainerName = configurationOptions["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
 
-        /*public async Task CreateAsync<T>(Func<string, Task> writeOutputAsync, T item, string partitionKeyValue)
-        {
-            //try
-            //{
-            Database database = client.GetDatabase(databaseName);
-
-            // Ensure the container exists
-            ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(
-                id: ContainerName,
-                partitionKeyPath: "/id"
-            );
-
-            Container container = database.GetContainer(ContainerName);
-
-            // Upsert item with partition key
-            ItemResponse<T> response = await container.UpsertItemAsync(
-                item: item,
-                partitionKey: new PartitionKey(partitionKeyValue)
-            );
-
-            // Logging
-            await writeOutputAsync($"Upserted item ID: {response.Resource}");
-            await writeOutputAsync($"Status code: {response.StatusCode}");
-            await writeOutputAsync($"Request charge: {response.RequestCharge:0.00}");
-            await writeOutputAsync($"Status Code: {response.ActivityId}");
-            Console.WriteLine("DataService::CreateAsync => successfull ");
-            //}
-            //catch (Exception ex)
-            //{
-            //    await writeOutputAsync($"Error: {ex.Message}");
-            //}
-        }*/
-
         public async Task CreateAsync<T>(
     Func<string, Task> writeOutputAsync,
     T item,
     string partitionKeyValue
-) 
+)
         {
             Database database = client.GetDatabase(databaseName);
 
@@ -60,25 +27,14 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 
             Container container = database.GetContainer(ContainerName);
 
-            string id = null;
+            string id = string.Empty;
 
             // Case 1: Dictionary<string, object>
             if (item is IDictionary<string, object> dict)
             {
-                if (dict.TryGetValue("id", out var idValue))
+                if (dict.TryGetValue("id", out var idValue) && idValue != null)
                 {
-                    id = idValue?.ToString();
-                }
-            }
-            else
-            {
-                // Case 2: POCO with id/Id property
-                var idProp = typeof(T).GetProperty("id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)
-                           ?? typeof(T).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-
-                if (idProp != null)
-                {
-                    id = idProp.GetValue(item)?.ToString();
+                    id = idValue.ToString()!;
                 }
             }
 
@@ -87,71 +43,62 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 
             try
             {
-                // Try to read existing item
-                await container.ReadItemAsync<T>(id, new PartitionKey(partitionKeyValue));
+                var result = await container.TryReadItemAsync<T>(id, partitionKeyValue, writeOutputAsync);
 
-                // Build patch ops only for non-null values
-                var patchOps = new List<PatchOperation>();
-
-                if (item is IDictionary<string, object> dictItem)
+                if (result == null)
                 {
-                    foreach (var kvp in dictItem)
-                    {
-                        if (string.Equals(kvp.Key, "id", StringComparison.OrdinalIgnoreCase))
-                            continue;
-
-                        if (kvp.Value != null)
-                        {
-                            patchOps.Add(PatchOperation.Set($"/{kvp.Key}", kvp.Value));
-                        }
-                    }
-                }
-                //else
-                //{
-                //    foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-                //    {
-                //        if (string.Equals(prop.Name, "id", StringComparison.OrdinalIgnoreCase))
-                //            continue;
-
-                //        var value = prop.GetValue(item);
-                //        if (value != null)
-                //        {
-                //            patchOps.Add(PatchOperation.Set($"/{prop.Name}", value));
-                //        }
-                //    }
-                //}
-
-                if (patchOps.Count > 0)
-                {
-                    var patchResponse = await container.PatchItemAsync<T>(
-                        id,
-                        new PartitionKey(partitionKeyValue),
-                        patchOps
+                    // Insert full item
+                    ItemResponse<T> insertResponse = await container.CreateItemAsync(
+                        item,
+                        new PartitionKey(partitionKeyValue)
                     );
 
-                    await writeOutputAsync($"Patched item ID: {id}");
-                    await writeOutputAsync($"Status code: {patchResponse.StatusCode}");
-                    await writeOutputAsync($"Request charge: {patchResponse.RequestCharge:0.00}");
+                    await writeOutputAsync($"Inserted new item ID: {id}");
+                    await writeOutputAsync($"Status code: {insertResponse.StatusCode}");
+                    await writeOutputAsync($"Request charge: {insertResponse.RequestCharge:0.00}");
                 }
                 else
                 {
-                    await writeOutputAsync($"No non-null fields to update for item ID: {id}");
+                    // Build patch ops only for non-null values
+                    var patchOps = new List<PatchOperation>();
+
+                    if (item is IDictionary<string, object> dictItem)
+                    {
+                        foreach (var kvp in dictItem)
+                        {
+                            if (string.Equals(kvp.Key, "id", StringComparison.OrdinalIgnoreCase))
+                                continue;
+
+                            if (kvp.Value != null)
+                            {
+                                patchOps.Add(PatchOperation.Set($"/{kvp.Key}", kvp.Value));
+                            }
+                        }
+                    }
+
+                    if (patchOps.Count > 0)
+                    {
+                        var patchResponse = await container.PatchItemAsync<T>(
+                            id,
+                            new PartitionKey(partitionKeyValue),
+                            patchOps
+                        );
+
+                        await writeOutputAsync($"Patched item ID: {id}");
+                        await writeOutputAsync($"Status code: {patchResponse.StatusCode}");
+                        await writeOutputAsync($"Request charge: {patchResponse.RequestCharge:0.00}");
+                    }
+                    else
+                    {
+                        await writeOutputAsync($"No non-null fields to update for item ID: {id}");
+                    }
                 }
             }
-            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            catch (CosmosException ex)
             {
-                // Insert full item
-                ItemResponse<T> insertResponse = await container.CreateItemAsync(
-                    item,
-                    new PartitionKey(partitionKeyValue)
-                );
-
-                await writeOutputAsync($"Inserted new item ID: {id}");
-                await writeOutputAsync($"Status code: {insertResponse.StatusCode}");
-                await writeOutputAsync($"Request charge: {insertResponse.RequestCharge:0.00}");
+                await writeOutputAsync($"Error: {ex.Message}");
             }
         }
-
 
         public async Task<T> ReadAsync<T>(Func<string, Task> writeOutputAync, string id, string partitionKey)
         {
