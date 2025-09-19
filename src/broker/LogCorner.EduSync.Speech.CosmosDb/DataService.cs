@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace LogCorner.EduSync.Speech.CosmosDb
 {
@@ -10,7 +11,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
         private string databaseName = configurationOptions["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
         private string ContainerName = configurationOptions["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
 
-        public async Task CreateAsync<T>(Func<string, Task> writeOutputAsync, T item, string partitionKeyValue)
+        /*public async Task CreateAsync<T>(Func<string, Task> writeOutputAsync, T item, string partitionKeyValue)
         {
             //try
             //{
@@ -41,7 +42,116 @@ namespace LogCorner.EduSync.Speech.CosmosDb
             //{
             //    await writeOutputAsync($"Error: {ex.Message}");
             //}
+        }*/
+
+        public async Task CreateAsync<T>(
+    Func<string, Task> writeOutputAsync,
+    T item,
+    string partitionKeyValue
+) 
+        {
+            Database database = client.GetDatabase(databaseName);
+
+            // Ensure the container exists
+            ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(
+                id: ContainerName,
+                partitionKeyPath: "/id"
+            );
+
+            Container container = database.GetContainer(ContainerName);
+
+            string id = null;
+
+            // Case 1: Dictionary<string, object>
+            if (item is IDictionary<string, object> dict)
+            {
+                if (dict.TryGetValue("id", out var idValue))
+                {
+                    id = idValue?.ToString();
+                }
+            }
+            else
+            {
+                // Case 2: POCO with id/Id property
+                var idProp = typeof(T).GetProperty("id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)
+                           ?? typeof(T).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+
+                if (idProp != null)
+                {
+                    id = idProp.GetValue(item)?.ToString();
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(id))
+                throw new InvalidOperationException("Entity must have an 'id' property or dictionary key");
+
+            try
+            {
+                // Try to read existing item
+                await container.ReadItemAsync<T>(id, new PartitionKey(partitionKeyValue));
+
+                // Build patch ops only for non-null values
+                var patchOps = new List<PatchOperation>();
+
+                if (item is IDictionary<string, object> dictItem)
+                {
+                    foreach (var kvp in dictItem)
+                    {
+                        if (string.Equals(kvp.Key, "id", StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        if (kvp.Value != null)
+                        {
+                            patchOps.Add(PatchOperation.Set($"/{kvp.Key}", kvp.Value));
+                        }
+                    }
+                }
+                //else
+                //{
+                //    foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                //    {
+                //        if (string.Equals(prop.Name, "id", StringComparison.OrdinalIgnoreCase))
+                //            continue;
+
+                //        var value = prop.GetValue(item);
+                //        if (value != null)
+                //        {
+                //            patchOps.Add(PatchOperation.Set($"/{prop.Name}", value));
+                //        }
+                //    }
+                //}
+
+                if (patchOps.Count > 0)
+                {
+                    var patchResponse = await container.PatchItemAsync<T>(
+                        id,
+                        new PartitionKey(partitionKeyValue),
+                        patchOps
+                    );
+
+                    await writeOutputAsync($"Patched item ID: {id}");
+                    await writeOutputAsync($"Status code: {patchResponse.StatusCode}");
+                    await writeOutputAsync($"Request charge: {patchResponse.RequestCharge:0.00}");
+                }
+                else
+                {
+                    await writeOutputAsync($"No non-null fields to update for item ID: {id}");
+                }
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Insert full item
+                ItemResponse<T> insertResponse = await container.CreateItemAsync(
+                    item,
+                    new PartitionKey(partitionKeyValue)
+                );
+
+                await writeOutputAsync($"Inserted new item ID: {id}");
+                await writeOutputAsync($"Status code: {insertResponse.StatusCode}");
+                await writeOutputAsync($"Request charge: {insertResponse.RequestCharge:0.00}");
+            }
         }
+
 
         public async Task<T> ReadAsync<T>(Func<string, Task> writeOutputAync, string id, string partitionKey)
         {

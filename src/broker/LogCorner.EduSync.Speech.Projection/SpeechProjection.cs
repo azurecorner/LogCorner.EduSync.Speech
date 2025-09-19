@@ -56,4 +56,29 @@ namespace LogCorner.EduSync.Speech.Projection
             IsDeleted = ev.IsDeleted;
         }
     }
+
+    public class SpeechProjectionTest : Projection<Guid>
+    {
+        public string Title { get; private set; }
+
+        public string Url { get; private set; }
+        public string Description { get; private set; }
+        public SpeechTypeEnum Type { get; private set; }
+
+        public new long Version { get; private set; }
+
+        public bool IsDeleted { get; private set; }
+
+        public SpeechProjectionTest( Guid id, string title, string description, string url, SpeechTypeEnum type, long version, bool isDeleted)
+        {
+            Id = id;
+            Title = title;
+            Url = url;
+            Description = description;
+            Type = type;
+            IsDeleted = isDeleted;
+            Version = version;
+        }
+        
+    }
 }

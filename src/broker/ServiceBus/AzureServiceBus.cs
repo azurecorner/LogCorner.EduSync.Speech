@@ -66,8 +66,8 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             var AZURE_CLIENT_SECRET = Environment.GetEnvironmentVariable("AZURE_CLIENT_SECRET");
             Console.WriteLine($"*******************-AZURE_CLIENT_SECRET = {AZURE_CLIENT_SECRET}");
 
-            var token = await credential.GetTokenAsync(
-     new TokenRequestContext(new[] { "https://servicebus.azure.net/.default" }), CancellationToken.None);
+     //       var token = await credential.GetTokenAsync(
+     //new TokenRequestContext(new[] { "https://servicebus.azure.net/.default" }), CancellationToken.None);
 
             //Console.WriteLine($"*******************-Token acquired: {token.Token}");
 
