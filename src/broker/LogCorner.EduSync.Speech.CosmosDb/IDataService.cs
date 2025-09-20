@@ -10,6 +10,8 @@
 
         Task<List<T>> ReadAsync<T>(Func<string, Task> writeOutputAync);
 
+        Task DeleteAsync<T>( Func<string, Task> writeOutputAync,string id);
+
         string GetEndpoint();
     }
 }

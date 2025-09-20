@@ -86,13 +86,13 @@ public class ConsumerService : IConsumerService
 
         // update projection url  with dummy data
         var projection = new SpeechProjectionTest(
-             new Guid("addc157b-b127-4258-a9c1-bd7865a39c2f"),
+             new Guid("a47662d0-844a-46b0-9ae5-07b049c7d1dc"),
             null,
             null,
            "http://mod.com/speech",
            null,
            0,
-            false);
+            true);
 
         var speech = Mapper.ToSpeech(projection);
 
@@ -102,10 +102,21 @@ public class ConsumerService : IConsumerService
             return;
         }
 
-        // Process the delivery message (passing it to your data service)
-        await _dataService.CreateAsync<object>(async (message) =>
+        if (projection.IsDeleted == false)
         {
-            _logger.LogInformation("Processing message: {message}", message);
-        }, speech, projection.Id.ToString());
+            // Process the delivery message (passing it to your data service)
+            await _dataService.CreateAsync<object>(async (message) =>
+            {
+                _logger.LogInformation("Processing message: {message}", message);
+            }, speech, projection.Id.ToString());
+        }
+        else    {
+            await _dataService.DeleteAsync<object>(async (message) =>
+            {
+                _logger.LogInformation("Processing message: {message}", message);
+            },  projection.Id.ToString());
+
+
+        }
     }
 }

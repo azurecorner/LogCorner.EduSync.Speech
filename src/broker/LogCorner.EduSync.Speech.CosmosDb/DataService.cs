@@ -197,5 +197,35 @@ namespace LogCorner.EduSync.Speech.CosmosDb
                 throw;
             }
         }
+
+        public async Task DeleteAsync<T>( Func<string, Task> writeOutputAync,string id)
+        {
+            Database database = client.GetDatabase(databaseName);
+
+            Container container = database.GetContainer(ContainerName);
+
+            var result = await container.TryReadItemAsync<T>(id, id, writeOutputAync);
+
+            if(result == null)
+            {
+                await writeOutputAync($"Item with id '{id}' does not exist. No deletion performed.");
+                return;
+            }
+
+            var response = await container.DeleteItemAsync<T>(
+               id: id,
+                   partitionKey: new PartitionKey(id)
+               );
+            
+            if(response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                await writeOutputAync($"Item with id '{id}' deleted successfully.");
+            }
+            else
+            {
+                await writeOutputAync($"Failed to delete item with id '{id}'. Status code: {response.StatusCode}");
+            }
+
+        }
     }
 }
