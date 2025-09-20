@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>95e5e0b2-d0cb-4ec9-a5ca-134af4fd6bcb</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Logs\**" />
+    <Content Remove="Logs\**" />
+    <EmbeddedResource Remove="Logs\**" />
+    <None Remove="Logs\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LogCorner.EduSync.Speech.Resiliency" Version="2.0.5" />
+    <PackageReference Include="LogCorner.EduSync.Speech.Telemetry" Version="2.0.6" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.48.1" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />
+    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <!--SERILOG-->
+    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+    <!--OPEN TELMETRY-->
+    <!-- OpenTelemetry API & SDK -->
+    <!-- OpenTelemetry instrumentation packages -->
+    <!-- OpenTelemetry OTLP exporter.
+         Note that logs support is currently in a separate package because the OTLP log data model is still deemed beta -->
+    <!-- Misc .NET specific SDK extensions -->
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LogCorner.EduSync.Speech.Application\LogCorner.EduSync.Speech.Application.csproj" />
+    <ProjectReference Include="..\LogCorner.EduSync.Speech.ReadModel\LogCorner.EduSync.Speech.ReadModel.csproj" />
+  </ItemGroup>
+</Project>

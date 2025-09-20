@@ -1,4 +1,5 @@
-﻿using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
+﻿using LogCorner.EduSync.Speech.Command.SharedKernel;
+using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.CosmosDb;
 using LogCorner.EduSync.Speech.Projection;
 using LogCorner.EduSync.Speech.Repository;
@@ -55,14 +56,14 @@ public class ConsumerService : IConsumerService
     public async Task DoWorkAsync(CancellationToken stoppingToken)
     {
         // create a test projection with dummy data
-        //var projection = new SpeechProjectionTest(
-        //     Guid.NewGuid(),
-        //    "Test Title",
-        //    "Test Description",
-        //   "http://example.com/speech",
-        //   new SpeechTypeEnum(2, "Type 2"),
-        //   0,
-        //    false);
+        var projection = new SpeechProjectionTest(
+             Guid.NewGuid(),
+            "Test Title 3",
+            "Test Description 3",
+           "http://example.com/speech",
+           new SpeechTypeEnum(1, "Type 3"),
+           0,
+            false);
 
         //// update projection title  with dummy data
         //var projection = new SpeechProjectionTest(
@@ -85,14 +86,14 @@ public class ConsumerService : IConsumerService
         //    false);
 
         // update projection url  with dummy data
-        var projection = new SpeechProjectionTest(
-             new Guid("a47662d0-844a-46b0-9ae5-07b049c7d1dc"),
-            null,
-            null,
-           "http://mod.com/speech",
-           null,
-           0,
-            true);
+        //var projection = new SpeechProjectionTest(
+        //     new Guid("a47662d0-844a-46b0-9ae5-07b049c7d1dc"),
+        //    null,
+        //    null,
+        //   "http://mod.com/speech",
+        //   null,
+        //   0,
+        //    true);
 
         var speech = Mapper.ToSpeech(projection);
 
@@ -110,13 +111,12 @@ public class ConsumerService : IConsumerService
                 _logger.LogInformation("Processing message: {message}", message);
             }, speech, projection.Id.ToString());
         }
-        else    {
+        else
+        {
             await _dataService.DeleteAsync<object>(async (message) =>
             {
                 _logger.LogInformation("Processing message: {message}", message);
-            },  projection.Id.ToString());
-
-
+            }, projection.Id.ToString());
         }
     }
 }

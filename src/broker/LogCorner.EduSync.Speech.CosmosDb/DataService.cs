@@ -198,7 +198,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
             }
         }
 
-        public async Task DeleteAsync<T>( Func<string, Task> writeOutputAync,string id)
+        public async Task DeleteAsync<T>(Func<string, Task> writeOutputAync, string id)
         {
             Database database = client.GetDatabase(databaseName);
 
@@ -206,7 +206,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 
             var result = await container.TryReadItemAsync<T>(id, id, writeOutputAync);
 
-            if(result == null)
+            if (result == null)
             {
                 await writeOutputAync($"Item with id '{id}' does not exist. No deletion performed.");
                 return;
@@ -216,8 +216,8 @@ namespace LogCorner.EduSync.Speech.CosmosDb
                id: id,
                    partitionKey: new PartitionKey(id)
                );
-            
-            if(response.StatusCode == System.Net.HttpStatusCode.NoContent)
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
                 await writeOutputAync($"Item with id '{id}' deleted successfully.");
             }
@@ -225,7 +225,6 @@ namespace LogCorner.EduSync.Speech.CosmosDb
             {
                 await writeOutputAync($"Failed to delete item with id '{id}'. Status code: {response.StatusCode}");
             }
-
         }
     }
 }
