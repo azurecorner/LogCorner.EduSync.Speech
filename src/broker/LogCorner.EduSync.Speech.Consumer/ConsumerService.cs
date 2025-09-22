@@ -1,4 +1,5 @@
-﻿using LogCorner.EduSync.Speech.Command.SharedKernel;
+﻿using LogCorner.EduSync.Notification.Common.Hub;
+using LogCorner.EduSync.Speech.Command.SharedKernel;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.CosmosDb;
 using LogCorner.EduSync.Speech.Projection;
@@ -15,13 +16,15 @@ public class ConsumerService : IConsumerService
     private readonly IDataService _dataService;
 
     private readonly IEventSerializer _eventSerializer;
+    private readonly ISignalRPublisher _publisher;
 
-    public ConsumerService(IServiceBusReceiver serviceBus, ILogger<ConsumerService> logger, IDataService dataService, IEventSerializer eventSerializer)
+    public ConsumerService(IServiceBusReceiver serviceBus, ILogger<ConsumerService> logger, IDataService dataService, IEventSerializer eventSerializer, ISignalRPublisher signalRPublisher)
     {
         _serviceBus = serviceBus;
         _logger = logger;
         _dataService = dataService;
         _eventSerializer = eventSerializer;
+        _publisher = signalRPublisher;
     }
 
     /*public async Task DoWorkAsync(CancellationToken stoppingToken)
@@ -58,10 +61,10 @@ public class ConsumerService : IConsumerService
         // create a test projection with dummy data
         var projection = new SpeechProjectionTest(
              Guid.NewGuid(),
-            "Test Title 3",
-            "Test Description 3",
-           "http://example.com/speech",
-           new SpeechTypeEnum(1, "Type 3"),
+            "Test Title 4",
+            "Test Description 4",
+           "http://example_4.com/speech",
+           new SpeechTypeEnum(4, "Type 4"),
            0,
             false);
 
@@ -110,6 +113,8 @@ public class ConsumerService : IConsumerService
             {
                 _logger.LogInformation("Processing message: {message}", message);
             }, speech, projection.Id.ToString());
+
+           
         }
         else
         {
@@ -118,5 +123,6 @@ public class ConsumerService : IConsumerService
                 _logger.LogInformation("Processing message: {message}", message);
             }, projection.Id.ToString());
         }
+        await _publisher.PublishAsync("ReadModelAcknowledged", null, projection);
     }
 }

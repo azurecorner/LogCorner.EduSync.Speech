@@ -1,8 +1,13 @@
+
+using LogCorner.EduSync.Notification.Common;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient(); // register IHttpClientFactory
+
+var notificationHubEndpoint = builder.Configuration["HubUrl"];
+builder.Services.AddSignalRServices($"{notificationHubEndpoint}?clientName=LogCorner.EduSync.Speech.Consumer");
 
 var app = builder.Build();
 

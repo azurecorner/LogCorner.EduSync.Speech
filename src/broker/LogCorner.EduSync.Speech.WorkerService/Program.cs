@@ -1,7 +1,9 @@
+using LogCorner.EduSync.Notification.Common;
 using LogCorner.EduSync.Speech.Consumer;
 using LogCorner.EduSync.Speech.CosmosDb;
 using LogCorner.EduSync.Speech.ServiceBus;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Configuration;
 using System.Configuration;
 
 namespace LogCorner.EduSync.Speech.WorkerService
@@ -18,6 +20,9 @@ namespace LogCorner.EduSync.Speech.WorkerService
             builder.Services.AddHostedService<Worker>();
             builder.Services.AddConsumer();
             builder.Services.AddServiceBus();
+
+            var notificationHubEndpoint = builder.Configuration["HubUrl"];
+            builder.Services.AddSignalRServices($"{notificationHubEndpoint}?clientName=LogCorner.EduSync.Speech.Consumer");
 
             var connectionString = builder.Configuration["AzureCosmosDB:ConnectionString"];
             builder.Services.AddSingleton<CosmosClient>((serviceProvider) =>
