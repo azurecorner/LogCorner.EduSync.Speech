@@ -1,7 +1,6 @@
 ﻿using LogCorner.EduSync.Notification.Common.Hub;
 using LogCorner.EduSync.Speech.Presentation.Models; // Your Speech model
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace LogCorner.EduSync.Speech.Presentation.Controllers
 {
@@ -13,7 +12,6 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         private readonly ISignalRNotifier? _notifier; // Make nullable to avoid CS8602
         private readonly ISignalRPublisher? _publisher;
 
-    
         public SpeechController(IHttpClientFactory httpClientFactory, ISignalRNotifier notifier, ISignalRPublisher publisher)
         {
             _httpClientFactory = httpClientFactory;
@@ -36,11 +34,10 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             return PartialView("_SpeechListPartial", speeches); // partial from Shared folder
         }
 
-
         // GET: SpeechController
         public async Task<IActionResult> Index()
         {
-          // await DoWorkAsync(); // ensure subscription/publish happens
+            // await DoWorkAsync(); // ensure subscription/publish happens
             var client = _httpClientFactory.CreateClient();
             var speeches = await client.GetFromJsonAsync<List<SpeechModel>>(ApiBaseUrl);
             return View(speeches); // Pass list to the view
@@ -76,7 +73,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
                 _notifier.ReceivedOnPublishToTopic += async (topic, header, @event) =>
                 {
                     // Instead of RedirectToAction, broadcast update to clients
-                    if (_publisher != null  && topic == "ReadModelAcknowledged") 
+                    if (_publisher != null && topic == "ReadModelAcknowledged")
                     {
                         // Create headers (could reuse existing, or keep minimal)
                         var headers = new Dictionary<string, string>

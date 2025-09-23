@@ -7,8 +7,8 @@
             <th>Title</th>
             <th>Description</th>
             <th>Url</th>
-            <th>TypeId</th>
-            <th>Version</th>
+            <th>Type</th>
+        
             <th></th>
         </tr>
     </thead>
@@ -20,8 +20,8 @@
                 <td>@item.Title</td>
                 <td>@item.Description</td>
                 <td>@item.Url</td>
-                <td>@item.TypeId</td>
-                <td>@item.Version</td>
+                <td>@item.Type.Name</td>
+               
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

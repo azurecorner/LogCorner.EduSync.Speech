@@ -13,7 +13,6 @@ namespace LogCorner.EduSync.Speech.Presentation.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }
-        public int? TypeId { get; set; }
         public SpeechType Type { get; set; }
         public int Version { get; set; }
     }
