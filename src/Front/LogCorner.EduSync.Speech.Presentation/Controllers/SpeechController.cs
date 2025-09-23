@@ -12,7 +12,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         private readonly ISignalRNotifier? _notifier; // Make nullable to avoid CS8602
         private readonly ISignalRPublisher? _publisher;
 
-        public SpeechController(IHttpClientFactory httpClientFactory, ISignalRNotifier notifier , ISignalRPublisher publisher )
+        public SpeechController(IHttpClientFactory httpClientFactory, ISignalRNotifier notifier, ISignalRPublisher publisher)
         {
             _httpClientFactory = httpClientFactory;
             _notifier = notifier;
@@ -51,14 +51,21 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
 
         public async Task DoWorkAsync()
         {
-            await _publisher.SubscribeAsync("Speech");
-
-            await _notifier.OnPublish("Speech");
-
-            _notifier.ReceivedOnPublishToTopic += async (topic,header, @event) =>
+            if (_publisher != null)
             {
-                //await _serviceBus.SendAsync(Topics.Speech, @event);
-            };
+                await _publisher.SubscribeAsync("Speech");
+            }
+
+            if (_notifier != null)
+            {
+                await _notifier.OnPublish("Speech");
+
+                _notifier.ReceivedOnPublishToTopic += async (topic, header, @event) =>
+                {
+                    // Refresh the list when a new event is received
+                    RedirectToAction("Index");
+                };
+            }
         }
     }
 }

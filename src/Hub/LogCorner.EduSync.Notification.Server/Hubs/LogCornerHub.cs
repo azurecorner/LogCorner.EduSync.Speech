@@ -13,16 +13,12 @@ namespace LogCorner.EduSync.Notification.Server.Hubs
 {
     public class LogCornerHub<T> : Hub<IHubNotifier<T>>, IHubInvoker<T> where T : class
     {
-       
-    
         private Client Client => GetClientName();
 
-     
         private readonly ILogger<LogCornerHub<T>> _logger;
 
-        public LogCornerHub( ILogger<LogCornerHub<T>> logger)
+        public LogCornerHub(ILogger<LogCornerHub<T>> logger)
         {
-
             _logger = logger;
         }
 
@@ -36,7 +32,6 @@ namespace LogCorner.EduSync.Notification.Server.Hubs
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-
             _logger.LogInformation($"OnDisconnectedAsync :: clientId : {Context.ConnectionId}, clientName :{Client.ClientName}, User : {Client.ConnectedUser}  - {DateTime.UtcNow:MM/dd/yyyy hh:mm:ss.fff tt}");
 
             return base.OnDisconnectedAsync(exception);
@@ -57,9 +52,6 @@ namespace LogCorner.EduSync.Notification.Server.Hubs
 
         public async Task PublishToTopic(string topic, IDictionary<string, string> headers, T payload)
         {
-            
-
-       
             await Clients.All.OnPublish(topic, headers, payload);
             _logger.LogInformation(
                 $"PublishToTopic :: topic : {topic} , payload : {payload}, clientId : {Context.ConnectionId}, clientName :{Client.ClientName}, User : {Client.ConnectedUser}  - {DateTime.UtcNow:MM/dd/yyyy hh:mm:ss.fff tt}");

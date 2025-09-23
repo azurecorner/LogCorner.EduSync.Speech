@@ -6,7 +6,7 @@ namespace LogCorner.EduSync.Notification.Common.Hub
 {
     public interface ISignalRNotifier
     {
-        event Action<string, IDictionary<string, string> , object> ReceivedOnPublishToTopic;
+        event Action<string, IDictionary<string, string>, object> ReceivedOnPublishToTopic;
 
         Task StartAsync();
 

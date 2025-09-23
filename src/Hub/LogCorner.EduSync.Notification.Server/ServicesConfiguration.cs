@@ -7,7 +7,6 @@ namespace LogCorner.EduSync.Notification.Server
     {
         public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-
         }
     }
 }

@@ -3,7 +3,6 @@ using LogCorner.EduSync.Speech.Consumer;
 using LogCorner.EduSync.Speech.CosmosDb;
 using LogCorner.EduSync.Speech.ServiceBus;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Configuration;
 using System.Configuration;
 
 namespace LogCorner.EduSync.Speech.WorkerService

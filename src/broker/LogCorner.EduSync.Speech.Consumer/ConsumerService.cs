@@ -6,6 +6,7 @@ using LogCorner.EduSync.Speech.Projection;
 using LogCorner.EduSync.Speech.Repository;
 using LogCorner.EduSync.Speech.ServiceBus;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace LogCorner.EduSync.Speech.Consumer;
 
@@ -113,8 +114,6 @@ public class ConsumerService : IConsumerService
             {
                 _logger.LogInformation("Processing message: {message}", message);
             }, speech, projection.Id.ToString());
-
-           
         }
         else
         {
@@ -123,6 +122,7 @@ public class ConsumerService : IConsumerService
                 _logger.LogInformation("Processing message: {message}", message);
             }, projection.Id.ToString());
         }
-        await _publisher.PublishAsync("ReadModelAcknowledged", null, projection);
+        string jsonString = JsonSerializer.Serialize(projection);
+        await _publisher.PublishAsync("ReadModelAcknowledged", null, jsonString);
     }
 }

@@ -1,5 +1,5 @@
-
 using LogCorner.EduSync.Notification.Common;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

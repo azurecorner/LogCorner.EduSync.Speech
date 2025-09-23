@@ -1,6 +1,4 @@
 ﻿using LogCorner.EduSync.Notification.Common.Hub;
-using LogCorner.EduSync.Speech.Command.SharedKernel;
-using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LogCorner.EduSync.Notification.Common
@@ -9,7 +7,6 @@ namespace LogCorner.EduSync.Notification.Common
     {
         public static void AddSignalRServices(this IServiceCollection services, string endpoint)
         {
-            services.AddSharedKernel();
             services.AddSingleton<ISignalRNotifier, SignalRNotifier>();
             services.AddSingleton<ISignalRPublisher, SignalRPublisher>();
 
