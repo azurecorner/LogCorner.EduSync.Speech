@@ -1,66 +1,39 @@
 ﻿@model IEnumerable<LogCorner.EduSync.Speech.Presentation.Models.SpeechModel>
 
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+<h1>Speech List</h1>
 
-<h1>Index</h1>
+<div id="speech-list">
+    @await Html.PartialAsync("_SpeechListPartial", Model)
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Url)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TypeId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Version)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Url)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TypeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Version)
-            </td>
-            <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+    <script>
+        console.log("SignalR script loaded");
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:5001/logcornerhub?clientName=LogCorner.EduSync.Speech.Front") // your hub endpoint
+            .build();
+
+        // Listen to all published events
+        connection.on("OnPublish", function(topic, header, payload) {
+            console.log("OnPublish received:", topic, header, payload);
+
+            // Only handle ReadModelAcknowledged
+            if (topic === "ReadModelAcknowledged") {
+                console.log("ReadModelAcknowledged event received, refreshing table...");
+
+                // Refresh table via partial view
+                fetch("/Speech/IndexPartial")
+                    .then(r => r.text())
+                    .then(html => {
+                        document.getElementById("speech-list").innerHTML = html;
+                    });
+            }
+        });
+
+        connection.start()
+            .then(() => console.log("SignalR connected, listening for ReadModelAcknowledged"))
+            .catch(err => console.error(err.toString()));
+    </script>
 }
-    </tbody>
-</table>

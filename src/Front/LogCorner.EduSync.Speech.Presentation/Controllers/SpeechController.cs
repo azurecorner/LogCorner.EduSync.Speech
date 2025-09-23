@@ -1,6 +1,7 @@
 ﻿using LogCorner.EduSync.Notification.Common.Hub;
 using LogCorner.EduSync.Speech.Presentation.Models; // Your Speech model
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace LogCorner.EduSync.Speech.Presentation.Controllers
 {
@@ -12,6 +13,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         private readonly ISignalRNotifier? _notifier; // Make nullable to avoid CS8602
         private readonly ISignalRPublisher? _publisher;
 
+    
         public SpeechController(IHttpClientFactory httpClientFactory, ISignalRNotifier notifier, ISignalRPublisher publisher)
         {
             _httpClientFactory = httpClientFactory;
@@ -25,13 +27,24 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             }
         }
 
+        // Returns the partial table only
+        [HttpGet]
+        public async Task<IActionResult> IndexPartial()
+        {
+            var client = _httpClientFactory.CreateClient();
+            var speeches = await client.GetFromJsonAsync<List<SpeechModel>>(ApiBaseUrl);
+            return PartialView("_SpeechListPartial", speeches); // partial from Shared folder
+        }
+
+
         // GET: SpeechController
         public async Task<IActionResult> Index()
         {
-            await DoWorkAsync(); // ensure subscription/publish happens
+          // await DoWorkAsync(); // ensure subscription/publish happens
             var client = _httpClientFactory.CreateClient();
             var speeches = await client.GetFromJsonAsync<List<SpeechModel>>(ApiBaseUrl);
             return View(speeches); // Pass list to the view
+            //return PartialView("_SpeechListPartial", speeches);
         }
 
         // GET: SpeechController/Details/5
@@ -49,21 +62,31 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             return View(speech); // Pass single speech to view
         }
 
-        public async Task DoWorkAsync()
+        private async Task DoWorkAsync()
         {
             if (_publisher != null)
             {
-                await _publisher.SubscribeAsync("Speech");
+                await _publisher.SubscribeAsync("ReadModelAcknowledged");
             }
 
             if (_notifier != null)
             {
-                await _notifier.OnPublish("Speech");
+                await _notifier.OnPublish("ReadModelAcknowledged");
 
                 _notifier.ReceivedOnPublishToTopic += async (topic, header, @event) =>
                 {
-                    // Refresh the list when a new event is received
-                    RedirectToAction("Index");
+                    // Instead of RedirectToAction, broadcast update to clients
+                    if (_publisher != null  && topic == "ReadModelAcknowledged") 
+                    {
+                        // Create headers (could reuse existing, or keep minimal)
+                        var headers = new Dictionary<string, string>
+                        {
+                            { "source", "SpeechController" },
+                            { "eventType", "SpeechUpdated" }
+                        };
+
+                        await _publisher.PublishAsync("SpeechUpdated", headers, @event);
+                    }
                 };
             }
         }

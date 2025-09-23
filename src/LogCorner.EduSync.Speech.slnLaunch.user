@@ -3,7 +3,7 @@
     "Name": "New Profile",
     "Projects": [
       {
-        "Path": "Command\\LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+        "Path": "Hub\\LogCorner.EduSync.Notification.Server\\LogCorner.EduSync.Notification.Server.csproj",
         "Action": "Start"
       },
       {
