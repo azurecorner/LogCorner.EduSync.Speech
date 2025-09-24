@@ -213,24 +213,62 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             return View(model);
         }
 
-        // GET: HomeController1/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Speech/Delete/{id}
+        public async Task<IActionResult> Delete(Guid id)
         {
-            return View();
+            var client = _httpClientFactory.CreateClient();
+
+            // Here, you probably need to call your query API to fetch the speech version
+            var speech = _speeches.SingleOrDefault(s => s.Id == id.ToString());
+            if (speech == null)
+            {
+                _logger.LogInformation("Speech not found with id: {Id}", id);
+                return NotFound();
+            }
+
+            var model = new SpeechModelForDelete
+            {
+                Id = Guid.Parse(speech.Id),
+                Version = speech.Version
+            };
+
+            return View(model); // pass delete model to confirmation view
         }
 
-        // POST: HomeController1/Delete/5
-        [HttpPost]
+        // POST: Speech/Delete/{id}
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(SpeechModelForDelete model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var client = _httpClientFactory.CreateClient();
+
+                var request = new HttpRequestMessage(HttpMethod.Delete, $"{commandApiBaseUrl}")
+                {
+                    Content = JsonContent.Create(model) // includes Id + Version in body
+                };
+
+                var response = await client.SendAsync(request);
+
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Deleted speech with id: {Id}", model.Id);
+                    return RedirectToAction(nameof(Index));
+                }
+
+                _logger.LogError("Failed to delete speech with id: {Id}. Status Code: {StatusCode}",
+                                 model.Id, response.StatusCode);
+
+                ModelState.AddModelError("", "Unable to delete speech.");
+                return View(model);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                _logger.LogError(ex, "Exception when deleting speech with id: {Id}", model.Id);
+                return View(model);
             }
         }
 
