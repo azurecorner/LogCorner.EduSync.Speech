@@ -1,5 +1,6 @@
 ﻿using LogCorner.EduSync.Notification.Common.Hub;
 using LogCorner.EduSync.Speech.Command.SharedKernel;
+using LogCorner.EduSync.Speech.Command.SharedKernel.Events;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.CosmosDb;
 using LogCorner.EduSync.Speech.Projection;
@@ -28,7 +29,7 @@ public class ConsumerService : IConsumerService
         _publisher = signalRPublisher;
     }
 
-    /*public async Task DoWorkAsync(CancellationToken stoppingToken)
+    public async Task DoWorkAsync(CancellationToken stoppingToken)
     {
         var topics = new[] { "speech", "synchro" };
 
@@ -49,15 +50,33 @@ public class ConsumerService : IConsumerService
                 return;
             }
 
-            // Process the delivery message (passing it to your data service)
-            await _dataService.CreateAsync<object>(async (message) =>
-            {
-                _logger.LogInformation("Processing message: {message}", message);
-            }, speech, projection.Id.ToString());
-        }
-    }*/
+            /* // Process the delivery message (passing it to your data service)
+             await _dataService.CreateAsync<object>(async (message) =>
+             {
+                 _logger.LogInformation("Processing message: {message}", message);
+             }, speech, projection.Id.ToString());*/
 
-    public async Task DoWorkAsync(CancellationToken stoppingToken)
+            if (projection.IsDeleted == false)
+            {
+                // Process the delivery message (passing it to your data service)
+                await _dataService.CreateAsync<object>(async (message) =>
+                {
+                    _logger.LogInformation("Processing message: {message}", message);
+                }, speech, projection.Id.ToString());
+            }
+            else
+            {
+                await _dataService.DeleteAsync<object>(async (message) =>
+                {
+                    _logger.LogInformation("Processing message: {message}", message);
+                }, projection.Id.ToString());
+            }
+            string jsonString = JsonSerializer.Serialize(projection);
+            await _publisher.PublishAsync("ReadModelAcknowledged", null, jsonString);
+        }
+    }
+
+    public async Task DoWorkAsyncXXX(CancellationToken stoppingToken)
     {
         // create a test projection with dummy data
         var projection = new SpeechProjectionTest(

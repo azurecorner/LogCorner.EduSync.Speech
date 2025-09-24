@@ -7,6 +7,10 @@
         "Action": "Start"
       },
       {
+        "Path": "Command\\LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
+        "Action": "Start"
+      },
+      {
         "Path": "Query\\LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
         "Action": "Start"
       },
