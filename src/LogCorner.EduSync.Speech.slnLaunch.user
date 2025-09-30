@@ -17,6 +17,10 @@
       {
         "Path": "Front\\LogCorner.EduSync.Speech.Presentation\\LogCorner.EduSync.Speech.Presentation.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "broker\\LogCorner.EduSync.Speech.WorkerService\\LogCorner.EduSync.Speech.WorkerService.csproj",
+        "Action": "Start"
       }
     ]
   }

@@ -26,8 +26,8 @@ namespace LogCorner.EduSync.Speech.ServiceBus
         // the processor that reads and processes messages from the queue
         private ServiceBusProcessor processor;
 
-        private string serviceBusNamespace = "datasynchro.servicebus.windows.net";
-        private string serviceBusQueueName = "datasyncqueue";
+        private string serviceBusNamespace = "datasynchro-sb-namespace.servicebus.windows.net";
+        private string serviceBusQueueName = "datasynchro-sb-queue";
         private string userAssignedClientId; //"ff678d92-8adc-4f90-b8f5-cb4ea1a908ed";
 
         public IConfiguration Configuration { get; }
@@ -100,7 +100,7 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             Console.WriteLine($"*******************-A batch of {numOfMessages} messages has been published to the queue.");
         }
 
-        public async Task<List<T>> ReceiveAsync<T>(string[] topics, CancellationToken stoppingToken, bool runAlways = true)
+        public async Task<List<T>> ReceiveAsync_old<T>(string[] topics, CancellationToken stoppingToken, bool runAlways = true)
         {
             List<T> messages = new List<T>();
 
@@ -197,6 +197,44 @@ namespace LogCorner.EduSync.Speech.ServiceBus
                 Console.WriteLine($"Error processing message: {args.Exception.ToString()}");
                 return Task.CompletedTask;
             }
+        }
+
+        public async Task<List<T>> ReceiveAsync<T>(string[] topics, CancellationToken stoppingToken, bool runAlways = true)
+        {
+            var messages = new List<T>();
+
+            var clientOptions = new ServiceBusClientOptions
+            {
+                TransportType = ServiceBusTransportType.AmqpWebSockets
+            };
+
+            var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+            {
+                ExcludeManagedIdentityCredential = true
+            });
+
+            await using var client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
+            var receiver = client.CreateReceiver(serviceBusQueueName);
+
+            // loop si tu veux runAlways
+
+            var receivedMessages = await receiver.ReceiveMessagesAsync(
+                maxMessages: 10,
+                maxWaitTime: TimeSpan.FromSeconds(1), // ⚡ réduit la latence
+                cancellationToken: stoppingToken);
+
+            foreach (var msg in receivedMessages)
+            {
+                var body = msg.Body.ToString();
+                var message = _jsonSerializer.Deserialize<T>(body);
+
+                if (message != null)
+                    messages.Add(message);
+
+                await receiver.CompleteMessageAsync(msg, stoppingToken);
+            }
+
+            return messages;
         }
     }
 }

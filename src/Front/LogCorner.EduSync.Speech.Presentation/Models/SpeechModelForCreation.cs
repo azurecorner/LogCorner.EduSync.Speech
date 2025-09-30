@@ -26,6 +26,8 @@ namespace LogCorner.EduSync.Speech.Presentation.Models
         public string Url { get; set; }
 
         public int TypeId { get; set; }
-       
+
+        public long Version { get; set; }
+
     }
 }

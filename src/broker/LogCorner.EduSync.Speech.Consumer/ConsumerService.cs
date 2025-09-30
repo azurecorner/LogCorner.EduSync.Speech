@@ -50,12 +50,6 @@ public class ConsumerService : IConsumerService
                 return;
             }
 
-            /* // Process the delivery message (passing it to your data service)
-             await _dataService.CreateAsync<object>(async (message) =>
-             {
-                 _logger.LogInformation("Processing message: {message}", message);
-             }, speech, projection.Id.ToString());*/
-
             if (projection.IsDeleted == false)
             {
                 // Process the delivery message (passing it to your data service)

@@ -72,9 +72,9 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         {
             ViewBag.SpeechTypes = new List<SpeechType>
             {
-                new SpeechType { Value = 1, Name = "Conference" },
-                new SpeechType { Value = 2, Name = "Podcast" },
-                new SpeechType { Value = 3, Name = "Interview" }
+                new SpeechType { Value = 1, Name = "SelfPacedLabs" },
+                new SpeechType { Value = 2, Name = "TraingVideo" },
+                new SpeechType { Value = 3, Name = "Conferences" }
             };
             return View(new SpeechModelForCreation());
         }
@@ -89,9 +89,9 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
                 // Repopulate dropdown when validation fails
                 ViewBag.SpeechTypes = new List<SpeechType>
                 {
-                    new SpeechType { Value = 1, Name = "Conference" },
-                    new SpeechType { Value = 2, Name = "Podcast" },
-                    new SpeechType { Value = 3, Name = "Interview" }
+                     new SpeechType { Value = 1, Name = "SelfPacedLabs" },
+                new SpeechType { Value = 2, Name = "TraingVideo" },
+                new SpeechType { Value = 3, Name = "Conferences" }
                 };
 
                 return View(model);
@@ -115,9 +115,9 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
                 // Repopulate dropdown for redisplay
                 ViewBag.SpeechTypes = new List<SpeechType>
                 {
-                    new SpeechType { Value = 1, Name = "Conference" },
-                    new SpeechType { Value = 2, Name = "Podcast" },
-                    new SpeechType { Value = 3, Name = "Interview" }
+                    new SpeechType { Value = 1, Name = "SelfPacedLabs" },
+                new SpeechType { Value = 2, Name = "TraingVideo" },
+                new SpeechType { Value = 3, Name = "Conferences" }
                 };
 
                 return View(model);
@@ -127,9 +127,9 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
                 // Repopulate dropdown for redisplay
                 ViewBag.SpeechTypes = new List<SpeechType>
                 {
-                    new SpeechType { Value = 1, Name = "Conference" },
-                    new SpeechType { Value = 2, Name = "Podcast" },
-                    new SpeechType { Value = 3, Name = "Interview" }
+                    new SpeechType { Value = 1, Name = "SelfPacedLabs" },
+                new SpeechType { Value = 2, Name = "TraingVideo" },
+                new SpeechType { Value = 3, Name = "Conferences" }
                 };
 
                 return View(model);
@@ -152,18 +152,19 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             // Populate dropdown
             ViewBag.SpeechTypes = new List<SelectListItem>
             {
-                new SelectListItem { Value = "1", Text = "Conference" },
-                new SelectListItem { Value = "2", Text = "Podcast" },
-                new SelectListItem { Value = "3", Text = "Interview" }
+                new SelectListItem { Value = "1", Text = "SelfPacedLabs" },
+                new SelectListItem { Value = "2", Text = "TraingVideo" },
+                new SelectListItem { Value = "3", Text = "Conferences" }
             };
 
             return View(new SpeechModelForUpdate
             {
-                Id = id,
+                Id = new Guid(speech.Id),
                 Title = speech.Title,
                 Description = speech.Description,
                 Url = speech.Url,
-                TypeId = speech.Type.Value
+                TypeId = speech.Type.Value,
+                Version = speech.Version
             });
         }
 
@@ -177,9 +178,9 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
                 // repopulate dropdown when redisplaying form
                 ViewBag.SpeechTypes = new List<SelectListItem>
             {
-                new SelectListItem { Value = "1", Text = "Conference" },
-                new SelectListItem { Value = "2", Text = "Podcast" },
-                new SelectListItem { Value = "3", Text = "Interview" }
+                 new SelectListItem { Value = "1", Text = "SelfPacedLabs" },
+                new SelectListItem { Value = "2", Text = "TraingVideo" },
+                new SelectListItem { Value = "3", Text = "Conferences" }
             };
 
                 return View(model);
@@ -205,9 +206,9 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             // repopulate dropdown before returning view again
             ViewBag.SpeechTypes = new List<SelectListItem>
             {
-                new SelectListItem { Value = "1", Text = "Conference" },
-                new SelectListItem { Value = "2", Text = "Podcast" },
-                new SelectListItem { Value = "3", Text = "Interview" }
+               new SelectListItem { Value = "1", Text = "SelfPacedLabs" },
+                new SelectListItem { Value = "2", Text = "TraingVideo" },
+                new SelectListItem { Value = "3", Text = "Conferences" }
             };
 
             return View(model);
@@ -250,8 +251,6 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
                 };
 
                 var response = await client.SendAsync(request);
-
-
 
                 if (response.IsSuccessStatusCode)
                 {

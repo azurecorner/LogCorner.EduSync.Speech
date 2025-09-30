@@ -26,7 +26,8 @@
             if (idProp == null)
                 throw new InvalidOperationException("Entity must have an 'id' property");
 
-            string id = idProp.GetValue(item)?.ToString();
+            object? idObj = idProp.GetValue(item);
+            string? id = idObj?.ToString();
             if (string.IsNullOrWhiteSpace(id))
                 throw new InvalidOperationException("Entity id cannot be null or empty");
 

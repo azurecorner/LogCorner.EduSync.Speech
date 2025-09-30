@@ -1,11 +1,13 @@
 ﻿@model IEnumerable<LogCorner.EduSync.Speech.Presentation.Models.SpeechModel>
 
-<h1>Speech List</h1>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Speech List</h1>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Create New
+    </a>
+</div>
 
-<div id="speech-list">
+<div id="speech-list" class="shadow-sm p-3 bg-white rounded">
     @await Html.PartialAsync("_SpeechListPartial", Model)
 </div>
 
