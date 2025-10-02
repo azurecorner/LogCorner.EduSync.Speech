@@ -1,14 +1,15 @@
 replicaCount: 1
 
 image:
-  repository: locornermsacrdev.azurecr.io/logcorner.edusync.speech.command
+  repository: datasynchroacr.azurecr.io/web-api
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
-  type: ClusterIP
+  type: LoadBalancer  # ClusterIP
   port: 80
-  targetPort: 8080
-  containerPort: 8080
+  targetPort: 5000  
+  containerPort: 5000
 
 env:
   title: "Welcome to Azure Kubernetes Service (AKS)"
@@ -30,13 +31,13 @@ configMap:
   labels:
     product: mssql
   data:
-    SQL_SERVER: "mssql-server-edusync-dev.database.windows.net"
-    DB_NAME: "backend-db-edusync-dev"
-    USER_NAME: "mssql-admin-user"
+    SQL_SERVER: "sqlserver-datasynchro.database.windows.net"
+    DB_NAME: "WeatherForecastDb" #"LogCorner.EduSync.Speech.Database"
+    USER_NAME: "logcorner"
 secret:
   name: mssql
   labels:
     version: "1.0.0"
     product: "mssql"
   data:
-    DB_PASSWORD: "x%3b-Rq]xHP66ny!P*P$"  # Sensitive data can be overridden securely during deployment
+    DB_PASSWORD: "MySecureP@ssword"  # Sensitive data can be overridden securely during deployment

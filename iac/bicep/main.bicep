@@ -35,7 +35,7 @@ param sqlserverAdminLogin string = 'logcorner'
 @secure()
 param sqlserverAdminPassword string
 
-param databaseName string = 'WeatherForecastDb'
+param databaseName string = 'LogCorner.EduSync.Speech.Database'
 
 param privateDnsZoneNames  array = [
   'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io'

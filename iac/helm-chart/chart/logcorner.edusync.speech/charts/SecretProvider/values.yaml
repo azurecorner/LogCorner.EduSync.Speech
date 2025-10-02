@@ -1,6 +1,0 @@
-secretProviderClassName: azure-tls
-secretName: dbpassword
-keyvaultName: kv-shared-edusync-dev
-certificateName: logcorner-datasync-cert
-tenantId: f12a747a-cddf-4426-96ff-ebe055e215a3
-
