@@ -81,6 +81,8 @@ module network 'modules/network.bicep' = {
     appgw_subnet_addressPrefix:'10.200.4.0/24'
     privatelink_subnet_name:'privatelink-subnet'
     privatelink_subnet_addressPrefix:'10.200.5.0/24'
+    applicationGatewayForContainersSubnetName: 'appgwforcontainers-subnet'
+    applicationGatewayForContainersSubnetAddressPrefix: '10.200.6.0/24'
   }
 }
 
@@ -94,8 +96,16 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     ]
   }
 }]
+@description('Specifies the namespace of the application.')
+param namespace string = ''
 
-module aks 'modules/aks.bicep' = {
+@description('Specifies the service account of the application.')
+param serviceAccountName string = ''
+
+@description('Specifies the name of the workload managed identity.')
+param workloadManagedIdentityName string =  'workload-managed-identity-${prefix}'
+
+module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -109,6 +119,11 @@ module aks 'modules/aks.bicep' = {
      tags: tags
      adminGroupObjectIDs: [adminUserObjectId]
       LoganalyticID: logAnalyticsWorkspace.id
+       namespace: namespace
+    serviceAccountName: serviceAccountName
+    workloadManagedIdentityName: workloadManagedIdentityName
+    workloadIdentityEnabled: true
+    oidcIssuerProfileEnabled: true
   }
 }
  
@@ -199,10 +214,48 @@ module slqServerPrivateEndpoint 'modules/private_endpoint.bicep' = {
 module cosmosdb 'modules/cosmosdb.bicep' = {
   name: 'cosmosdb'
   params: {
-    accountName: 'cosmos-${prefix}'
+    accountName: 'cosmos-${prefix}-001'
     location: location
     databaseName: 'LogCorner.EduSync.Speech.Database'
   }
 
 }
  
+
+// Deploy Application Gateway for Containers 
+@description('Specifies whether creating an Application Gateway for Containers or not.')
+param applicationGatewayForContainersEnabled bool 
+
+@description('Specifies the name of the Application Gateway for Containers.')
+param applicationGatewayForContainersName string = 'appgwforcon-${prefix}'
+
+@description('Specifies whether the Application Gateway for Containers is managed or bring your own (BYO).')
+@allowed([
+  'managed'
+  'byo'
+])
+param applicationGatewayForContainersType string 
+
+@description('Specifies the namespace for the Application Load Balancer Controller of the Application Gateway for Containers.')
+param applicationGatewayForContainersAlbControllerNamespace string = 'azure-alb-system'
+
+@description('Specifies the name of the service account for the Application Load Balancer Controller of the Application Gateway for Containers.')
+param applicationGatewayForContainersAlbControllerServiceAccountName string = 'alb-controller-sa'
+
+module applicationGatewayForContainers 'modules/applicationGatewayForContainers.bicep' =  {
+  name: 'applicationGatewayForContainers'
+  params: {
+    name: applicationGatewayForContainersName
+    type: applicationGatewayForContainersType
+    workspaceId: logAnalyticsWorkspace.id
+    
+    aksClusterName: ClusterName
+    nodeResourceGroupName: aksCluster.outputs.nodeResourceGroup
+    virtualNetworkName: network.outputs.virtualNetworkName
+    subnetName: network.outputs.applicationGatewayForContainersSubnet_name
+    namespace: applicationGatewayForContainersAlbControllerNamespace
+    serviceAccountName: applicationGatewayForContainersAlbControllerServiceAccountName
+    location: location
+    tags: tags
+  }
+}

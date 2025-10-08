@@ -28,6 +28,21 @@ param vmSize string
 
 param privateDNSZoneName string
 
+@description('Specifies the name of the user-defined managed identity used by the application that uses Azure AD workload identity to authenticate against Azure OpenAI.')
+param workloadManagedIdentityName string
+
+@description('Specifies the namespace of the application.')
+param namespace string
+
+@description('Specifies the service account of the application.')
+param serviceAccountName string
+
+@description('Specifies whether to enable Workload Identity. The default value is false.')
+param workloadIdentityEnabled bool = false
+
+@description('Specifies whether the OIDC issuer is enabled.')
+param oidcIssuerProfileEnabled bool = true
+
 @description('The role definition ID for the ACR pull role.')
 var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
 
@@ -40,7 +55,7 @@ resource privatednsZone 'Microsoft.Network/privateDnsZones@2024-06-01' existing 
   name: privateDNSZoneName
 }
 
-resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-02-01' = {
+resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
   name: ClusterName
   location: location
   tags: tags
@@ -92,14 +107,23 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-02-01' = {
       expander: 'random'
     }
     oidcIssuerProfile: {
-      enabled: true
+      enabled: oidcIssuerProfileEnabled
     }
 
+
+    // workloadIdentityProfile: {
+    //   enabled: true
+    // }
      /* apiServerAccessProfile: {
       enablePrivateCluster: enablePrivateCluster
       privateDNSZone:  privatednsZone.id
       
     }    */
+      securityProfile: {
+        workloadIdentity: {
+          enabled: workloadIdentityEnabled
+        }
+    }
       aadProfile: {
       adminGroupObjectIDs: adminGroupObjectIDs
       enableAzureRBAC: true
@@ -137,7 +161,32 @@ resource kubernetesServiceClusterAdminRole_roleAssignment 'Microsoft.Authorizati
   }
 } 
 
-output id string = aksCluster.id
-output name string = aksCluster.name
+resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: workloadManagedIdentityName
+  location: location
+  tags: tags
+}
+
+// Create federated identity for the user-defined managed identity used by the workload
+resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' = if (!empty(namespace) && !empty(serviceAccountName)) {
+  name: 'WorkloadFederatedIdentityCredentials'
+  parent: workloadManagedIdentity
+  properties: {
+    issuer: aksCluster.properties.oidcIssuerProfile.issuerURL
+    subject: 'system:serviceaccount:${namespace}:${serviceAccountName}'
+    audiences: [
+      'api://AzureADTokenExchange'
+    ]
+  }
+}
+
 output aksOidcIssuerUrl string = aksCluster.properties.oidcIssuerProfile.issuerURL 
 output kubeletidentityObjectId string =aksCluster.properties.identityProfile.kubeletidentity.objectId
+
+
+// Output
+output id string = aksCluster.id
+output name string = aksCluster.name
+output issuerUrl string = aksCluster.properties.oidcIssuerProfile.issuerURL
+output workloadManagedIdentityClientId string = workloadManagedIdentity.properties.clientId
+output nodeResourceGroup string = aksCluster.properties.nodeResourceGroup

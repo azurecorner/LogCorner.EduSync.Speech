@@ -20,3 +20,6 @@ param tags  = {
 param applicationInsightName = 'datasyncappi'
 
 param sqlserverAdminPassword =  'MySecureP@ssword'
+
+param applicationGatewayForContainersEnabled = true
+param applicationGatewayForContainersType ='byo'

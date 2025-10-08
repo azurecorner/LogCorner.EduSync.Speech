@@ -1,6 +1,43 @@
 # LogCorner.EduSync
 Building microservices through Event Driven Architecture
 
+# Set the ACR name and log in
+$acrName = "datasynchroacr"
+az acr login --name $acrName
+
+# Build and push the Web API image
+docker build -t "$acrName.azurecr.io/web-api:latest" -f .\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ --no-cache
+docker push "$acrName.azurecr.io/web-api:latest"
+
+# Build and push the Web App image
+docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\OtelReferenceApp\WebApp\Dockerfile .\src\OtelReferenceApp\ --no-cache
+docker push "$acrName.azurecr.io/web-app:latest"
+
+
+C:\Users\LEYE-GORA\source\repos\AZURE WARRIORS\EDA-FULL MICROSOFT\LogCorner.EduSync.Speech\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 install ingress for doecker desktop
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.3/deploy/static/provider/aws/deploy.yaml
 
