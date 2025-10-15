@@ -202,14 +202,13 @@ module slqServerPrivateEndpoint 'modules/private_endpoint.bicep' = {
  module servicebus 'modules/serviceBus.bicep' = {
   name: 'servicebus'
   params: {
-    userAssignedIdentityName: userAssignedIdentityName
+    userAssignedIdentityName: managedIdentity.name
     location: location
     serviceBusNamespaceName: '${prefix}-sb-namespace'
     serviceBusQueueName: '${prefix}-sb-queue'
   }
 
 }
-
 
 module cosmosdb 'modules/cosmosdb.bicep' = {
   name: 'cosmosdb'
@@ -222,19 +221,9 @@ module cosmosdb 'modules/cosmosdb.bicep' = {
 }
  
 
-// Deploy Application Gateway for Containers 
-@description('Specifies whether creating an Application Gateway for Containers or not.')
-param applicationGatewayForContainersEnabled bool 
-
 @description('Specifies the name of the Application Gateway for Containers.')
 param applicationGatewayForContainersName string = 'appgwforcon-${prefix}'
 
-@description('Specifies whether the Application Gateway for Containers is managed or bring your own (BYO).')
-@allowed([
-  'managed'
-  'byo'
-])
-param applicationGatewayForContainersType string 
 
 @description('Specifies the namespace for the Application Load Balancer Controller of the Application Gateway for Containers.')
 param applicationGatewayForContainersAlbControllerNamespace string = 'azure-alb-system'
@@ -246,7 +235,6 @@ module applicationGatewayForContainers 'modules/applicationGatewayForContainers.
   name: 'applicationGatewayForContainers'
   params: {
     name: applicationGatewayForContainersName
-    type: applicationGatewayForContainersType
     workspaceId: logAnalyticsWorkspace.id
     
     aksClusterName: ClusterName

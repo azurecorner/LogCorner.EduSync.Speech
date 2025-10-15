@@ -12,13 +12,12 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Query/LogCorner.EduSync.Speech.Presentation/LogCorner.EduSync.Speech.Presentation.csproj", "Query/LogCorner.EduSync.Speech.Presentation/"]
-COPY ["Query/LogCorner.EduSync.Speech.Application/LogCorner.EduSync.Speech.Application.csproj", "Query/LogCorner.EduSync.Speech.Application/"]
-COPY ["Query/LogCorner.EduSync.Speech.Infrastructure/LogCorner.EduSync.Speech.Infrastructure.csproj", "Query/LogCorner.EduSync.Speech.Infrastructure/"]
-COPY ["Query/LogCorner.EduSync.Speech.ReadModel/LogCorner.EduSync.Speech.ReadModel.csproj", "Query/LogCorner.EduSync.Speech.ReadModel/"]
-RUN dotnet restore "./Query/LogCorner.EduSync.Speech.Presentation/LogCorner.EduSync.Speech.Presentation.csproj"
+COPY ["Front/LogCorner.EduSync.Speech.Presentation/LogCorner.EduSync.Speech.Presentation.csproj", "Front/LogCorner.EduSync.Speech.Presentation/"]
+COPY ["Hub/LogCorner.EduSync.Notification.Common/LogCorner.EduSync.Notification.Common.csproj", "Hub/LogCorner.EduSync.Notification.Common/"]
+COPY ["Command/LogCorner.EduSync.Speech.SharedKernel/LogCorner.EduSync.Speech.SharedKernel.csproj", "Command/LogCorner.EduSync.Speech.SharedKernel/"]
+RUN dotnet restore "./Front/LogCorner.EduSync.Speech.Presentation/LogCorner.EduSync.Speech.Presentation.csproj"
 COPY . .
-WORKDIR "/src/Query/LogCorner.EduSync.Speech.Presentation"
+WORKDIR "/src/Front/LogCorner.EduSync.Speech.Presentation"
 RUN dotnet build "./LogCorner.EduSync.Speech.Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage

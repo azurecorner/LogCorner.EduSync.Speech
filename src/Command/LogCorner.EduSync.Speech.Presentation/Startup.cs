@@ -57,7 +57,7 @@ namespace LogCorner.EduSync.Speech.Presentation
             services.AddTransient<IDomainEventRebuilder, DomainEventRebuilder>();
             services.AddTransient<IJsonProvider, JsonDotNetProvider>();
 
-            services.AddProducer("localhost:9092", Configuration);
+            services.AddProducer( Configuration);
             services.AddScoped<IEventPublisher, EventPublisher>();
             services.AddSharedKernel();
 
@@ -71,7 +71,7 @@ namespace LogCorner.EduSync.Speech.Presentation
                         .AllowCredentials());
             });
 
-            services.AddCustomAuthentication(Configuration);
+            //services.AddCustomAuthentication(Configuration);
 
             services.AddCustomSwagger(Configuration);
             // services.AddResiliencyServices();
@@ -92,10 +92,10 @@ namespace LogCorner.EduSync.Speech.Presentation
                 app.UseHttpsRedirection();
             }
 
-            if (!bool.TryParse(Configuration["isAuthenticationEnabled"], out var isAuthenticationEnabled))
-            {
-                throw new PresentationException("isAuthenticationEnabled is not configured correctly ");
-            }
+            //if (!bool.TryParse(Configuration["isAuthenticationEnabled"], out var isAuthenticationEnabled))
+            //{
+            //    throw new PresentationException("isAuthenticationEnabled is not configured correctly ");
+            //}
             string pathBase = Configuration["pathBase"];
             string useHttps = Configuration["useHttps"];
             var protocol = "http";
@@ -119,16 +119,16 @@ namespace LogCorner.EduSync.Speech.Presentation
             .UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("../swagger/v1/swagger.json", "WebApi v1");
-                if (isAuthenticationEnabled)
-                {
-                    var oAuthClientId = Configuration["SwaggerUI:OAuthClientId"];
-                    var oAuthClientSecret = Configuration["SwaggerUI:OAuthClientSecret"];
-                    c.OAuthClientId(oAuthClientId);
-                    c.OAuthClientSecret(oAuthClientSecret);
-                    c.OAuthAppName("The Speech Micro Service Command Swagger UI");
-                    c.OAuthScopeSeparator(" ");
-                    c.OAuthUsePkce();
-                }
+                //if (isAuthenticationEnabled)
+                //{
+                //    var oAuthClientId = Configuration["SwaggerUI:OAuthClientId"];
+                //    var oAuthClientSecret = Configuration["SwaggerUI:OAuthClientSecret"];
+                //    c.OAuthClientId(oAuthClientId);
+                //    c.OAuthClientSecret(oAuthClientSecret);
+                //    c.OAuthAppName("The Speech Micro Service Command Swagger UI");
+                //    c.OAuthScopeSeparator(" ");
+                //    c.OAuthUsePkce();
+                //}
             });
             app.UseRouting();
             app.UseCors("CorsPolicy");
@@ -137,14 +137,14 @@ namespace LogCorner.EduSync.Speech.Presentation
 
             app.UseEndpoints(endpoints =>
             {
-                if (isAuthenticationEnabled)
-                {
-                    endpoints.MapControllers().RequireAuthorization();
-                }
-                else
-                {
+                //if (isAuthenticationEnabled)
+                //{
+                //    endpoints.MapControllers().RequireAuthorization();
+                //}
+                //else
+                //{
                     endpoints.MapControllers();
-                }
+               // }
             });
 
             if (!string.IsNullOrWhiteSpace(pathBase))

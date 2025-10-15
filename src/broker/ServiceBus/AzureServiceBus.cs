@@ -26,8 +26,8 @@ namespace LogCorner.EduSync.Speech.ServiceBus
         // the processor that reads and processes messages from the queue
         private ServiceBusProcessor processor;
 
-        private string serviceBusNamespace = "datasynchro-sb-namespace.servicebus.windows.net";
-        private string serviceBusQueueName = "datasynchro-sb-queue";
+        private string serviceBusNamespace;
+        private string serviceBusQueueName;
         private string userAssignedClientId; //"ff678d92-8adc-4f90-b8f5-cb4ea1a908ed";
 
         public IConfiguration Configuration { get; }
@@ -38,9 +38,15 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             _jsonSerializer = jsonSerializer;
             Configuration = configuration;
 
-            //userAssignedClientId = Configuration["UserAssignedClientId"] ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
+
+            userAssignedClientId = Configuration["UserAssignedClientId"] ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
+
 
             Console.WriteLine($"*******************-UserAssignedClientId: {userAssignedClientId}");
+
+            serviceBusNamespace = Configuration["ServiceBusNamespace"] ?? throw new ArgumentNullException(nameof(Configuration), "ServiceBusNamespace configuration is missing.");
+            serviceBusQueueName = Configuration["ServiceBusQueueName"] ?? throw new ArgumentNullException(nameof(Configuration), "ServiceBusQueueName configuration is missing.");
+
         }
 
         public async Task SendAsync(string topic, string @event)
@@ -53,10 +59,19 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             TokenCredential credential;
             Console.WriteLine($"*******************-ASPNETCORE_ENVIRONMENT = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") {
             credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
             {
                 ExcludeManagedIdentityCredential = true
             });
+            }
+            else {
+                credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+                {
+                    ManagedIdentityClientId = userAssignedClientId // This should be set from config or env
+                });
+            }
+
             var AZURE_CLIENT_ID = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID");
             Console.WriteLine($"*******************-AZURE_CLIENT_ID = {AZURE_CLIENT_ID}");
 

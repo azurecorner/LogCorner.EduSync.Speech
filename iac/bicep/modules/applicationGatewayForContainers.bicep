@@ -1,13 +1,7 @@
 // Parameters
 @description('Specifies the name of the Application Gateway for Containers.')
-param name string = 'dummy'
+param name string 
 
-@description('Specifies whether the Application Gateway for Containers is managed or bring your own (BYO).')
-@allowed([
-  'managed'
-  'byo'
-])
-param type string 
 
 @description('Specifies the workspace id of the Log Analytics used to monitor the Application Gateway for Containers.')
 param workspaceId string
@@ -28,10 +22,10 @@ param virtualNetworkName string
 param subnetName string
 
 @description('Specifies the namespace for the Application Load Balancer Controller of the Application Gateway for Containers.')
-param namespace string = 'azure-alb-system'
+param namespace string 
 
 @description('Specifies the name of the service account for the Application Load Balancer Controller of the Application Gateway for Containers.')
-param serviceAccountName string = 'alb-controller-sa'
+param serviceAccountName string 
 
 @description('Specifies the resource tags for the Application Gateway for Containers.')
 param tags object
@@ -83,13 +77,13 @@ resource appGwForContainersConfigurationManagerRole 'Microsoft.Authorization/rol
 }
 
 resource applicationLoadBalancerManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: '${name}ManagedIdentity'
+  name: 'azure-alb-identity'
   location: location
   tags: tags
 }
 
 // Assign the Network Contributor role to the Application Load Balancer user-assigned managed identity with the association subnet as as scope
-resource subnetNetworkContributorRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+ resource subnetNetworkContributorRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name:  guid(name, applicationLoadBalancerManagedIdentity.name, networkContributorRole.id)
   scope: subnet
   properties: {
@@ -97,10 +91,10 @@ resource subnetNetworkContributorRoleAssignment 'Microsoft.Authorization/roleAss
     principalId: applicationLoadBalancerManagedIdentity.properties.principalId
     principalType: 'ServicePrincipal'
   }
-}
+} 
 
 // Assign the AppGw for Containers Configuration Manager role to the Application Load Balancer user-assigned managed identity with the resource group as a scope
-resource appGwForContainersConfigurationManagerRoleAssignmenOnResourceGroup 'Microsoft.Authorization/roleAssignments@2022-04-01' =  {
+/*resource appGwForContainersConfigurationManagerRoleAssignmenOnResourceGroup 'Microsoft.Authorization/roleAssignments@2022-04-01' =  {
   name:  guid(name, applicationLoadBalancerManagedIdentity.name, appGwForContainersConfigurationManagerRole.id)
   scope: resourceGroup()
   properties: {
@@ -108,17 +102,17 @@ resource appGwForContainersConfigurationManagerRoleAssignmenOnResourceGroup 'Mic
     principalId: applicationLoadBalancerManagedIdentity.properties.principalId
     principalType: 'ServicePrincipal'
   }
-}
-
+}*/
+ 
 // Assign the AppGw for Containers Configuration Manager role to the Application Load Balancer user-assigned managed identity with the AKS cluster node resource group as a scope
-/* module appGwForContainersConfigurationManagerRoleAssignmenOnnodeResourceGroupName 'resourceGroupRoleAssignment.bicep' = if (type == 'managed') {
+/*  module appGwForContainersConfigurationManagerRoleAssignmenOnnodeResourceGroupName 'resourceGroupRoleAssignment.bicep' = if (type == 'managed') {
   name: guid(nodeResourceGroupName, applicationLoadBalancerManagedIdentity.name, appGwForContainersConfigurationManagerRole.id)
   scope: resourceGroup(nodeResourceGroupName)
   params: {
     principalId: applicationLoadBalancerManagedIdentity.properties.principalId
     roleName: appGwForContainersConfigurationManagerRole.name
   }
-} */
+}  */
 
 // Assign the Reader role the Application Load Balancer user-assigned managed identity with the AKS cluster node resource group as a scope
 module nodeResourceGroupReaderRoleAssignment 'resourceGroupRoleAssignment.bicep' = {
@@ -131,7 +125,7 @@ module nodeResourceGroupReaderRoleAssignment 'resourceGroupRoleAssignment.bicep'
 }
 
 // Create federated identity for the Application Load Balancer user-assigned managed identity
-resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' = if (!empty(namespace) && !empty(serviceAccountName)) {
+resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' ={
   name: 'azure-alb-identity'
   parent: applicationLoadBalancerManagedIdentity
   properties: {
@@ -143,7 +137,7 @@ resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIde
   }
 }
 
-resource applicationGatewayForContainers 'Microsoft.ServiceNetworking/trafficControllers@2023-11-01' =  {
+resource applicationGatewayForContainers 'Microsoft.ServiceNetworking/trafficControllers@2025-01-01' =  {
   name: name
   location: location
   tags: tags

@@ -5,7 +5,7 @@ namespace LogCorner.EduSync.Speech.Producer
 {
     public static class ServicesConfiguration
     {
-        public static void AddProducer(this IServiceCollection services, string bootstrapServer, IConfiguration configuration)
+        public static void AddProducer(this IServiceCollection services,  IConfiguration configuration)
         {
             services.AddSingleton<IProducerService, ProducerService>();
             //services.AddSingleton<IServiceBusProducer>(x =>

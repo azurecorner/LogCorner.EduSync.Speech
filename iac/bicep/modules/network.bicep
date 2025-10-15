@@ -62,6 +62,15 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-01-01' = {
           addressPrefix: applicationGatewayForContainersSubnetAddressPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Disabled'
+
+          delegations: [
+            {
+              name: 'delegationToMicrosoftAppGatewayForContainers'
+              properties: {
+                serviceName: 'Microsoft.ServiceNetworking/trafficControllers'
+              }
+            }
+          ]
         }
       }
     ]

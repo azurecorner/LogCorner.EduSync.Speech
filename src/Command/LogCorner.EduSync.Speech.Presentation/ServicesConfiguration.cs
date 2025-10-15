@@ -34,10 +34,10 @@ namespace LogCorner.EduSync.Speech.Presentation
         public static void AddCustomSwagger(this IServiceCollection services, IConfiguration configuration)
         {
             var tenantName = configuration["SwaggerUI:TenantName"];
-            if (!bool.TryParse(configuration["isAuthenticationEnabled"], out var isAuthenticationEnabled))
-            {
-                throw new PresentationException("isAuthenticationEnabled is not configured correctly ");
-            }
+            //if (!bool.TryParse(configuration["isAuthenticationEnabled"], out var isAuthenticationEnabled))
+            //{
+            //    throw new PresentationException("isAuthenticationEnabled is not configured correctly ");
+            //}
 
             services.AddSwaggerGen(options =>
             {
@@ -47,7 +47,7 @@ namespace LogCorner.EduSync.Speech.Presentation
                     Version = "v1",
                     Description = "The Speech Micro Service Command HTTP API"
                 });
-                if (isAuthenticationEnabled)
+              /*  if (isAuthenticationEnabled)
                 {
                     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                     {
@@ -101,6 +101,8 @@ namespace LogCorner.EduSync.Speech.Presentation
                         }
                     });
                 }
+           
+            */
             });
         }
     }

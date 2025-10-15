@@ -160,15 +160,27 @@ resource kubernetesServiceClusterAdminRole_roleAssignment 'Microsoft.Authorizati
     principalType: 'User'
   }
 } 
-
-resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+/*
+ resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: workloadManagedIdentityName
   location: location
   tags: tags
 }
+ */
+/*
+resource ReaderRole_roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: aksCluster
+  name: guid(aksCluster.id,aksCluster.id,'acdd72a7-3385-48ef-bd42-f606fba81ae7')
+  properties: {
+    roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' // Reader role
+    description: 'Apply Reader role to the AKS managed cluster resource group for the newly provisioned identity'
+    principalId: workloadManagedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
+} */
 
 // Create federated identity for the user-defined managed identity used by the workload
-resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' = if (!empty(namespace) && !empty(serviceAccountName)) {
+ /*resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' = {
   name: 'WorkloadFederatedIdentityCredentials'
   parent: workloadManagedIdentity
   properties: {
@@ -179,6 +191,10 @@ resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIde
     ]
   }
 }
+*/
+ 
+
+
 
 output aksOidcIssuerUrl string = aksCluster.properties.oidcIssuerProfile.issuerURL 
 output kubeletidentityObjectId string =aksCluster.properties.identityProfile.kubeletidentity.objectId
@@ -188,5 +204,5 @@ output kubeletidentityObjectId string =aksCluster.properties.identityProfile.kub
 output id string = aksCluster.id
 output name string = aksCluster.name
 output issuerUrl string = aksCluster.properties.oidcIssuerProfile.issuerURL
-output workloadManagedIdentityClientId string = workloadManagedIdentity.properties.clientId
+//output workloadManagedIdentityClientId string = workloadManagedIdentity.properties.clientId
 output nodeResourceGroup string = aksCluster.properties.nodeResourceGroup
