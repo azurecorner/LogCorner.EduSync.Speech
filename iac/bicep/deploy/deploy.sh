@@ -38,7 +38,7 @@ CONTROLLER_NAMESPACE=azure-alb-system
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $AKS_NAME
 kubectl create namespace $HELM_NAMESPACE
 #kubectl create namespace $CONTROLLER_NAMESPACE
-
+helm repo update
 helm upgrade --install alb-controller oci://mcr.microsoft.com/application-lb/charts/alb-controller \
   --namespace $HELM_NAMESPACE \
   --version 1.7.9 \
@@ -84,3 +84,31 @@ spec:
 EOF
 
 kubectl get gateway gateway-01 -n $HELM_NAMESPACE -o yaml
+
+
+# Once the gateway is created, create an HTTPRoute
+
+kubectl apply -f - <<EOF
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: traffic-split-route
+  namespace: $HELM_NAMESPACE
+spec:
+  parentRefs:
+  - name: gateway-01
+  rules:
+  - backendRefs:
+    - name: backend-v1
+      port: 8080
+      weight: 50
+    - name: backend-v2
+      port: 8080
+      weight: 50
+EOF
+
+kubectl get httproute traffic-split-route -n $HELM_NAMESPACE -o yaml
+
+
+
+fqdn=$(kubectl get gateway gateway-01 -n $HELM_NAMESPACE -o jsonpath='{.status.addresses[0].value}')
