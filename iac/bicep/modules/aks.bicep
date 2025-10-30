@@ -110,15 +110,6 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
       enabled: oidcIssuerProfileEnabled
     }
 
-
-    // workloadIdentityProfile: {
-    //   enabled: true
-    // }
-     /* apiServerAccessProfile: {
-      enablePrivateCluster: enablePrivateCluster
-      privateDNSZone:  privatednsZone.id
-      
-    }    */
       securityProfile: {
         workloadIdentity: {
           enabled: workloadIdentityEnabled

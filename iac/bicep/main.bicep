@@ -231,7 +231,7 @@ param applicationGatewayForContainersAlbControllerNamespace string = 'azure-alb-
 @description('Specifies the name of the service account for the Application Load Balancer Controller of the Application Gateway for Containers.')
 param applicationGatewayForContainersAlbControllerServiceAccountName string = 'alb-controller-sa'
 
-module applicationGatewayForContainers 'modules/applicationGatewayForContainers.bicep' =  {
+/* module applicationGatewayForContainers 'modules/applicationGatewayForContainers.bicep' =  {
   name: 'applicationGatewayForContainers'
   params: {
     name: applicationGatewayForContainersName
@@ -247,3 +247,4 @@ module applicationGatewayForContainers 'modules/applicationGatewayForContainers.
     tags: tags
   }
 }
+ */
