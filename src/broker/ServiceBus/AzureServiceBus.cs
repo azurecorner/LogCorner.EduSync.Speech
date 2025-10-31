@@ -7,7 +7,7 @@ using System.Net.Mime;
 
 namespace LogCorner.EduSync.Speech.ServiceBus
 {
-    public class AzureServiceBus : /*IAzureServiceBus */ IServiceBusProducer, IServiceBusReceiver
+    public class AzureServiceBus : IServiceBusProducer, IServiceBusReceiver
     {
         // https://learn.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme?view=azure-dotnet
         // name of your Service Bus queue
@@ -34,13 +34,11 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
         public AzureServiceBus(IEventSerializer eventSerializer, IJsonSerializer jsonSerializer, IConfiguration configuration)
         {
-            //_eventSerializer = eventSerializer;
-            _jsonSerializer = jsonSerializer;
+              _jsonSerializer = jsonSerializer;
             Configuration = configuration;
 
 
             userAssignedClientId = Configuration["UserAssignedClientId"] ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
-
 
             Console.WriteLine($"*******************-UserAssignedClientId: {userAssignedClientId}");
 
@@ -56,21 +54,25 @@ namespace LogCorner.EduSync.Speech.ServiceBus
                 TransportType = ServiceBusTransportType.AmqpWebSockets
             };
 
-            TokenCredential credential;
+          
             Console.WriteLine($"*******************-ASPNETCORE_ENVIRONMENT = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") {
-            credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
-            {
-                ExcludeManagedIdentityCredential = true
-            });
-            }
-            else {
-                credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+            var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID")  ?? "2804c445-8a4f-4aac-a214-f56d76235af4";
+            var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? "f12a747a-cddf-4426-96ff-ebe055e215a3";
+
+            Console.WriteLine("AZURE_CLIENT_ID = ", managedIdentityClientId);
+            Console.WriteLine("AZURE_TENANT_ID = ", tenantId);
+
+            // For example, will discover Visual Studio or Azure CLI credentials
+            // in local environments and managed identity credentials in production deployments
+            var credential = new DefaultAzureCredential(
+                new DefaultAzureCredentialOptions
                 {
-                    ManagedIdentityClientId = userAssignedClientId // This should be set from config or env
-                });
-            }
+                      ManagedIdentityClientId = managedIdentityClientId,
+                      TenantId = tenantId
+ 
+                }
+            );
 
             var AZURE_CLIENT_ID = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID");
             Console.WriteLine($"*******************-AZURE_CLIENT_ID = {AZURE_CLIENT_ID}");
@@ -115,105 +117,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             Console.WriteLine($"*******************-A batch of {numOfMessages} messages has been published to the queue.");
         }
 
-        public async Task<List<T>> ReceiveAsync_old<T>(string[] topics, CancellationToken stoppingToken, bool runAlways = true)
-        {
-            List<T> messages = new List<T>();
-
-            var clientOptions = new ServiceBusClientOptions()
-            {
-                TransportType = ServiceBusTransportType.AmqpWebSockets
-            };
-
-            TokenCredential credential;
-            Console.WriteLine($"*******************-ASPNETCORE_ENVIRONMENT = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
-
-            credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
-            {
-                ExcludeManagedIdentityCredential = true
-            });
-
-            // Environment variables (you may want to sanitize these in production)
-            var AZURE_CLIENT_ID = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID");
-            Console.WriteLine($"*******************-AZURE_CLIENT_ID = {AZURE_CLIENT_ID}");
-            var AZURE_TENANT_ID = Environment.GetEnvironmentVariable("AZURE_TENANT_ID");
-            Console.WriteLine($"*******************-AZURE_TENANT_ID = {AZURE_TENANT_ID}");
-            var AZURE_CLIENT_SECRET = Environment.GetEnvironmentVariable("AZURE_CLIENT_SECRET");
-            Console.WriteLine($"*******************-AZURE_CLIENT_SECRET = {AZURE_CLIENT_SECRET}");
-
-            // Get token
-            var token = await credential.GetTokenAsync(new TokenRequestContext(new[] { "https://servicebus.azure.net/.default" }), CancellationToken.None);
-
-            client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
-            processor = client.CreateProcessor(serviceBusQueueName, new ServiceBusProcessorOptions());
-
-            try
-            {
-                // Add handler to process messages
-                processor.ProcessMessageAsync += MessageHandler;
-
-                // Add handler to process errors
-                processor.ProcessErrorAsync += ErrorHandler;
-
-                // Start processing
-                await processor.StartProcessingAsync();
-
-                // Wait for a period before stopping processing (adjust as needed)
-                await Task.Delay(TimeSpan.FromSeconds(30));
-
-                // Stop processing after delay
-                Console.WriteLine("\nStopping the receiver...");
-                await processor.StopProcessingAsync();
-                Console.WriteLine("Stopped receiving messages");
-
-                // Return the collected messages
-                //Console.WriteLine( messages);
-                return messages;
-            }
-            catch (ServiceBusException ex)
-            {
-                Console.WriteLine($"*******************-ServiceBusException: {ex.Message}");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"*******************-Exception: {ex.Message}");
-                throw;
-            }
-            finally
-            {
-                await processor.DisposeAsync();
-                await client.DisposeAsync();
-            }
-
-            // Message handler that processes individual messages
-            async Task MessageHandler(ProcessMessageEventArgs args)
-            {
-                var messageBody = args.Message.Body.ToString();
-                Console.WriteLine($"*******************-Received from service bus queue: {messageBody}");
-
-                // Only proceed if the message is not empty
-                if (!string.IsNullOrWhiteSpace(messageBody))
-                {
-                    // var message = JsonSerializer.Deserialize<T>(messageBody);
-                    var message = _jsonSerializer.Deserialize<T>(messageBody);
-
-                    if (message != null)
-                    {
-                        messages.Add(message);  // Add the deserialized message to the list
-                    }
-                }
-
-                // Complete the message (it will be removed from the queue)
-                await args.CompleteMessageAsync(args.Message);
-            }
-            // Error handler for any issues during message processing
-            Task ErrorHandler(ProcessErrorEventArgs args)
-            {
-                Console.WriteLine($"Error processing message: {args.Exception.ToString()}");
-                return Task.CompletedTask;
-            }
-        }
-
         public async Task<List<T>> ReceiveAsync<T>(string[] topics, CancellationToken stoppingToken, bool runAlways = true)
         {
             var messages = new List<T>();
@@ -223,10 +126,16 @@ namespace LogCorner.EduSync.Speech.ServiceBus
                 TransportType = ServiceBusTransportType.AmqpWebSockets
             };
 
-            var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
-            {
-                ExcludeManagedIdentityCredential = true
-            });
+            var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "2804c445-8a4f-4aac-a214-f56d76235af4";
+            var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? "f12a747a-cddf-4426-96ff-ebe055e215a3";
+            var credential = new DefaultAzureCredential(
+              new DefaultAzureCredentialOptions
+              {
+                  ManagedIdentityClientId = managedIdentityClientId,
+                  TenantId = tenantId
+
+              }
+          );
 
             await using var client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
             var receiver = client.CreateReceiver(serviceBusQueueName);

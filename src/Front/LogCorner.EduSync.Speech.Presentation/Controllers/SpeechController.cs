@@ -9,7 +9,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private const string queryApiBaseUrl = "http://localhost:7000/api/speech";
-        private const string commandApiBaseUrl = "https://localhost:6001/api/speech";
+        private const string commandApiBaseUrl = "http://localhost:6000/api/speech";
 
         private readonly ISignalRNotifier? _notifier; // Make nullable to avoid CS8602
         private readonly ISignalRPublisher? _publisher;

@@ -20,4 +20,4 @@ param tags  = {
 param applicationInsightName = 'datasyncappi'
 
 param sqlserverAdminPassword =  'MySecureP@ssword'
-
+param workloadManagedIdentityName =  'workload-managed-identity-${prefix}'

@@ -28,14 +28,6 @@ param vmSize string
 
 param privateDNSZoneName string
 
-@description('Specifies the name of the user-defined managed identity used by the application that uses Azure AD workload identity to authenticate against Azure OpenAI.')
-param workloadManagedIdentityName string
-
-@description('Specifies the namespace of the application.')
-param namespace string
-
-@description('Specifies the service account of the application.')
-param serviceAccountName string
 
 @description('Specifies whether to enable Workload Identity. The default value is false.')
 param workloadIdentityEnabled bool = false
@@ -53,6 +45,32 @@ var kubernetesServiceRBACClusterAdminId = resourceId('Microsoft.Authorization/ro
 
 resource privatednsZone 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   name: privateDNSZoneName
+}
+
+param workloadManagedIdentityName string
+
+param serviceAccountName string = 'workload-identity-sa'
+
+param serviceAccountNameNamespace string ='azure-resources'
+
+var AzureServiceBusDataOwner = '090c5cfd-751d-490a-894a-3ce6f1109419'
+
+//  This user-defined managed identity used by the workload to connect to the Azure services with a security token issued by Azue Active Directory
+resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: workloadManagedIdentityName
+  location: location
+  tags: tags
+}
+
+
+module AzureServiceBusDataOwnerrRole 'roleAssignment.bicep' = {
+  name: 'AzureServiceBusDataOwnerRole'
+  params: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', AzureServiceBusDataOwner) 
+    identityPrincipalId: workloadManagedIdentity.properties.principalId 
+    roleDescription: 'Allows for full access to Azure Service Bus resources'
+    principalType:'ServicePrincipal'
+  }
 }
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
@@ -151,39 +169,21 @@ resource kubernetesServiceClusterAdminRole_roleAssignment 'Microsoft.Authorizati
     principalType: 'User'
   }
 } 
-/*
- resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: workloadManagedIdentityName
-  location: location
-  tags: tags
-}
- */
-/*
-resource ReaderRole_roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  scope: aksCluster
-  name: guid(aksCluster.id,aksCluster.id,'acdd72a7-3385-48ef-bd42-f606fba81ae7')
-  properties: {
-    roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' // Reader role
-    description: 'Apply Reader role to the AKS managed cluster resource group for the newly provisioned identity'
-    principalId: workloadManagedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-  }
-} */
 
+ 
 // Create federated identity for the user-defined managed identity used by the workload
- /*resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' = {
+resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' =  {
   name: 'WorkloadFederatedIdentityCredentials'
   parent: workloadManagedIdentity
   properties: {
     issuer: aksCluster.properties.oidcIssuerProfile.issuerURL
-    subject: 'system:serviceaccount:${namespace}:${serviceAccountName}'
+    subject: 'system:serviceaccount:${serviceAccountNameNamespace}:${serviceAccountName}'
     audiences: [
       'api://AzureADTokenExchange'
     ]
   }
 }
-*/
- 
+
 
 
 

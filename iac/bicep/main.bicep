@@ -103,7 +103,7 @@ param namespace string = ''
 param serviceAccountName string = ''
 
 @description('Specifies the name of the workload managed identity.')
-param workloadManagedIdentityName string =  'workload-managed-identity-${prefix}'
+param workloadManagedIdentityName string 
 
 module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
@@ -119,7 +119,7 @@ module aksCluster 'modules/aks.bicep' = {
      tags: tags
      adminGroupObjectIDs: [adminUserObjectId]
       LoganalyticID: logAnalyticsWorkspace.id
-       namespace: namespace
+       serviceAccountNameNamespace: namespace
     serviceAccountName: serviceAccountName
     workloadManagedIdentityName: workloadManagedIdentityName
     workloadIdentityEnabled: true
