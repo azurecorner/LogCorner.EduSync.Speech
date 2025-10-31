@@ -38,39 +38,36 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             Configuration = configuration;
 
 
-            userAssignedClientId = Configuration["UserAssignedClientId"] ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
+            userAssignedClientId = Configuration["UserAssignedClientId"];// ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
+            var tenantId = Configuration["TenantId"];
 
             Console.WriteLine($"*******************-UserAssignedClientId: {userAssignedClientId}");
 
             serviceBusNamespace = Configuration["ServiceBusNamespace"] ?? throw new ArgumentNullException(nameof(Configuration), "ServiceBusNamespace configuration is missing.");
             serviceBusQueueName = Configuration["ServiceBusQueueName"] ?? throw new ArgumentNullException(nameof(Configuration), "ServiceBusQueueName configuration is missing.");
 
-        }
-
-        public async Task SendAsync(string topic, string @event)
-        {
             var clientOptions = new ServiceBusClientOptions()
             {
                 TransportType = ServiceBusTransportType.AmqpWebSockets
             };
 
-          
+
             Console.WriteLine($"*******************-ASPNETCORE_ENVIRONMENT = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 
-            var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID")  ?? "2804c445-8a4f-4aac-a214-f56d76235af4";
-            var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? "f12a747a-cddf-4426-96ff-ebe055e215a3";
+            var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? userAssignedClientId;
+            var azureTenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? tenantId;
 
             Console.WriteLine("AZURE_CLIENT_ID = ", managedIdentityClientId);
-            Console.WriteLine("AZURE_TENANT_ID = ", tenantId);
+            Console.WriteLine("AZURE_TENANT_ID = ", azureTenantId);
 
             // For example, will discover Visual Studio or Azure CLI credentials
             // in local environments and managed identity credentials in production deployments
             var credential = new DefaultAzureCredential(
                 new DefaultAzureCredentialOptions
                 {
-                      ManagedIdentityClientId = managedIdentityClientId,
-                      TenantId = tenantId
- 
+                    ManagedIdentityClientId = managedIdentityClientId,
+                    TenantId = azureTenantId
+
                 }
             );
 
@@ -89,6 +86,12 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             //Console.WriteLine($"*******************-Token acquired: {token.Token}");
 
             client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
+
+        }
+
+        public async Task SendAsync(string topic, string @event)
+        {
+    
             sender = client.CreateSender(serviceBusQueueName);
 
             // create a batch
@@ -121,23 +124,23 @@ namespace LogCorner.EduSync.Speech.ServiceBus
         {
             var messages = new List<T>();
 
-            var clientOptions = new ServiceBusClientOptions
-            {
-                TransportType = ServiceBusTransportType.AmqpWebSockets
-            };
+          //  var clientOptions = new ServiceBusClientOptions
+          //  {
+          //      TransportType = ServiceBusTransportType.AmqpWebSockets
+          //  };
 
-            var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "2804c445-8a4f-4aac-a214-f56d76235af4";
-            var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? "f12a747a-cddf-4426-96ff-ebe055e215a3";
-            var credential = new DefaultAzureCredential(
-              new DefaultAzureCredentialOptions
-              {
-                  ManagedIdentityClientId = managedIdentityClientId,
-                  TenantId = tenantId
+          //  var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "2804c445-8a4f-4aac-a214-f56d76235af4";
+          //  var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? "f12a747a-cddf-4426-96ff-ebe055e215a3";
+          //  var credential = new DefaultAzureCredential(
+          //    new DefaultAzureCredentialOptions
+          //    {
+          //        ManagedIdentityClientId = managedIdentityClientId,
+          //        TenantId = tenantId
 
-              }
-          );
+          //    }
+          //);
 
-            await using var client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
+            //await using var client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
             var receiver = client.CreateReceiver(serviceBusQueueName);
 
             // loop si tu veux runAlways

@@ -220,31 +220,59 @@ module cosmosdb 'modules/cosmosdb.bicep' = {
 
 }
  
+module keyvault 'modules/keyvault.bicep' = {
+  name: 'keyvault'
+  params: {
+    location: location
+    keyvault_name: 'kv-${prefix}-001'
+      workloadManagedIdentityName:workloadManagedIdentityName
+  }
 
+}
+
+
+// Application Gateway for Containers
+
+param userAssignedIdentities_azure_alb_identity_name string = 'azure_alb_identity'
 @description('Specifies the name of the Application Gateway for Containers.')
 param applicationGatewayForContainersName string = 'appgwforcon-${prefix}'
 
 
-@description('Specifies the namespace for the Application Load Balancer Controller of the Application Gateway for Containers.')
-param applicationGatewayForContainersAlbControllerNamespace string = 'azure-alb-system'
+param nodeResourceGroupName string= 'MC_${resourceGroup().name}_${ClusterName}_${location}'
 
-@description('Specifies the name of the service account for the Application Load Balancer Controller of the Application Gateway for Containers.')
-param applicationGatewayForContainersAlbControllerServiceAccountName string = 'alb-controller-sa'
-
-/* module applicationGatewayForContainers 'modules/applicationGatewayForContainers.bicep' =  {
-  name: 'applicationGatewayForContainers'
-  params: {
-    name: applicationGatewayForContainersName
-    workspaceId: logAnalyticsWorkspace.id
-    
-    aksClusterName: ClusterName
-    nodeResourceGroupName: aksCluster.outputs.nodeResourceGroup
-    virtualNetworkName: network.outputs.virtualNetworkName
-    subnetName: network.outputs.applicationGatewayForContainersSubnet_name
-    namespace: applicationGatewayForContainersAlbControllerNamespace
-    serviceAccountName: applicationGatewayForContainersAlbControllerServiceAccountName
-    location: location
-    tags: tags
-  }
+resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedIdentity/userAssignedIdentities@2025-01-31-preview' = {
+  name: userAssignedIdentities_azure_alb_identity_name
+  location: location
 }
- */
+
+ module gateway 'modules/applicationGatewayForContainers.bicep' = {
+  name:'gateway'
+  params: {
+    
+    trafficControllers_alb_name: applicationGatewayForContainersName
+    location: location
+    alb_subnet_id:network.outputs.applicationGatewayForContainersSubnet_id
+     nodeResourceGroupName: nodeResourceGroupName
+     userManagedIdentityprincipalId: userAssignedIdentities_azure_alb_identity_resource.properties.principalId
+  
+  }
+  dependsOn: [
+    aksCluster
+  ]
+} 
+
+param controllerServiceAccountName string = 'alb-controller-sa'
+
+param controllerNamespace string ='azure-alb-system'
+ 
+resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {
+  parent: userAssignedIdentities_azure_alb_identity_resource
+  name: userAssignedIdentities_azure_alb_identity_name
+  properties: {
+    issuer: aksCluster.outputs.issuerUrl 
+    subject: 'system:serviceaccount:${controllerNamespace}:${controllerServiceAccountName}' 
+    audiences: [
+      'api://AzureADTokenExchange'
+    ]
+  }
+} 

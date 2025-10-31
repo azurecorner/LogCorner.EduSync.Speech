@@ -17,7 +17,7 @@
         console.log("SignalR script loaded");
 
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:5001/logcornerhub?clientName=LogCorner.EduSync.Speech.Front") // your hub endpoint
+            .withUrl("https://localhost:8001/logcornerhub?clientName=LogCorner.EduSync.Speech.Front") // your hub endpoint
             .build();
 
         // Listen to all published events
