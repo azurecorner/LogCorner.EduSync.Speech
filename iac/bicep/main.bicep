@@ -41,6 +41,17 @@ param privateDnsZoneNames  array = [
   'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io'
 ]
 
+@description('Specifies the namespace of the application.')
+param workloadIdentityserviceAccounNamespace string 
+
+@description('Specifies the service account of the application.')
+param workloadIdentityServiceAccountName string 
+
+@description('Specifies the name of the workload managed identity.')
+param workloadManagedIdentityName string 
+
+
+
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: userAssignedIdentityName
   location: location
@@ -86,6 +97,26 @@ module network 'modules/network.bicep' = {
   }
 }
 
+module peerFirstVnetSecondVnet 'modules/vnet_peering.bicep' = {
+  name: 'peerFirstToSecond'
+  scope: resourceGroup()
+  params: {
+    existingLocalVirtualNetworkName: network.outputs.virtualNetworkName
+    existingRemoteVirtualNetworkName: 'datasynchro-hub-vnet'
+    existingRemoteVirtualNetworkResourceGroupName: 'RG-DATASYNCHRO-HUB'
+  }
+}
+
+module peerSecondVnetFirstVnet 'modules/vnet_peering.bicep' = {
+  name: 'peerSecondToFirst'
+  scope: resourceGroup('RG-DATASYNCHRO-HUB')
+  params: {
+    existingLocalVirtualNetworkName: 'datasynchro-hub-vnet'
+    existingRemoteVirtualNetworkName: network.outputs.virtualNetworkName
+    existingRemoteVirtualNetworkResourceGroupName: resourceGroup().name
+  }
+}
+
 module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName in privateDnsZoneNames: {
   name: 'privateDnsZone-${privateDnsZoneName}'
   params: {
@@ -93,17 +124,11 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     location: 'global'
     virtualNetworkId: [
       network.outputs.virtualNetworkId
+      '/subscriptions/023b2039-5c23-44b8-844e-c002f8ed431d/resourceGroups/RG-DATASYNCHRO-HUB/providers/Microsoft.Network/virtualNetworks/datasynchro-hub-vnet'
     ]
   }
 }]
-@description('Specifies the namespace of the application.')
-param namespace string = ''
 
-@description('Specifies the service account of the application.')
-param serviceAccountName string = ''
-
-@description('Specifies the name of the workload managed identity.')
-param workloadManagedIdentityName string 
 
 module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
@@ -119,8 +144,8 @@ module aksCluster 'modules/aks.bicep' = {
      tags: tags
      adminGroupObjectIDs: [adminUserObjectId]
       LoganalyticID: logAnalyticsWorkspace.id
-       serviceAccountNameNamespace: namespace
-    serviceAccountName: serviceAccountName
+       serviceAccountNamespace: workloadIdentityserviceAccounNamespace
+    serviceAccountName: workloadIdentityServiceAccountName
     workloadManagedIdentityName: workloadManagedIdentityName
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
@@ -227,7 +252,9 @@ module keyvault 'modules/keyvault.bicep' = {
     keyvault_name: 'kv-${prefix}-001'
       workloadManagedIdentityName:workloadManagedIdentityName
   }
-
+dependsOn: [
+    aksCluster
+  ]
 }
 
 
@@ -245,7 +272,7 @@ resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedId
   location: location
 }
 
- module gateway 'modules/applicationGatewayForContainers.bicep' = {
+/*  module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
     
@@ -276,3 +303,4 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 } 
+ */

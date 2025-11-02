@@ -5,12 +5,17 @@ Building microservices through Event Driven Architecture
 $acrName = "datasynchroacr"
 az acr login --name $acrName
 
+
+# Build and push the SIGNALR image
+docker build -t "$acrName.azurecr.io/signalr-hub:latest" -f .\src\Hub\LogCorner.EduSync.Notification.Server\Dockerfile .\src\ 
+docker push "$acrName.azurecr.io/signalr-hub:latest"
+
 # Build and push the Web API image
-docker build -t "$acrName.azurecr.io/web-api:latest" -f .\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ --no-cache
+docker build -t "$acrName.azurecr.io/web-api:latest" -f .\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\
 docker push "$acrName.azurecr.io/web-api:latest"
 
 # Build and push the Web App image
-docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\OtelReferenceApp\WebApp\Dockerfile .\src\OtelReferenceApp\ --no-cache
+docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\OtelReferenceApp\WebApp\Dockerfile .\src\OtelReferenceApp\ 
 docker push "$acrName.azurecr.io/web-app:latest"
 
 

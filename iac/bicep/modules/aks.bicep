@@ -49,9 +49,9 @@ resource privatednsZone 'Microsoft.Network/privateDnsZones@2024-06-01' existing 
 
 param workloadManagedIdentityName string
 
-param serviceAccountName string = 'workload-identity-sa'
+param serviceAccountName string 
 
-param serviceAccountNameNamespace string ='azure-resources'
+param serviceAccountNamespace string 
 
 var AzureServiceBusDataOwner = '090c5cfd-751d-490a-894a-3ce6f1109419'
 
@@ -177,7 +177,7 @@ resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIde
   parent: workloadManagedIdentity
   properties: {
     issuer: aksCluster.properties.oidcIssuerProfile.issuerURL
-    subject: 'system:serviceaccount:${serviceAccountNameNamespace}:${serviceAccountName}'
+    subject: 'system:serviceaccount:${serviceAccountNamespace}:${serviceAccountName}'
     audiences: [
       'api://AzureADTokenExchange'
     ]
