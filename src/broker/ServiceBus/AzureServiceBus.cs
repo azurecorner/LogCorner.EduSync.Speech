@@ -124,26 +124,12 @@ namespace LogCorner.EduSync.Speech.ServiceBus
         {
             var messages = new List<T>();
 
-          //  var clientOptions = new ServiceBusClientOptions
-          //  {
-          //      TransportType = ServiceBusTransportType.AmqpWebSockets
-          //  };
-
-          //  var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "2804c445-8a4f-4aac-a214-f56d76235af4";
-          //  var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? "f12a747a-cddf-4426-96ff-ebe055e215a3";
-          //  var credential = new DefaultAzureCredential(
-          //    new DefaultAzureCredentialOptions
-          //    {
-          //        ManagedIdentityClientId = managedIdentityClientId,
-          //        TenantId = tenantId
-
-          //    }
-          //);
-
-            //await using var client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
+            Console.WriteLine($"*******************-Listening for messages on queue: {serviceBusQueueName}");
             var receiver = client.CreateReceiver(serviceBusQueueName);
 
             // loop si tu veux runAlways
+
+            Console.WriteLine($"*******************-Receiving messages from queue: {serviceBusQueueName}");
 
             var receivedMessages = await receiver.ReceiveMessagesAsync(
                 maxMessages: 10,

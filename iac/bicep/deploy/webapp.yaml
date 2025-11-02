@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: otel-demo-app
+  name: web-frontend-app
   namespace: azure-resources
   labels:
     app: webapp
@@ -16,7 +16,7 @@ spec:
         app: webapp
     spec:
       containers:
-        - name: otel-demo-app
+        - name: web-frontend-app
           image: datasynchroacr.azurecr.io/web-app:latest
           ports:
             - containerPort: 5000
@@ -32,5 +32,27 @@ spec:
               value: http://+:5000
             - name: ASPNETCORE_ENVIRONMENT
               value: Kubernetes
-            - name: WEBAPI_URL
+            - name: WEBAPI_COMMAND_URL
               value : http://webapi-service
+            - name: WEBAPI_QUERY_URL
+              value : http://web-api-query-service
+            - name: HubUrl
+              value : http://signalr-service
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+  namespace: azure-resources
+  labels:
+    app: webapp
+
+spec:
+  selector:
+    app: webapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer #ClusterIP

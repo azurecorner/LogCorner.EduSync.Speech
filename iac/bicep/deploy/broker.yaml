@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker-app
+  namespace: azure-resources
+  labels:
+    app: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: workload-identity-sa
+      containers:
+        - name: broker-app
+          image: datasynchroacr.azurecr.io/broker-app:latest
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+          
+            - name: DOTNET_ENVIRONMENT
+              value: Kubernetes
+            - name: AzureCosmosDB__ConnectionString
+              value: AccountEndpoint=https://cosmos-datasynchro-001.documents.azure.com:443/;AccountKey=FnTlv5s1F1Z08ggw2qEAWu0Ekb4LMNHkodEFnUKLzlP7YLk1CEWTBGOwxEWdGVfLvwQCXSHtjp3GACDbuvqE8A==;
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-service
+  namespace: azure-resources
+  labels:
+    app: broker
+
+spec:
+  selector:
+    app: broker
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP

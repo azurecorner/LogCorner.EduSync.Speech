@@ -110,7 +110,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
         count: 1
         enableAutoScaling: true
         minCount: 1
-        maxCount: 2
+        maxCount: 3
         vmSize: vmSize
         osType: 'Linux'
         osSKU: 'Ubuntu'

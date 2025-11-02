@@ -46,13 +46,29 @@ docker login "$acrName.azurecr.io" `
 docker build -t "$acrName.azurecr.io/signalr-hub:latest" -f .\src\Hub\LogCorner.EduSync.Notification.Server\Dockerfile .\src\ 
 docker push "$acrName.azurecr.io/signalr-hub:latest"
 
-# Build and push the Web API image
+# Build and push the Web API command image
 docker build -t "$acrName.azurecr.io/web-api:latest" -f .\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ --no-cache
 docker push "$acrName.azurecr.io/web-api:latest"
 
+
+
+# Build and push the Broker Service image
+docker build -t "$acrName.azurecr.io/broker-app:latest" -f .\src\broker\LogCorner.EduSync.Speech.WorkerService\Dockerfile .\src\ --no-cache
+docker push "$acrName.azurecr.io/broker-app:latest"
+
+C:\Users\logcorner\source\repos\LogCorner.EduSync.Speech.Command\src\broker\LogCorner.EduSync.Speech.WorkerService\Dockerfile
+
+
+# Build and push the Web API query image
+docker build -t "$acrName.azurecr.io/web-api-query:latest" -f .\src\Query\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ 
+docker push "$acrName.azurecr.io/web-api-query:latest"
+
+
+
 # Build and push the Web App image
-docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\OtelReferenceApp\WebApp\Dockerfile .\src\OtelReferenceApp\ --no-cache
+docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\Front\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ 
 docker push "$acrName.azurecr.io/web-app:latest"
+
 
 # signalrhub
 kubectl apply -f namespace.yaml
@@ -80,3 +96,22 @@ kubectl exec -it curl-test -n azure-resources -- `
     `"url`": `"http://test.com`",
     `"typeId`": 1
   }"
+
+
+# broker service
+kubectl apply -f workload-identity-service-account.yaml
+kubectl apply -f broker.yaml
+
+kubectl get pods -n azure-resources
+
+# web api query
+
+kubectl apply -f webapi-query.yaml
+
+kubectl get pods -n azure-resources
+
+
+kubectl logs web-api-64d6f78cc5-ps27k -n azure-resources
+
+
+kubectl exec -it curl-test -n azure-resources --   curl -v -k -X GET http://web-api-query-service/api/speech 
