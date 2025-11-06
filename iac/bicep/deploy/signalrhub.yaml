@@ -32,6 +32,8 @@ spec:
               value: http://+:5000
             - name: ASPNETCORE_ENVIRONMENT
               value: Kubernetes
+            - name: allowedOrigins
+              value : http://172.189.50.99 # web app  IP
 ---
 apiVersion: v1
 kind: Service
@@ -48,4 +50,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 5000
-  type: ClusterIP
+  type: LoadBalancer

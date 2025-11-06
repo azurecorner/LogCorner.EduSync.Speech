@@ -27,8 +27,6 @@ az provider register --namespace Microsoft.ServiceNetworking
 az extension add --name alb
 
 
-
-
 # LogCorner.EduSync
 Building microservices through Event Driven Architecture
 
@@ -64,7 +62,6 @@ docker build -t "$acrName.azurecr.io/web-api-query:latest" -f .\src\Query\LogCor
 docker push "$acrName.azurecr.io/web-api-query:latest"
 
 
-
 # Build and push the Web App image
 docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\Front\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ 
 docker push "$acrName.azurecr.io/web-app:latest"
@@ -82,10 +79,14 @@ kubectl apply -f workload-identity-service-account.yaml
 kubectl apply -f webapi.yaml
 
 kubectl get pods -n azure-resources
+kubectl  rollout restart deployment -n azure-resources
 
 
-kubectl logs web-api-64d6f78cc5-ps27k -n azure-resources
+kubectl get pods -n azure-resources
+kubectl get svc -n azure-resources
 
+
+kubectl logs web-frontend-app-84bb97d577-mj9gp -n azure-resources
 
 kubectl exec -it curl-test -n azure-resources -- `
   curl -v -k -X POST http://webapi-service/api/speech `
@@ -115,3 +116,17 @@ kubectl logs web-api-64d6f78cc5-ps27k -n azure-resources
 
 
 kubectl exec -it curl-test -n azure-resources --   curl -v -k -X GET http://web-api-query-service/api/speech 
+
+# web app front
+
+kubectl apply -f webapp.yaml
+
+kubectl get pods -n azure-resources
+
+
+kubectl logs web-api-64d6f78cc5-ps27k -n azure-resources
+
+
+kubectl exec -it curl-test -n azure-resources --   curl -v -k -X GET http://web-api-query-service/api/speech 
+
+kubectl  rollout restart deployment -n azure-resources

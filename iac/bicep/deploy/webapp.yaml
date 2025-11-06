@@ -37,7 +37,7 @@ spec:
             - name: WEBAPI_QUERY_URL
               value : http://web-api-query-service
             - name: HubUrl
-              value : http://signalr-service
+              value : http://4.251.203.51/logcornerhub
 
 ---
 apiVersion: v1
