@@ -3,21 +3,19 @@ kind: HTTPRoute
 metadata:
   name: webapps-route
   namespace: azure-resources
-  annotations:
-    # Optional: if your backend does not respond to "/" for health checks
-    # alb.networking.azure.io/health-probe-path: /webapp/
+  
 spec:
   parentRefs:
     - name: gateway-01
       namespace: azure-resources
   rules:
-    # Route /webapi/ to webapi-service
+    # Route /signalr/ to signalr-service
     - matches:
         - path:
             type: PathPrefix
-            value: /webapi/
+            value: /signalr/
       backendRefs:
-        - name: webapi-service
+        - name: signalr-service
           port: 80
 
     # Route /webapp/ to webapp-service

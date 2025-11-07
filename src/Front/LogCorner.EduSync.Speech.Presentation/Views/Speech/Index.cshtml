@@ -17,6 +17,7 @@
         console.log("SignalR script loaded");
 
           console.log("HubUrl => @Configuration["HubUrl"]");
+          console.log("pathBase => @Configuration["pathBase"]");
 
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("@Configuration["HubUrl"]?clientName=LogCorner.EduSync.Speech.Front") // your hub endpoint
@@ -31,7 +32,7 @@
                 console.log("ReadModelAcknowledged event received, refreshing table...");
 
                 // Refresh table via partial view
-                fetch("/Speech/IndexPartial")
+                fetch("@Configuration["pathBase"]/Speech/IndexPartial")
                     .then(r => r.text())
                     .then(html => {
                         document.getElementById("speech-list").innerHTML = html;

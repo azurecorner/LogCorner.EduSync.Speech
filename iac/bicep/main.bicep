@@ -272,7 +272,7 @@ resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedId
   location: location
 }
 
-/*  module gateway 'modules/applicationGatewayForContainers.bicep' = {
+ module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
     
@@ -303,4 +303,4 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 } 
- */
+ 

@@ -30,6 +30,8 @@ spec:
           env:
             - name: ASPNETCORE_URLS
               value: http://+:5000
+            - name: pathBase
+              value: /webapp
             - name: ASPNETCORE_ENVIRONMENT
               value: Kubernetes
             - name: WEBAPI_COMMAND_URL
@@ -37,7 +39,7 @@ spec:
             - name: WEBAPI_QUERY_URL
               value : http://web-api-query-service
             - name: HubUrl
-              value : http://4.251.203.51/logcornerhub
+              value : http://aeevdzcjeshjc7cy.fz55.alb.azure.com/signalr/logcornerhub
 
 ---
 apiVersion: v1
@@ -55,4 +57,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 5000
-  type: LoadBalancer #ClusterIP
+  type: ClusterIP

@@ -2,16 +2,16 @@ $AKS_NAME="datasynchro-aks"
 $RESOURCE_GROUP="RG-EVENT-DRIVEN-ARCHITECTURE"
 
 $HELM_NAMESPACE="azure-resources"
-$CONTROLLER_NAMESPACE="azure-alb-system"
 
-$RESOURCE_NAME="datasynchro_alb"
+$RESOURCE_NAME="appgwforcon-datasynchro"
 $FRONTEND_NAME="datasynchro-frontend"
 
 
+
+ 
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $AKS_NAME --overwrite-existing
 
-kubectl apply -f .\deploy\referenceapp\
-
+# kubectl apply -f .\deploy\referenceapp\
 
 kubectl get pods -n $HELM_NAMESPACE
 
@@ -48,11 +48,41 @@ spec:
 
  kubectl get gateway gateway-01 -n $HELM_NAMESPACE -o yaml
 
- kubectl apply -f .\deploy\referenceapp\http-routes.yaml
+
+ # signalrhub
+kubectl apply -f namespace.yaml
+kubectl apply -f signalrhub.yaml
+kubectl apply -f curl-test.yaml
+
+kubectl exec -it curl-test -n azure-resources --   curl -v -k http://signalr-service/logcornerhub  
+
+
+# web api command
+kubectl apply -f workload-identity-service-account.yaml
+kubectl apply -f webapi.yaml
+
+# web api query
+
+kubectl apply -f webapi-query.yaml
+
+
+# broker service
+kubectl apply -f workload-identity-service-account.yaml
+kubectl apply -f broker.yaml
+
+
+# web app front
+
+kubectl apply -f webapp.yaml
+
+
+# deploy routes
+ kubectl apply -f http-routes.yaml
 
  kubectl get httproute webapps-route -n $HELM_NAMESPACE -o yaml
 
-
+ # verify deployment
+ kubectl  rollout restart deployment -n azure-resources
 
  kubectl get svc -n $HELM_NAMESPACE
  kubectl get endpoints -n $HELM_NAMESPACE
@@ -64,6 +94,11 @@ spec:
  Write-Host "fqdn=$fqdn"
 
  $resp = Invoke-WebRequest "http://$fqdn/webapp/" -UseBasicParsing -ErrorAction Stop
+        Write-Host "Status: $($resp.StatusCode)" -ForegroundColor Green
+        Write-Host $resp.Content
+
+
+$resp = Invoke-WebRequest "http://$fqdn/signalr/logcornerhub" -UseBasicParsing -ErrorAction Stop
         Write-Host "Status: $($resp.StatusCode)" -ForegroundColor Green
         Write-Host $resp.Content
 

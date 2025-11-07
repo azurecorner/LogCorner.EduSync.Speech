@@ -23,7 +23,12 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
-
+//app.UsePathBase("/webapp");
+var pathBase = builder.Configuration["pathBase"];
+if (!string.IsNullOrWhiteSpace(pathBase))
+{
+    app.UsePathBase(new PathString(pathBase));
+}
 app.MapStaticAssets();
 
 app.MapControllerRoute(

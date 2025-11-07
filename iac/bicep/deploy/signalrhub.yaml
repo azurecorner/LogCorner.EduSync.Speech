@@ -30,10 +30,13 @@ spec:
           env:
             - name: ASPNETCORE_URLS
               value: http://+:5000
+            - name: pathBase
+              value: /signalr
             - name: ASPNETCORE_ENVIRONMENT
               value: Kubernetes
             - name: allowedOrigins
-              value : http://172.189.50.99 # web app  IP
+              value : http://aeevdzcjeshjc7cy.fz55.alb.azure.com # web app  IP
+            
 ---
 apiVersion: v1
 kind: Service
@@ -50,4 +53,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 5000
-  type: LoadBalancer
+  type: ClusterIP
