@@ -8,21 +8,12 @@ namespace LogCorner.EduSync.Speech.Infrastructure
 {
     public class Repository(CosmosClient client, IConfiguration configurationOptions) : IRepository
     {
-        //private string databaseName;
-        //private string ContainerName;
 
-        //private readonly CosmosClient client;
 
         private string databaseName = configurationOptions["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
         private string ContainerName = configurationOptions["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
 
-        //public Repository(CosmosClient client, IConfiguration configurationOptions)
-        //{
-        //    this.client = client;
 
-        //    databaseName = configurationOptions["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
-        //    ContainerName = configurationOptions["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
-        //}
 
         public async Task<List<T>> ReadAsync<T>(Func<string, Task> writeOutputAync)
         {

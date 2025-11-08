@@ -19,9 +19,26 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2022-01-01-preview
   name: serviceBusNamespaceName
   location: location
   sku: {
-    name: 'Standard'
+    name: 'Premium'
+    tier: 'Premium'
+    capacity: 1
   }
-  properties: {}
+  properties: {
+     publicNetworkAccess: 'Disabled'
+      
+  }
+}
+
+resource namespaces_sb_namespace_datasynchro_name_default 'Microsoft.ServiceBus/namespaces/networkrulesets@2024-01-01' = {
+  parent: serviceBusNamespace
+  name: 'default'
+
+  properties: {
+    publicNetworkAccess: 'Disabled'
+    defaultAction: 'Allow'
+
+    trustedServiceAccessEnabled: true
+  }
 }
 
 resource serviceBusQueue 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' = {
@@ -83,3 +100,4 @@ resource roleAssignmentAdminUser 'Microsoft.Authorization/roleAssignments@2022-0
 }
 
 
+output id string = serviceBusNamespace.id

@@ -38,7 +38,7 @@ param sqlserverAdminPassword string
 param databaseName string = 'LogCorner.EduSync.Speech.Database'
 
 param privateDnsZoneNames  array = [
-  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io'
+  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net'
 ]
 
 @description('Specifies the namespace of the application.')
@@ -224,33 +224,89 @@ module slqServerPrivateEndpoint 'modules/private_endpoint.bicep' = {
   ]
 }
 
+param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
+param serviceBusQueueName string = 'sb-queue-${prefix}'
+
  module servicebus 'modules/serviceBus.bicep' = {
-  name: 'servicebus'
+  name: serviceBusNamespaceName
   params: {
     userAssignedIdentityName: managedIdentity.name
     location: location
-    serviceBusNamespaceName: '${prefix}-sb-namespace'
-    serviceBusQueueName: '${prefix}-sb-queue'
+    serviceBusNamespaceName:serviceBusNamespaceName
+    serviceBusQueueName: serviceBusQueueName
   }
 
 }
+
+
+
+module servicebusPrivateEndpoint 'modules/private_endpoint.bicep' = { 
+
+  name: 'pe-${serviceBusNamespaceName}'
+  params: {
+    location: location
+    privateEndpointName:  'pe-${serviceBusNamespaceName}'
+    privateDnsZoneName : 'privatelink.servicebus.windows.net'
+    endpointDnsGroupName: 'pe-${serviceBusNamespaceName}/dnsgroup'
+    privateLinkConnexionServiceName: 'cn-${serviceBusNamespaceName}'
+    groupIds:[
+      'namespace'
+    ]
+    subnetId: network.outputs.privatelink_subnet_id
+    privateLinkServiceId: servicebus.outputs.id
+  }
+
+  dependsOn: [
+    PrivateDnsZone
+
+  ]
+}
+
+
+
+param cosmosdbAccountName string = 'cosmos-${prefix}-002'
+param cosmosdbDatabaseName string = 'LogCorner.EduSync.Speech.Database'
 
 module cosmosdb 'modules/cosmosdb.bicep' = {
-  name: 'cosmosdb'
+  name: cosmosdbAccountName
   params: {
-    accountName: 'cosmos-${prefix}-001'
+    accountName: cosmosdbAccountName
     location: location
-    databaseName: 'LogCorner.EduSync.Speech.Database'
+    databaseName: cosmosdbDatabaseName
   }
 
 }
- 
-module keyvault 'modules/keyvault.bicep' = {
-  name: 'keyvault'
+
+module cosmosdbPrivateEndpoint 'modules/private_endpoint.bicep' = { 
+
+  name: 'pe-${cosmosdbAccountName}'
   params: {
     location: location
-    keyvault_name: 'kv-${prefix}-001'
+    privateEndpointName:  'pe-${cosmosdbAccountName}'
+    privateDnsZoneName : 'privatelink.documents.azure.com'
+    endpointDnsGroupName: 'pe-${cosmosdbAccountName}/dnsgroup'
+    privateLinkConnexionServiceName: 'cn-${cosmosdbAccountName}'
+    groupIds:[
+      'Sql'
+    ]
+    subnetId: network.outputs.privatelink_subnet_id
+    privateLinkServiceId: cosmosdb.outputs.account_id
+  }
+
+  dependsOn: [
+    PrivateDnsZone
+
+  ]
+}
+
+param keyvault_name string = 'kv-${prefix}-001'
+module keyvault 'modules/keyvault.bicep' = {
+  name: keyvault_name
+  params: {
+    location: location
+    keyvault_name: keyvault_name
       workloadManagedIdentityName:workloadManagedIdentityName
+      privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
 dependsOn: [
     aksCluster
@@ -271,7 +327,7 @@ resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedId
   name: userAssignedIdentities_azure_alb_identity_name
   location: location
 }
-
+/*
  module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
@@ -303,4 +359,4 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 } 
- 
+ */

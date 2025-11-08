@@ -2,9 +2,11 @@ param keyvault_name string
 
 param workloadManagedIdentityName string
 
-// @secure()
-// param secret_name  string
+param privatelink_subnet_id string
+
 param location string 
+
+
 resource keyvault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
   name: keyvault_name
   location : location
@@ -14,14 +16,12 @@ resource keyvault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
       name: 'standard'
     }
     tenantId: 'f12a747a-cddf-4426-96ff-ebe055e215a3'
-    //accessPolicies: []
-    //enabledForDeployment: false
+
     enableSoftDelete: true
     softDeleteRetentionInDays: 90
     enableRbacAuthorization: true
     enablePurgeProtection: true
-   // vaultUri: 'https://${keyvault_name}.vault.azure.net/'
-    //provisioningState: 'Succeeded'
+
     publicNetworkAccess: 'Enabled'
   }
 }
@@ -63,4 +63,24 @@ module KeyVaultSecretsUserRole 'roleAssignment.bicep' = {
     roleDescription: 'Perform any action on the secrets of a key vault, except manage permissions'
     principalType:'servicePrincipal'
   }
+}
+
+
+module servicebusPrivateEndpoint 'private_endpoint.bicep' = { 
+
+  name: 'pe-${keyvault_name}'
+  params: {
+    location: location
+    privateEndpointName:  'pe-${keyvault_name}'
+    privateDnsZoneName : 'privatelink.vaultcore.azure.net'
+    endpointDnsGroupName: 'pe-${keyvault_name}/dnsgroup'
+    privateLinkConnexionServiceName: 'cn-${keyvault_name}'
+    groupIds:[
+      'vault'
+    ]
+    subnetId: privatelink_subnet_id
+    privateLinkServiceId: keyvault.id
+  }
+
+ 
 }

@@ -7,7 +7,7 @@ New-AzResourceGroupDeployment `
   -TemplateParameterFile main.bicepparam `
   -DeploymentDebugLogLevel All
 
-
+# https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control?pivots=azure-cli#permission-model
 
   # https://learn.microsoft.com/en-us/azure/aks/workload-identity-deploy-cluster?source=recommendations
 

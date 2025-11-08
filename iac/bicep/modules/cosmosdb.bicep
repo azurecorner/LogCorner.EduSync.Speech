@@ -13,6 +13,7 @@ resource account 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   properties: {
     enableFreeTier: true
     databaseAccountOfferType: 'Standard'
+     publicNetworkAccess: 'Disabled'
     consistencyPolicy: {
       defaultConsistencyLevel: 'Session'
     }
@@ -38,7 +39,8 @@ resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-11-15
 }
 
 
-output location string = location
+output account_id string = account.id
+output account_name string = account.name
 
-output resourceGroupName string = resourceGroup().name
+
 
