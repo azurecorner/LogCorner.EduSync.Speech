@@ -22,9 +22,9 @@ namespace LogCorner.EduSync.Speech.Presentation
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var elasticSearchUrl = Configuration["elasticSearchUrl"];
+            
             services.AddScoped<ISpeechUseCase, SpeechUseCase>();
-            //  services.AddElasticSearch<SpeechView>(elasticSearchUrl, "speech");
+  
             services.RegisterCosmosDependencies(Configuration);
             services.AddCors(options =>
             {
@@ -37,21 +37,23 @@ namespace LogCorner.EduSync.Speech.Presentation
                          );
             });
 
-            services.AddCustomAuthentication(Configuration);
-            services.AddCustomSwagger(Configuration);
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "LogCorner Micro Service Event Driven Architecture - Query HTTP API",
+                    Version = "v1",
+                    Description = "The Speech Micro Service Query HTTP API"
+                });
+            });
 
-            //services.AddResiliencyServices();
-            //services.AddOpenTelemetry(Configuration);
             services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //if (!bool.TryParse(Configuration["isAuthenticationEnabled"], out var isAuthenticationEnabled))
-            //{
-            //    throw new PresentationException("isAuthenticationEnabled should be configured in appsettings");
-            //}
+ 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

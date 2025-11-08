@@ -1,25 +1,15 @@
 # LogCorner.EduSync
 Building microservices through Event Driven Architecture
 
-# Set the ACR name and log in
-$acrName = "datasynchroacr"
-az acr login --name $acrName
 
+$resourceGroupName="RG-EVENT-DRIVEN-ARCHITECTURE"
 
-# Build and push the SIGNALR image
-docker build -t "$acrName.azurecr.io/signalr-hub:latest" -f .\src\Hub\LogCorner.EduSync.Notification.Server\Dockerfile .\src\ 
-docker push "$acrName.azurecr.io/signalr-hub:latest"
-
-# Build and push the Web API image
-docker build -t "$acrName.azurecr.io/web-api:latest" -f .\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\
-docker push "$acrName.azurecr.io/web-api:latest"
-
-# Build and push the Web App image
-docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\OtelReferenceApp\WebApp\Dockerfile .\src\OtelReferenceApp\ 
-docker push "$acrName.azurecr.io/web-app:latest"
-
-
-C:\Users\LEYE-GORA\source\repos\AZURE WARRIORS\EDA-FULL MICROSOFT\LogCorner.EduSync.Speech\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile
+New-AzResourceGroupDeployment `
+  -Name "datasynchro-sre-agent" `
+  -ResourceGroupName $resourceGroupName `
+  -TemplateFile main.bicep `
+  -TemplateParameterFile main.bicepparam `
+  -DeploymentDebugLogLevel All
 
 
 
