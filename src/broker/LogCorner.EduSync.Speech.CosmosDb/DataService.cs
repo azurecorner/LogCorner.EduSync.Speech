@@ -11,7 +11,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
         private string databaseName = configurationOptions["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
         private string ContainerName = configurationOptions["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
 
-        public async Task CreateAsync<T>(     Func<string, Task> writeOutputAsync,    T item,    string partitionKeyValue )
+        public async Task CreateAsync<T>(Func<string, Task> writeOutputAsync, T item, string partitionKeyValue)
         {
             Database database = client.GetDatabase(databaseName);
 

@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Azure.Identity;
+﻿using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using Microsoft.Extensions.Configuration;
@@ -34,9 +33,8 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
         public AzureServiceBus(IEventSerializer eventSerializer, IJsonSerializer jsonSerializer, IConfiguration configuration)
         {
-              _jsonSerializer = jsonSerializer;
+            _jsonSerializer = jsonSerializer;
             Configuration = configuration;
-
 
             userAssignedClientId = Configuration["UserAssignedClientId"];// ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
             var tenantId = Configuration["TenantId"];
@@ -50,7 +48,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             {
                 TransportType = ServiceBusTransportType.AmqpWebSockets
             };
-
 
             Console.WriteLine($"*******************-ASPNETCORE_ENVIRONMENT = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 
@@ -67,7 +64,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
                 {
                     ManagedIdentityClientId = managedIdentityClientId,
                     TenantId = azureTenantId
-
                 }
             );
 
@@ -86,12 +82,10 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             //Console.WriteLine($"*******************-Token acquired: {token.Token}");
 
             client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
-
         }
 
         public async Task SendAsync(string topic, string @event)
         {
-    
             sender = client.CreateSender(serviceBusQueueName);
 
             // create a batch

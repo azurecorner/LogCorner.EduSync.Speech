@@ -22,9 +22,8 @@ namespace LogCorner.EduSync.Speech.Presentation
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
             services.AddScoped<ISpeechUseCase, SpeechUseCase>();
-  
+
             services.RegisterCosmosDependencies(Configuration);
             services.AddCors(options =>
             {
@@ -53,7 +52,6 @@ namespace LogCorner.EduSync.Speech.Presentation
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
- 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

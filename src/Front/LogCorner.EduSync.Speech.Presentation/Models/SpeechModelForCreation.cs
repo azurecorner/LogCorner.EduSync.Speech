@@ -20,7 +20,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Models
 
     public class SpeechModelForUpdate
     {
-        public Guid Id { get; set; }    
+        public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }
@@ -28,6 +28,5 @@ namespace LogCorner.EduSync.Speech.Presentation.Models
         public int TypeId { get; set; }
 
         public long Version { get; set; }
-
     }
 }

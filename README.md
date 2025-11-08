@@ -5,19 +5,41 @@ Building microservices through Event Driven Architecture
 $resourceGroupName="RG-EVENT-DRIVEN-ARCHITECTURE"
 
 New-AzResourceGroupDeployment `
-  -Name "datasynchro-sre-agent" `
+  -Name "datasynchro-event-driven-architecture" `
   -ResourceGroupName $resourceGroupName `
   -TemplateFile main.bicep `
   -TemplateParameterFile main.bicepparam `
   -DeploymentDebugLogLevel All
 
 
+# install helm 
+https://helm.sh/docs/intro/install/
+
+helm version --short
+kubectl config view
+
+helm repo add "stable" "https://charts.helm.sh/stable"
+
+helm env
+
+# go under folder => C:\Users\logcorner\source\repos\LogCorner.EduSync.Speech.Command\helm-chart\chart> 
+
+helm install [release] [chart]
+helm install  logcorner-command  logcorner.edusync.speech
 
 
+helm list --short  => list release name
+
+helm get manifest logcorner-command
 
 
+helm upgrade logcorner-command  logcorner.edusync.speech
 
+helm rollback logcorner-command 1
 
+helm history logcorner-command 
+
+helm uninstall logcorner-command  logcorner.edusync.speech
 
 
 

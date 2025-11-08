@@ -1,5 +1,4 @@
 ﻿using LogCorner.EduSync.Notification.Common.Hub;
-using LogCorner.EduSync.Speech.Command.SharedKernel;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Events;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.CosmosDb;
@@ -73,5 +72,4 @@ public class ConsumerService : IConsumerService
             await _publisher.PublishAsync("ReadModelAcknowledged", null, jsonString);
         }
     }
-
 }

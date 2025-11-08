@@ -1,4 +1,3 @@
-using LogCorner.EduSync.Notification.Common.Exceptions;
 using LogCorner.EduSync.Notification.Server.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -70,18 +69,9 @@ namespace LogCorner.EduSync.Notification.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                /*if (!bool.TryParse(Configuration["isAuthenticationEnabled"], out var isAuthenticationEnabled))
-                {
-                    throw new NotificationServerException("isAuthenticationEnabled property should be configured appSettings");
-                }
-                if (!isAuthenticationEnabled)
-                {*/
-                    endpoints.MapHub<LogCornerHub<object>>("/logcornerhub");
-                /*}
-                else
-                {
-                    endpoints.MapHub<LogCornerHub<object>>("/logcornerhub").RequireAuthorization();
-                }*/
+              
+                endpoints.MapHub<LogCornerHub<object>>("/logcornerhub");
+              
             });
         }
     }

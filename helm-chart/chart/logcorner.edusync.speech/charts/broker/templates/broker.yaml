@@ -40,7 +40,7 @@ spec:
             - name: HubUrl
               value: http://signalr-service/logcornerhub
             - name: AzureCosmosDB__ConnectionString
-              value: AccountEndpoint=AccountEndpoint=https://cosmos-datasynchro-002.documents.azure.com:443/;AccountKey=MDE27LlrJgfwO6tbm1199ENG6P9wXNs2moMkf7WVRrlFZtAxEsmL24GiI60QgCMwNd7NFTE7CYS3ACDbN3c2UQ==;
+              value: AccountEndpoint=https://cosmos-datasynchro-002.documents.azure.com:443/;AccountKey=MDE27LlrJgfwO6tbm1199ENG6P9wXNs2moMkf7WVRrlFZtAxEsmL24GiI60QgCMwNd7NFTE7CYS3ACDbN3c2UQ==;
 
 ---
 apiVersion: v1

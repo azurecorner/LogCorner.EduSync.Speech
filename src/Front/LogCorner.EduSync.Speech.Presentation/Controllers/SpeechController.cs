@@ -8,8 +8,8 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
     public class SpeechController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private  string queryApiBaseUrl;
-        private  string commandApiBaseUrl;
+        private string queryApiBaseUrl;
+        private string commandApiBaseUrl;
 
         private readonly ISignalRNotifier? _notifier; // Make nullable to avoid CS8602
         private readonly ISignalRPublisher? _publisher;
@@ -23,17 +23,15 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             _notifier = notifier;
             _publisher = publisher;
 
-            queryApiBaseUrl = $"{configuration["WEBAPI_QUERY_URL"]}/api/speech" ;
+            queryApiBaseUrl = $"{configuration["WEBAPI_QUERY_URL"]}/api/speech";
             commandApiBaseUrl = $"{configuration["WEBAPI_COMMAND_URL"]}/api/speech";
-
 
             if (_notifier != null)
             {
-                _notifier.StartAsync().GetAwaiter().GetResult(); 
+                _notifier.StartAsync().GetAwaiter().GetResult();
             }
 
             _logger = logger;
-      
         }
 
         // Returns the partial table only
@@ -42,7 +40,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         {
             var client = _httpClientFactory.CreateClient();
             _speeches = await client.GetFromJsonAsync<List<SpeechModel>>(queryApiBaseUrl) ?? new List<SpeechModel>();
-            return PartialView("_SpeechListPartial", _speeches); 
+            return PartialView("_SpeechListPartial", _speeches);
         }
 
         // GET: SpeechController
@@ -50,8 +48,8 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         {
             var client = _httpClientFactory.CreateClient();
             _speeches = await client.GetFromJsonAsync<List<SpeechModel>>(queryApiBaseUrl) ?? new List<SpeechModel>();
-            return View(_speeches); 
-          }
+            return View(_speeches);
+        }
 
         // GET: SpeechController/Details/5
         public async Task<IActionResult> Details(string id)
@@ -65,7 +63,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             if (speech == null)
                 return NotFound();
 
-            return View(speech); 
+            return View(speech);
         }
 
         // GET: HomeController1/Create

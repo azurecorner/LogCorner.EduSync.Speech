@@ -1,1 +1,6 @@
-# namespace: helm
+namespace: azure-resources
+serviceAccountName: workload-identity-sa
+azureWorkloadIdentityClientId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+
+applicationGatewayForContainerResourceId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+applicationGatewayForContainerFrontEndName: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX

@@ -34,8 +34,12 @@ spec:
               value: Kubernetes
             - name: allowedOrigins
               value : http://localhost:4200
+            - name: AzureCosmosDB__DatabaseName
+              value: LogCorner.EduSync.Speech.Database
+            - name: AzureCosmosDB__ContainerName
+              value: Speech
             - name: AzureCosmosDB__ConnectionString
-              value: AccountEndpoint=AccountEndpoint=https://cosmos-datasynchro-002.documents.azure.com:443/;AccountKey=MDE27LlrJgfwO6tbm1199ENG6P9wXNs2moMkf7WVRrlFZtAxEsmL24GiI60QgCMwNd7NFTE7CYS3ACDbN3c2UQ==;
+              value: AccountEndpoint=https://cosmos-datasynchro-002.documents.azure.com:443/;AccountKey=MDE27LlrJgfwO6tbm1199ENG6P9wXNs2moMkf7WVRrlFZtAxEsmL24GiI60QgCMwNd7NFTE7CYS3ACDbN3c2UQ==;
 
 ---
 apiVersion: v1
