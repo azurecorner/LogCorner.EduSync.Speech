@@ -27,7 +27,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
         private string serviceBusNamespace;
         private string serviceBusQueueName;
-        private string userAssignedClientId; //"ff678d92-8adc-4f90-b8f5-cb4ea1a908ed";
 
         public IConfiguration Configuration { get; }
 
@@ -36,7 +35,7 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             _jsonSerializer = jsonSerializer;
             Configuration = configuration;
 
-            userAssignedClientId = Configuration["UserAssignedClientId"];// ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
+            var userAssignedClientId = Configuration["UserAssignedClientId"];// ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
             var tenantId = Configuration["TenantId"];
 
             Console.WriteLine($"*******************-UserAssignedClientId: {userAssignedClientId}");

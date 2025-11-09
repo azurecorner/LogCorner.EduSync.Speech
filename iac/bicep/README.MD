@@ -9,16 +9,15 @@ New-AzResourceGroupDeployment `
 
 # https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control?pivots=azure-cli#permission-model
 
-  # https://learn.microsoft.com/en-us/azure/aks/workload-identity-deploy-cluster?source=recommendations
+#  Using Managed Identities to authenticate with Azure Cosmos DB => https://dev.to/willvelida/using-managed-identities-to-authenticate-with-azure-cosmos-db-23ga
 
-  # https://learn.microsoft.com/en-us/samples/azure-samples/aks-application-gateway-for-containers-bicep/aks-application-gateway-for-containers-bicep/
+# https://learn.microsoft.com/en-us/azure/aks/workload-identity-deploy-cluster?source=recommendations
 
+# https://learn.microsoft.com/en-us/samples/azure-samples/aks-application-gateway-for-containers-bicep/aks-application-gateway-for-containers-bicep/
 
+# application gateway for container
 
-  # application gateway for container
-
-
-  az provider register --namespace Microsoft.ContainerService
+az provider register --namespace Microsoft.ContainerService
 az provider register --namespace Microsoft.Network
 az provider register --namespace Microsoft.NetworkFunction
 az provider register --namespace Microsoft.ServiceNetworking

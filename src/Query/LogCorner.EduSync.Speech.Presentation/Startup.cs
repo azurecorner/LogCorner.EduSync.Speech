@@ -1,12 +1,15 @@
+using Azure.Identity;
 using LogCorner.EduSync.Speech.Application.UseCases;
 using LogCorner.EduSync.Speech.Infrastructure;
 using LogCorner.EduSync.Speech.Presentation.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 
 namespace LogCorner.EduSync.Speech.Presentation
@@ -44,6 +47,41 @@ namespace LogCorner.EduSync.Speech.Presentation
                     Version = "v1",
                     Description = "The Speech Micro Service Query HTTP API"
                 });
+            });
+
+            services.AddSingleton(sp =>
+            {
+                CosmosClientOptions cosmosClientOptions = new CosmosClientOptions
+                {
+                    MaxRetryAttemptsOnRateLimitedRequests = 3,
+                    MaxRetryWaitTimeOnRateLimitedRequests = TimeSpan.FromSeconds(60)
+                };
+
+                var userAssignedClientId = Configuration["UserAssignedClientId"];
+                var tenantId = Configuration["TenantId"];
+
+                var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? userAssignedClientId;
+                var azureTenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? tenantId;
+
+                Console.WriteLine("AZURE_CLIENT_ID = ", managedIdentityClientId);
+                Console.WriteLine("AZURE_TENANT_ID = ", azureTenantId);
+
+                // For example, will discover Visual Studio or Azure CLI credentials
+                // in local environments and managed identity credentials in production deployments
+
+                var credential = new DefaultAzureCredential();
+                if (!string.IsNullOrEmpty(managedIdentityClientId) && !string.IsNullOrEmpty(azureTenantId))
+                {
+                    credential = new DefaultAzureCredential(
+                       new DefaultAzureCredentialOptions
+                       {
+                           ManagedIdentityClientId = managedIdentityClientId,
+                           TenantId = azureTenantId
+                       }
+                   );
+                }
+
+                return new CosmosClient(Configuration["CosmosDbEndpoint"], credential, cosmosClientOptions);
             });
 
             services.AddControllers();

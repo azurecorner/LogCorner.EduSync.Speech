@@ -273,6 +273,7 @@ module cosmosdb 'modules/cosmosdb.bicep' = {
     accountName: cosmosdbAccountName
     location: location
     databaseName: cosmosdbDatabaseName
+    workloadManagedIdentityName:workloadManagedIdentityName
   }
 
 }
@@ -327,7 +328,7 @@ resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedId
   name: userAssignedIdentities_azure_alb_identity_name
   location: location
 }
-
+/*
  module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
@@ -359,4 +360,4 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 } 
- 
+ */

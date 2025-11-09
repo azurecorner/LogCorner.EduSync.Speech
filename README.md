@@ -42,10 +42,14 @@ helm history logcorner-command
 helm uninstall logcorner-command  logcorner.edusync.speech
 
 
+# cosmos db role
+# principal id of azure vm (datasynchro-jumbobox) =>  1874d709-8343-4c7a-926d-d4dbb1f66ffe
+
+az cosmosdb sql role assignment create --account-name "cosmos-datasynchro-002" --resource-group "RG-EVENT-DRIVEN-ARCHITECTURE" --scope "/" --principal-id "1874d709-8343-4c7a-926d-d4dbb1f66ffe" --role-definition-name "Cosmos DB Built-in Data Contributor" 
 
 
 
-
+az cosmosdb sql role assignment list   --account-name cosmos-datasynchro-002   --resource-group RG-EVENT-DRIVEN-ARCHITECTURE   --query "[].{principalId:principalId, roleDefinitionId:roleDefinitionId, scope:scope}"
 
 
 

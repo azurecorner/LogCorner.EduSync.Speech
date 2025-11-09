@@ -23,14 +23,7 @@ namespace LogCorner.EduSync.Speech.WorkerService
             var notificationHubEndpoint = builder.Configuration["HubUrl"];
             builder.Services.AddSignalRServices($"{notificationHubEndpoint}?clientName=LogCorner.EduSync.Speech.Consumer");
 
-            var connectionString = builder.Configuration["AzureCosmosDB:ConnectionString"];
-            builder.Services.AddSingleton<CosmosClient>((serviceProvider) =>
-            {
-                CosmosClient client = new(
-                    connectionString: connectionString
-                );
-                return client;
-            });
+            builder.Services.RegisterCosmosDependencies(builder.Configuration);
 
             builder.Services.AddTransient<IDataService, DataService>();
             var host = builder.Build();
