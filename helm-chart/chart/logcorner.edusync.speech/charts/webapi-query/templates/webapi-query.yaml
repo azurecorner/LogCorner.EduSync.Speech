@@ -14,7 +14,9 @@ spec:
     metadata:
       labels:
         app: web-api-query
+        azure.workload.identity/use: "true"
     spec:
+      serviceAccountName: workload-identity-sa
       containers:
         - name: web-api-query-app
           image: datasynchroacr.azurecr.io/web-api-query:latest
@@ -38,8 +40,8 @@ spec:
               value: LogCorner.EduSync.Speech.Database
             - name: AzureCosmosDB__ContainerName
               value: Speech
-            - name: AzureCosmosDB__ConnectionString
-              value: AccountEndpoint=https://cosmos-datasynchro-002.documents.azure.com:443/;AccountKey=MDE27LlrJgfwO6tbm1199ENG6P9wXNs2moMkf7WVRrlFZtAxEsmL24GiI60QgCMwNd7NFTE7CYS3ACDbN3c2UQ==;
+            - name: AzureCosmosDB__AccountEndpoint
+              value: https://cosmos-datasynchro-002.documents.azure.com:443/
 
 ---
 apiVersion: v1

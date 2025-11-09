@@ -81,7 +81,7 @@ namespace LogCorner.EduSync.Speech.Presentation
                    );
                 }
 
-                return new CosmosClient(Configuration["CosmosDbEndpoint"], credential, cosmosClientOptions);
+                return new CosmosClient(Configuration["AzureCosmosDB:AccountEndpoint"], credential, cosmosClientOptions);
             });
 
             services.AddControllers();
