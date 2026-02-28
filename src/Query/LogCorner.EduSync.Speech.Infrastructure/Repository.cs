@@ -6,29 +6,24 @@ using System.Threading.Tasks;
 
 namespace LogCorner.EduSync.Speech.Infrastructure
 {
-    public class Repository(CosmosClient client, IConfiguration configurationOptions) : IRepository
+    public class Repository : IRepository
     {
-        //private string databaseName;
-        //private string ContainerName;
+        private string databaseName;
+        private string ContainerName;
+        private readonly CosmosClient _cosmosClient;
 
-        //private readonly CosmosClient client;
-
-        private string databaseName = configurationOptions["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
-        private string ContainerName = configurationOptions["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
-
-        //public Repository(CosmosClient client, IConfiguration configurationOptions)
-        //{
-        //    this.client = client;
-
-        //    databaseName = configurationOptions["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
-        //    ContainerName = configurationOptions["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
-        //}
+        public Repository(CosmosClient cosmosClient, IConfiguration configuration)
+        {
+            _cosmosClient = cosmosClient;
+            databaseName = configuration["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
+            ContainerName = configuration["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
+        }
 
         public async Task<List<T>> ReadAsync<T>(Func<string, Task> writeOutputAync)
         {
             try
             {
-                Database database = client.GetDatabase(databaseName);
+                Database database = _cosmosClient.GetDatabase(databaseName);
 
                 database = await database.ReadAsync();
                 await writeOutputAync($"Get database:\t{database.Id}");
@@ -77,7 +72,7 @@ namespace LogCorner.EduSync.Speech.Infrastructure
         {
             try
             {
-                Database database = client.GetDatabase(databaseName);
+                Database database = _cosmosClient.GetDatabase(databaseName);
 
                 // Ensure the container exists
                 ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(

@@ -1,34 +1,55 @@
 # LogCorner.EduSync
 Building microservices through Event Driven Architecture
 
-# Set the ACR name and log in
-$acrName = "datasynchroacr"
-az acr login --name $acrName
 
-# Build and push the Web API image
-docker build -t "$acrName.azurecr.io/web-api:latest" -f .\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ --no-cache
-docker push "$acrName.azurecr.io/web-api:latest"
+$resourceGroupName="RG-EVENT-DRIVEN-ARCHITECTURE"
 
-# Build and push the Web App image
-docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\OtelReferenceApp\WebApp\Dockerfile .\src\OtelReferenceApp\ --no-cache
-docker push "$acrName.azurecr.io/web-app:latest"
+New-AzResourceGroupDeployment `
+  -Name "datasynchro-event-driven-architecture" `
+  -ResourceGroupName $resourceGroupName `
+  -TemplateFile main.bicep `
+  -TemplateParameterFile main.bicepparam `
+  -DeploymentDebugLogLevel All
 
 
-C:\Users\LEYE-GORA\source\repos\AZURE WARRIORS\EDA-FULL MICROSOFT\LogCorner.EduSync.Speech\src\Command\LogCorner.EduSync.Speech.Presentation\Dockerfile
+# install helm 
+https://helm.sh/docs/intro/install/
+
+helm version --short
+kubectl config view
+
+helm repo add "stable" "https://charts.helm.sh/stable"
+
+helm env
+
+# go under folder => C:\Users\logcorner\source\repos\LogCorner.EduSync.Speech.Command\helm-chart\chart> 
+
+helm install [release] [chart]
+helm install  logcorner-command  logcorner.edusync.speech
+
+
+helm list --short  => list release name
+
+helm get manifest logcorner-command
+
+
+helm upgrade logcorner-command  logcorner.edusync.speech
+
+helm rollback logcorner-command 1
+
+helm history logcorner-command 
+
+helm uninstall logcorner-command  logcorner.edusync.speech
+
+
+# cosmos db role
+# principal id of azure vm (datasynchro-jumbobox) =>  1874d709-8343-4c7a-926d-d4dbb1f66ffe
+
+az cosmosdb sql role assignment create --account-name "cosmos-datasynchro-002" --resource-group "RG-EVENT-DRIVEN-ARCHITECTURE" --scope "/" --principal-id "1874d709-8343-4c7a-926d-d4dbb1f66ffe" --role-definition-name "Cosmos DB Built-in Data Contributor" 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+az cosmosdb sql role assignment list   --account-name cosmos-datasynchro-002   --resource-group RG-EVENT-DRIVEN-ARCHITECTURE   --query "[].{principalId:principalId, roleDefinitionId:roleDefinitionId, scope:scope}"
 
 
 

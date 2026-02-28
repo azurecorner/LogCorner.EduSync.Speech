@@ -12,6 +12,6 @@
 
         Task DeleteAsync<T>(Func<string, Task> writeOutputAync, string id);
 
-        string GetEndpoint();
+    
     }
 }

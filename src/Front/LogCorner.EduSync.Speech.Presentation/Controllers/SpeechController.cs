@@ -8,8 +8,8 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
     public class SpeechController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private const string queryApiBaseUrl = "http://localhost:7000/api/speech";
-        private const string commandApiBaseUrl = "http://localhost:6000/api/speech";
+        private string queryApiBaseUrl;
+        private string commandApiBaseUrl;
 
         private readonly ISignalRNotifier? _notifier; // Make nullable to avoid CS8602
         private readonly ISignalRPublisher? _publisher;
@@ -17,20 +17,21 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
 
         private static List<SpeechModel> _speeches;
 
-        public SpeechController(IHttpClientFactory httpClientFactory, ISignalRNotifier notifier, ISignalRPublisher publisher, ILogger<SpeechController> logger)
+        public SpeechController(IHttpClientFactory httpClientFactory, ISignalRNotifier notifier, ISignalRPublisher publisher, ILogger<SpeechController> logger, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
             _notifier = notifier;
             _publisher = publisher;
 
-            // Fix CS4033: Remove 'await' from constructor, use synchronous StartAsync call
+            queryApiBaseUrl = $"{configuration["WEBAPI_QUERY_URL"]}/api/speech";
+            commandApiBaseUrl = $"{configuration["WEBAPI_COMMAND_URL"]}/api/speech";
+
             if (_notifier != null)
             {
-                _notifier.StartAsync().GetAwaiter().GetResult(); // Synchronously wait for StartAsync
+                _notifier.StartAsync().GetAwaiter().GetResult();
             }
 
             _logger = logger;
-            //  _speeches = new List<SpeechModel>();
         }
 
         // Returns the partial table only
@@ -39,17 +40,15 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
         {
             var client = _httpClientFactory.CreateClient();
             _speeches = await client.GetFromJsonAsync<List<SpeechModel>>(queryApiBaseUrl) ?? new List<SpeechModel>();
-            return PartialView("_SpeechListPartial", _speeches); // partial from Shared folder
+            return PartialView("_SpeechListPartial", _speeches);
         }
 
         // GET: SpeechController
         public async Task<IActionResult> Index()
         {
-            // await DoWorkAsync(); // ensure subscription/publish happens
             var client = _httpClientFactory.CreateClient();
             _speeches = await client.GetFromJsonAsync<List<SpeechModel>>(queryApiBaseUrl) ?? new List<SpeechModel>();
-            return View(_speeches); // Pass list to the view
-            //return PartialView("_SpeechListPartial", speeches);
+            return View(_speeches);
         }
 
         // GET: SpeechController/Details/5
@@ -64,7 +63,7 @@ namespace LogCorner.EduSync.Speech.Presentation.Controllers
             if (speech == null)
                 return NotFound();
 
-            return View(speech); // Pass single speech to view
+            return View(speech);
         }
 
         // GET: HomeController1/Create

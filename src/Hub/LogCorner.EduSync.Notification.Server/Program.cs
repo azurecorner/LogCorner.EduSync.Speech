@@ -17,24 +17,24 @@ namespace LogCorner.EduSync.Notification.Server
                 {
                     var settings = config.Build();
 
-                //    if (!bool.TryParse(settings["isAuthenticationEnabled"], out var isAuthenticationEnabled))
-                //    {
-                //        throw new NotificationServerException("isAuthenticationEnabled property should be configured appSettings");
-                //    }
-                //    if (!context.HostingEnvironment.IsDevelopment() && isAuthenticationEnabled)
-                //    {
-                //        // Configure Azure Key Vault Connection
-                //        var uri = settings["AzureKeyVault:Uri"];
-                //        var tenantId = settings["AzureKeyVault:tenantId"];
-                //        var clientId = settings["AzureKeyVault:ClientId"];
-                //        var clientSecret = settings["AzureKeyVault:ClientSecret"];
-                //        if (!string.IsNullOrWhiteSpace(uri))
+                    //    if (!bool.TryParse(settings["isAuthenticationEnabled"], out var isAuthenticationEnabled))
+                    //    {
+                    //        throw new NotificationServerException("isAuthenticationEnabled property should be configured appSettings");
+                    //    }
+                    //    if (!context.HostingEnvironment.IsDevelopment() && isAuthenticationEnabled)
+                    //    {
+                    //        // Configure Azure Key Vault Connection
+                    //        var uri = settings["AzureKeyVault:Uri"];
+                    //        var tenantId = settings["AzureKeyVault:tenantId"];
+                    //        var clientId = settings["AzureKeyVault:ClientId"];
+                    //        var clientSecret = settings["AzureKeyVault:ClientSecret"];
+                    //        if (!string.IsNullOrWhiteSpace(uri))
 
-                //            config.AddAzureKeyVault(
-                //                new Uri(uri),
-                //                new ClientSecretCredential(tenantId, clientId, clientSecret)
-                //            );
-                //    }
+                    //            config.AddAzureKeyVault(
+                    //                new Uri(uri),
+                    //                new ClientSecretCredential(tenantId, clientId, clientSecret)
+                    //            );
+                    //    }
                 })
                 .ConfigureLogging((context, loggingBuilder) =>
                 {

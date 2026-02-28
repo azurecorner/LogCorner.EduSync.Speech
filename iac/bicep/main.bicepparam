@@ -21,3 +21,9 @@ param applicationInsightName = 'datasyncappi'
 
 param sqlserverAdminPassword =  'MySecureP@ssword'
 param workloadManagedIdentityName =  'workload-managed-identity-${prefix}'
+
+@description('Specifies the namespace of the application.')
+param workloadIdentityserviceAccounNamespace  = 'azure-resources'
+
+@description('Specifies the service account of the application.')
+param workloadIdentityServiceAccountName  = 'workload-identity-sa'

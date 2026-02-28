@@ -38,8 +38,19 @@ param sqlserverAdminPassword string
 param databaseName string = 'LogCorner.EduSync.Speech.Database'
 
 param privateDnsZoneNames  array = [
-  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io'
+  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net'
 ]
+
+@description('Specifies the namespace of the application.')
+param workloadIdentityserviceAccounNamespace string 
+
+@description('Specifies the service account of the application.')
+param workloadIdentityServiceAccountName string 
+
+@description('Specifies the name of the workload managed identity.')
+param workloadManagedIdentityName string 
+
+
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: userAssignedIdentityName
@@ -86,6 +97,26 @@ module network 'modules/network.bicep' = {
   }
 }
 
+module peerFirstVnetSecondVnet 'modules/vnet_peering.bicep' = {
+  name: 'peerFirstToSecond'
+  scope: resourceGroup()
+  params: {
+    existingLocalVirtualNetworkName: network.outputs.virtualNetworkName
+    existingRemoteVirtualNetworkName: 'datasynchro-hub-vnet'
+    existingRemoteVirtualNetworkResourceGroupName: 'RG-DATASYNCHRO-HUB'
+  }
+}
+
+module peerSecondVnetFirstVnet 'modules/vnet_peering.bicep' = {
+  name: 'peerSecondToFirst'
+  scope: resourceGroup('RG-DATASYNCHRO-HUB')
+  params: {
+    existingLocalVirtualNetworkName: 'datasynchro-hub-vnet'
+    existingRemoteVirtualNetworkName: network.outputs.virtualNetworkName
+    existingRemoteVirtualNetworkResourceGroupName: resourceGroup().name
+  }
+}
+
 module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName in privateDnsZoneNames: {
   name: 'privateDnsZone-${privateDnsZoneName}'
   params: {
@@ -93,17 +124,11 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     location: 'global'
     virtualNetworkId: [
       network.outputs.virtualNetworkId
+      '/subscriptions/023b2039-5c23-44b8-844e-c002f8ed431d/resourceGroups/RG-DATASYNCHRO-HUB/providers/Microsoft.Network/virtualNetworks/datasynchro-hub-vnet'
     ]
   }
 }]
-@description('Specifies the namespace of the application.')
-param namespace string = ''
 
-@description('Specifies the service account of the application.')
-param serviceAccountName string = ''
-
-@description('Specifies the name of the workload managed identity.')
-param workloadManagedIdentityName string 
 
 /* module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
@@ -119,8 +144,8 @@ param workloadManagedIdentityName string
      tags: tags
      adminGroupObjectIDs: [adminUserObjectId]
       LoganalyticID: logAnalyticsWorkspace.id
-       serviceAccountNameNamespace: namespace
-    serviceAccountName: serviceAccountName
+       serviceAccountNamespace: workloadIdentityserviceAccounNamespace
+    serviceAccountName: workloadIdentityServiceAccountName
     workloadManagedIdentityName: workloadManagedIdentityName
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
@@ -199,35 +224,94 @@ module slqServerPrivateEndpoint 'modules/private_endpoint.bicep' = {
   ]
 }
 
+param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
+param serviceBusQueueName string = 'sb-queue-${prefix}'
+
  module servicebus 'modules/serviceBus.bicep' = {
-  name: 'servicebus'
+  name: serviceBusNamespaceName
   params: {
     userAssignedIdentityName: managedIdentity.name
     location: location
-    serviceBusNamespaceName: '${prefix}-sb-namespace'
-    serviceBusQueueName: '${prefix}-sb-queue'
+    serviceBusNamespaceName:serviceBusNamespaceName
+    serviceBusQueueName: serviceBusQueueName
   }
 
 }
+
+
+
+module servicebusPrivateEndpoint 'modules/private_endpoint.bicep' = { 
+
+  name: 'pe-${serviceBusNamespaceName}'
+  params: {
+    location: location
+    privateEndpointName:  'pe-${serviceBusNamespaceName}'
+    privateDnsZoneName : 'privatelink.servicebus.windows.net'
+    endpointDnsGroupName: 'pe-${serviceBusNamespaceName}/dnsgroup'
+    privateLinkConnexionServiceName: 'cn-${serviceBusNamespaceName}'
+    groupIds:[
+      'namespace'
+    ]
+    subnetId: network.outputs.privatelink_subnet_id
+    privateLinkServiceId: servicebus.outputs.id
+  }
+
+  dependsOn: [
+    PrivateDnsZone
+
+  ]
+}
+
+
+
+param cosmosdbAccountName string = 'cosmos-${prefix}-002'
+param cosmosdbDatabaseName string = 'LogCorner.EduSync.Speech.Database'
 
 module cosmosdb 'modules/cosmosdb.bicep' = {
-  name: 'cosmosdb'
+  name: cosmosdbAccountName
   params: {
-    accountName: 'cosmos-${prefix}-001'
+    accountName: cosmosdbAccountName
     location: location
-    databaseName: 'LogCorner.EduSync.Speech.Database'
+    databaseName: cosmosdbDatabaseName
+    workloadManagedIdentityName:workloadManagedIdentityName
   }
 
 }
- 
+
+module cosmosdbPrivateEndpoint 'modules/private_endpoint.bicep' = { 
+
+  name: 'pe-${cosmosdbAccountName}'
+  params: {
+    location: location
+    privateEndpointName:  'pe-${cosmosdbAccountName}'
+    privateDnsZoneName : 'privatelink.documents.azure.com'
+    endpointDnsGroupName: 'pe-${cosmosdbAccountName}/dnsgroup'
+    privateLinkConnexionServiceName: 'cn-${cosmosdbAccountName}'
+    groupIds:[
+      'Sql'
+    ]
+    subnetId: network.outputs.privatelink_subnet_id
+    privateLinkServiceId: cosmosdb.outputs.account_id
+  }
+
+  dependsOn: [
+    PrivateDnsZone
+
+  ]
+}
+
+param keyvault_name string = 'kv-${prefix}-001'
 module keyvault 'modules/keyvault.bicep' = {
-  name: 'keyvault'
+  name: keyvault_name
   params: {
     location: location
     keyvault_name: 'kv-${prefix}-002'
       workloadManagedIdentityName:workloadManagedIdentityName
+      privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
-
+dependsOn: [
+    aksCluster
+  ]
 }
 
 

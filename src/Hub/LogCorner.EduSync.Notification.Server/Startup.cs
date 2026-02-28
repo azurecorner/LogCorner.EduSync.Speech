@@ -69,18 +69,9 @@ namespace LogCorner.EduSync.Notification.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                /*if (!bool.TryParse(Configuration["isAuthenticationEnabled"], out var isAuthenticationEnabled))
-                {
-                    throw new NotificationServerException("isAuthenticationEnabled property should be configured appSettings");
-                }
-                if (!isAuthenticationEnabled)
-                {*/
-                    endpoints.MapHub<LogCornerHub<object>>("/logcornerhub");
-                /*}
-                else
-                {
-                    endpoints.MapHub<LogCornerHub<object>>("/logcornerhub").RequireAuthorization();
-                }*/
+              
+                endpoints.MapHub<LogCornerHub<object>>("/logcornerhub");
+              
             });
         }
     }

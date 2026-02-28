@@ -1,3 +1,0 @@
-global:
-  namespace: helm
-  tag: "10"

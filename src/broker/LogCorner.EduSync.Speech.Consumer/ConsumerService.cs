@@ -1,5 +1,4 @@
 ﻿using LogCorner.EduSync.Notification.Common.Hub;
-using LogCorner.EduSync.Speech.Command.SharedKernel;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Events;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using LogCorner.EduSync.Speech.CosmosDb;
@@ -37,6 +36,7 @@ public class ConsumerService : IConsumerService
         foreach (var item in result)
         {
             _logger.LogInformation($"Received message - Id: {item.Id}, Client: {item.Name}, WeightKg: {item.AggregateId}, Status: {item.PayLoad}");
+            Console.WriteLine($"Received message - Id: {item.Id}, Client: {item.Name}, WeightKg: {item.AggregateId}, Status: {item.PayLoad}");
             var @event = _eventSerializer.DeserializeEvent<Event>(item.PayLoad, item.TypeName);
 
             var projection = Invoker.CreateInstanceOfProjection<SpeechProjection>();
@@ -47,6 +47,7 @@ public class ConsumerService : IConsumerService
             if (speech == null)
             {
                 _logger.LogWarning("Mapper.ToSpeech returned null for projection");
+                Console.WriteLine("Mapper.ToSpeech returned null for projection");
                 return;
             }
 
@@ -56,6 +57,7 @@ public class ConsumerService : IConsumerService
                 await _dataService.CreateAsync<object>(async (message) =>
                 {
                     _logger.LogInformation("Processing message: {message}", message);
+                    Console.WriteLine("Processing message: {0}", message);
                 }, speech, projection.Id.ToString());
             }
             else
@@ -63,79 +65,11 @@ public class ConsumerService : IConsumerService
                 await _dataService.DeleteAsync<object>(async (message) =>
                 {
                     _logger.LogInformation("Processing message: {message}", message);
+                    Console.WriteLine("Processing message: {0}", message);
                 }, projection.Id.ToString());
             }
             string jsonString = JsonSerializer.Serialize(projection);
             await _publisher.PublishAsync("ReadModelAcknowledged", null, jsonString);
         }
-    }
-
-    public async Task DoWorkAsyncXXX(CancellationToken stoppingToken)
-    {
-        // create a test projection with dummy data
-        var projection = new SpeechProjectionTest(
-             Guid.NewGuid(),
-            "Test Title 4",
-            "Test Description 4",
-           "http://example_4.com/speech",
-           new SpeechTypeEnum(4, "Type 4"),
-           0,
-            false);
-
-        //// update projection title  with dummy data
-        //var projection = new SpeechProjectionTest(
-        //     new Guid("a47662d0-844a-46b0-9ae5-07b049c7d1dc"),
-        //    "Test Title Mod",
-        //    null,
-        //   null,
-        //   null,
-        //   0,
-        //    false);
-
-        //// update projection description  with dummy data
-        //var projection = new SpeechProjectionTest(
-        //     new Guid("addc157b-b127-4258-a9c1-bd7865a39c2f"),
-        //    null,
-        //    "Test Description MOD",
-        //   null,
-        //   null,
-        //   0,
-        //    false);
-
-        // update projection url  with dummy data
-        //var projection = new SpeechProjectionTest(
-        //     new Guid("a47662d0-844a-46b0-9ae5-07b049c7d1dc"),
-        //    null,
-        //    null,
-        //   "http://mod.com/speech",
-        //   null,
-        //   0,
-        //    true);
-
-        var speech = Mapper.ToSpeech(projection);
-
-        if (speech == null)
-        {
-            _logger.LogWarning("Mapper.ToSpeech returned null for projection");
-            return;
-        }
-
-        if (projection.IsDeleted == false)
-        {
-            // Process the delivery message (passing it to your data service)
-            await _dataService.CreateAsync<object>(async (message) =>
-            {
-                _logger.LogInformation("Processing message: {message}", message);
-            }, speech, projection.Id.ToString());
-        }
-        else
-        {
-            await _dataService.DeleteAsync<object>(async (message) =>
-            {
-                _logger.LogInformation("Processing message: {message}", message);
-            }, projection.Id.ToString());
-        }
-        string jsonString = JsonSerializer.Serialize(projection);
-        await _publisher.PublishAsync("ReadModelAcknowledged", null, jsonString);
     }
 }

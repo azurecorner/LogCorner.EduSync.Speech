@@ -18,11 +18,11 @@ namespace LogCorner.EduSync.Speech.WorkerService
             while (!stoppingToken.IsCancellationRequested)
             {
                 await _consumerService.DoWorkAsync(stoppingToken);
-            _logger.LogInformation("ConsumerService is running .....");
+                _logger.LogInformation("ConsumerService is running .....");
 
-            // You can adjust the delay time based on message frequency and business requirements
-              await Task.Delay(1000, stoppingToken); // Delay for 3 seconds before checking for new messages
-           }
+                // You can adjust the delay time based on message frequency and business requirements
+                await Task.Delay(1000, stoppingToken); // Delay for 3 seconds before checking for new messages
+            }
         }
     }
 }

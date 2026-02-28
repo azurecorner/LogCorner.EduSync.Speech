@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<LogCorner.EduSync.Speech.Presentation.Models.SpeechModel>
-
+@inject IConfiguration Configuration
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Speech List</h1>
     <a asp-action="Create" class="btn btn-success">
@@ -16,8 +16,11 @@
     <script>
         console.log("SignalR script loaded");
 
+          console.log("HubUrl => @Configuration["HubUrl"]");
+          console.log("pathBase => @Configuration["pathBase"]");
+
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:8001/logcornerhub?clientName=LogCorner.EduSync.Speech.Front") // your hub endpoint
+            .withUrl("@Configuration["HubUrl"]?clientName=LogCorner.EduSync.Speech.Front") // your hub endpoint
             .build();
 
         // Listen to all published events
@@ -29,7 +32,7 @@
                 console.log("ReadModelAcknowledged event received, refreshing table...");
 
                 // Refresh table via partial view
-                fetch("/Speech/IndexPartial")
+                fetch("@Configuration["pathBase"]/Speech/IndexPartial")
                     .then(r => r.text())
                     .then(html => {
                         document.getElementById("speech-list").innerHTML = html;

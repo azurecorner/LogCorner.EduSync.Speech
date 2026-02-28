@@ -4,20 +4,23 @@ using Microsoft.Extensions.Configuration;
 
 namespace LogCorner.EduSync.Speech.CosmosDb
 {
-    public sealed class DataService(CosmosClient client, IConfiguration configurationOptions) : IDataService
+    public sealed class DataService : IDataService
     {
-        public string GetEndpoint() => $"{client.Endpoint}";
 
-        private string databaseName = configurationOptions["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
-        private string ContainerName = configurationOptions["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
+        private string databaseName;
+        private string ContainerName;
+        private readonly CosmosClient _cosmosClient;
 
-        public async Task CreateAsync<T>(
-    Func<string, Task> writeOutputAsync,
-    T item,
-    string partitionKeyValue
-)
+        public DataService(CosmosClient cosmosClient, IConfiguration configuration)
         {
-            Database database = client.GetDatabase(databaseName);
+            _cosmosClient = cosmosClient;
+            databaseName = configuration["AzureCosmosDB:DatabaseName"] ?? throw new ArgumentNullException("AzureCosmosDB:DatabaseName");
+            ContainerName = configuration["AzureCosmosDB:ContainerName"] ?? throw new ArgumentNullException("AzureCosmosDB:ContainerName");
+        }
+
+        public async Task CreateAsync<T>(Func<string, Task> writeOutputAsync, T item, string partitionKeyValue)
+        {
+          Database database = _cosmosClient.GetDatabase(databaseName);
 
             // Ensure the container exists
             ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(
@@ -102,7 +105,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 
         public async Task<T> ReadAsync<T>(Func<string, Task> writeOutputAync, string id, string partitionKey)
         {
-            Database database = client.GetDatabase(databaseName);
+            Database database = _cosmosClient.GetDatabase(databaseName);
 
             database = await database.ReadAsync();
             await writeOutputAync($"Get database:\t{database.Id}");
@@ -124,7 +127,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 
         public async Task<T> ReadAsync<T>(Func<string, Task> writeOutputAync, string id)
         {
-            Database database = client.GetDatabase(databaseName);
+            Database database = _cosmosClient.GetDatabase(databaseName);
 
             database = await database.ReadAsync();
             await writeOutputAync($"Get database:\t{database.Id}");
@@ -153,7 +156,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
         {
             try
             {
-                Database database = client.GetDatabase(databaseName);
+                Database database = _cosmosClient.GetDatabase(databaseName);
 
                 database = await database.ReadAsync();
                 await writeOutputAync($"Get database:\t{database.Id}");
@@ -200,7 +203,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 
         public async Task DeleteAsync<T>(Func<string, Task> writeOutputAync, string id)
         {
-            Database database = client.GetDatabase(databaseName);
+            Database database = _cosmosClient.GetDatabase(databaseName);
 
             Container container = database.GetContainer(ContainerName);
 

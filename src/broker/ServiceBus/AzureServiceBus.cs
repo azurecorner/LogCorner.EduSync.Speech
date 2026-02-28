@@ -27,17 +27,15 @@ namespace LogCorner.EduSync.Speech.ServiceBus
 
         private string serviceBusNamespace;
         private string serviceBusQueueName;
-        private string userAssignedClientId; //"ff678d92-8adc-4f90-b8f5-cb4ea1a908ed";
 
         public IConfiguration Configuration { get; }
 
         public AzureServiceBus(IEventSerializer eventSerializer, IJsonSerializer jsonSerializer, IConfiguration configuration)
         {
-              _jsonSerializer = jsonSerializer;
+            _jsonSerializer = jsonSerializer;
             Configuration = configuration;
 
-
-            userAssignedClientId = Configuration["UserAssignedClientId"];// ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
+            var userAssignedClientId = Configuration["UserAssignedClientId"];// ?? throw new ArgumentNullException(nameof(Configuration), "UserAssignedClientId configuration is missing.");
             var tenantId = Configuration["TenantId"];
 
             Console.WriteLine($"*******************-UserAssignedClientId: {userAssignedClientId}");
@@ -49,7 +47,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             {
                 TransportType = ServiceBusTransportType.AmqpWebSockets
             };
-
 
             Console.WriteLine($"*******************-ASPNETCORE_ENVIRONMENT = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 
@@ -66,7 +63,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
                 {
                     ManagedIdentityClientId = managedIdentityClientId,
                     TenantId = azureTenantId
-
                 }
             );
 
@@ -85,12 +81,10 @@ namespace LogCorner.EduSync.Speech.ServiceBus
             //Console.WriteLine($"*******************-Token acquired: {token.Token}");
 
             client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
-
         }
 
         public async Task SendAsync(string topic, string @event)
         {
-    
             sender = client.CreateSender(serviceBusQueueName);
 
             // create a batch
@@ -123,26 +117,12 @@ namespace LogCorner.EduSync.Speech.ServiceBus
         {
             var messages = new List<T>();
 
-          //  var clientOptions = new ServiceBusClientOptions
-          //  {
-          //      TransportType = ServiceBusTransportType.AmqpWebSockets
-          //  };
-
-          //  var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "2804c445-8a4f-4aac-a214-f56d76235af4";
-          //  var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? "f12a747a-cddf-4426-96ff-ebe055e215a3";
-          //  var credential = new DefaultAzureCredential(
-          //    new DefaultAzureCredentialOptions
-          //    {
-          //        ManagedIdentityClientId = managedIdentityClientId,
-          //        TenantId = tenantId
-
-          //    }
-          //);
-
-            //await using var client = new ServiceBusClient(serviceBusNamespace, credential, clientOptions);
+            Console.WriteLine($"*******************-Listening for messages on queue: {serviceBusQueueName}");
             var receiver = client.CreateReceiver(serviceBusQueueName);
 
             // loop si tu veux runAlways
+
+            Console.WriteLine($"*******************-Receiving messages from queue: {serviceBusQueueName}");
 
             var receivedMessages = await receiver.ReceiveMessagesAsync(
                 maxMessages: 10,
