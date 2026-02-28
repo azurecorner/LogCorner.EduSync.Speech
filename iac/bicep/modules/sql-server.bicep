@@ -14,10 +14,8 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
   properties: {
     administratorLogin: adminLogin
     administratorLoginPassword: adminPassword
-
     publicNetworkAccess: 'SecuredByPerimeter'
   }
-
 }
 
  resource allowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallRules@2023-08-01' = {
@@ -37,8 +35,7 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01' = {
     name: 'Standard'
     tier: 'Standard'
   }
-  
-}
+ }
 
 output id string = sqlServer.id
 

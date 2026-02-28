@@ -1,10 +1,6 @@
-using Azure.Identity;
-using LogCorner.EduSync.Notification.Common.Exceptions;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace LogCorner.EduSync.Notification.Server
 {

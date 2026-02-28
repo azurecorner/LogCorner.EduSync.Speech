@@ -105,7 +105,7 @@ param serviceAccountName string = ''
 @description('Specifies the name of the workload managed identity.')
 param workloadManagedIdentityName string 
 
-module aksCluster 'modules/aks.bicep' = {
+/* module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -125,7 +125,7 @@ module aksCluster 'modules/aks.bicep' = {
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
   }
-}
+} */
  
 module containerRegistry 'modules/containerRegistry.bicep' = {
   name: 'containerRegistry'
@@ -224,7 +224,7 @@ module keyvault 'modules/keyvault.bicep' = {
   name: 'keyvault'
   params: {
     location: location
-    keyvault_name: 'kv-${prefix}-001'
+    keyvault_name: 'kv-${prefix}-002'
       workloadManagedIdentityName:workloadManagedIdentityName
   }
 
@@ -245,7 +245,7 @@ resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedId
   location: location
 }
 
- module gateway 'modules/applicationGatewayForContainers.bicep' = {
+/*  module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
     
@@ -276,3 +276,4 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 } 
+ */

@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Azure.Identity;
+﻿using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using LogCorner.EduSync.Speech.Command.SharedKernel.Serialyser;
 using Microsoft.Extensions.Configuration;

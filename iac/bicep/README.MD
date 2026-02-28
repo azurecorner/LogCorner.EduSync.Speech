@@ -1,7 +1,7 @@
 $resourceGroupName="RG-EVENT-DRIVEN-ARCHITECTURE"
 
 New-AzResourceGroupDeployment `
-  -Name "datasynchro-sre-agent" `
+  -Name "datasynchro-event-driven" `
   -ResourceGroupName $resourceGroupName `
   -TemplateFile main.bicep `
   -TemplateParameterFile main.bicepparam `

@@ -38,11 +38,13 @@ resource keyvault_secret 'Microsoft.KeyVault/vaults/secrets@2024-12-01-preview' 
   }
 }
 
-
+/*
+// Azure application gateway for containers needs to access secrets in the key vault, so we will assign the Key Vault Secrets User role to the managed identity used by the application gateway for containers and Key Vault Secrets Officer role to a user who will manage the secrets in the key vault.
+// Example of assigning Key Vault Secrets Officer role to a user and Key Vault Secrets User role to a managed identity
 resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name: workloadManagedIdentityName
   
-}
+}*/
 
 module KeyVaultSecretsOfficerRole 'roleAssignment.bicep' = {
   name: 'KeyVaultSecretsOfficer'
@@ -54,7 +56,10 @@ module KeyVaultSecretsOfficerRole 'roleAssignment.bicep' = {
   }
 }
 
-
+/*
+/*
+// Azure application gateway for containers needs to access secrets in the key vault, so we will assign the Key Vault Secrets User role to the managed identity used by the application gateway for containers and Key Vault Secrets Officer role to a user who will manage the secrets in the key vault.
+// Example of assigning Key Vault Secrets Officer role to a user and Key Vault Secrets User role to
 module KeyVaultSecretsUserRole 'roleAssignment.bicep' = {
   name: 'KeyVaultSecretsUser'
   params: {
@@ -64,3 +69,4 @@ module KeyVaultSecretsUserRole 'roleAssignment.bicep' = {
     principalType:'servicePrincipal'
   }
 }
+*/

@@ -1,4 +1,3 @@
-using LogCorner.EduSync.Notification.Common.Exceptions;
 using LogCorner.EduSync.Notification.Server.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using System;
 using System.Collections.Generic;
 
@@ -68,20 +68,20 @@ namespace LogCorner.EduSync.Speech.Presentation
                     }
                 });
 
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                    {
-                        {
-                            new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "oauth2"
-                                }
-                            },
-                            new[] { $"https://{tenantName}.onmicrosoft.com/query/api/Speech.List" }
-                        }
-                    });
+                //options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //    {
+                //        {
+                //            new OpenApiSecurityScheme
+                //            {
+                //                Reference = new OpenApiReference
+                //                {
+                //                    Type = ReferenceType.SecurityScheme,
+                //                    Id = "oauth2"
+                //                }
+                //            },
+                //            new[] { $"https://{tenantName}.onmicrosoft.com/query/api/Speech.List" }
+                //        }
+                //    });
             });
         }
     }
