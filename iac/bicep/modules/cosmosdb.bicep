@@ -7,7 +7,7 @@ param location string = resourceGroup().location
 @description('The name for the SQL API database')
 param databaseName string 
 
-param workloadManagedIdentityName string
+param managedIdentityName string
 
 resource account 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   name: toLower(accountName)
@@ -84,7 +84,7 @@ output account_name string = account.name
 //var roleDefinitionId='/subscriptions/023b2039-5c23-44b8-844e-c002f8ed431d/resourceGroups/RG-EVENT-DRIVEN-ARCHITECTURE/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-datasynchro-002/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002'
 
 resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
-  name: workloadManagedIdentityName
+  name: managedIdentityName
 
 }
 
@@ -102,9 +102,9 @@ var roleDefinitionId = resourceId(
     roleDefinitionId: roleDefinitionId
     scope: account.id
   }
-}
+} 
 
-resource assignmentWorkloadManagedIdentity 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2024-05-15' = {
+resource assignmentManagedIdentity 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2024-05-15' = {
   name: guid(roleDefinitionId, workloadManagedIdentity.id, account.id)
   parent: account
   properties: {

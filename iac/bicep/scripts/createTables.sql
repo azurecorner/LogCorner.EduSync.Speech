@@ -1,3 +1,5 @@
+USE [LogCorner.EduSync.Speech.Database]
+GO
 CREATE TABLE [dbo].[Speech] (
     [ID]          UNIQUEIDENTIFIER DEFAULT (newid()) NOT NULL,
     [Title]       NVARCHAR (250)   NOT NULL,

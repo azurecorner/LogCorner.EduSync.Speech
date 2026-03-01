@@ -14,7 +14,8 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
   properties: {
     administratorLogin: adminLogin
     administratorLoginPassword: adminPassword
-    publicNetworkAccess: 'SecuredByPerimeter'
+    //publicNetworkAccess: 'SecuredByPerimeter'
+     publicNetworkAccess: 'Enabled' //  for development purposes, change to 'SecuredByPerimeter' for production
   }
 }
 
@@ -26,6 +27,15 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
     startIpAddress: '0.0.0.0'
   }
 } 
+
+resource allowClientIPAddress 'Microsoft.Sql/servers/firewallRules@2024-05-01-preview' = {
+  parent: sqlServer
+  name: 'allowClientIPAddress'
+  properties: {
+    startIpAddress: '86.245.251.176'
+    endIpAddress: '86.245.251.176'
+  }
+}
 
 resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01' = {
   name: databaseName

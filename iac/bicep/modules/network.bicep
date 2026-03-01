@@ -24,6 +24,14 @@ param applicationGatewayForContainersSubnetAddressPrefix string
 
 param appgw_subnet_addressPrefix string
 
+
+
+@description('Specifies the name of the subnet which contains the Application Gateway for Containers.')
+param containerInstanceSubnetName string
+
+@description('Specifies the address prefix of the subnet which contains the Application Gateway for Containers.')
+param containerInstanceSubnetAddressPrefix string
+
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-01-01' = {
   name: virtualNetworkName
   location: location
@@ -73,6 +81,23 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-01-01' = {
           ]
         }
       }
+      {
+        name: containerInstanceSubnetName
+        properties: {
+          addressPrefix: containerInstanceSubnetAddressPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
+          privateLinkServiceNetworkPolicies: 'Disabled'
+
+          delegations: [
+            {
+              name: 'delegationToMicrosoftContainerInstance'
+              properties: {
+                serviceName: 'Microsoft.ContainerInstance/containerGroups'
+              }
+            }
+          ]
+        }
+      }
     ]
   }
 }
@@ -88,5 +113,8 @@ output appgw_subnet_id string = virtualNetwork.properties.subnets[1].id
 output privatelink_subnet_id string = virtualNetwork.properties.subnets[2].id
 output applicationGatewayForContainersSubnet_id string = '${virtualNetwork.id}/subnets/${applicationGatewayForContainersSubnetName}'
 output applicationGatewayForContainersSubnet_name string = virtualNetwork.properties.subnets[3].name
+
+
+output containerInstanceSubnet_id string = '${virtualNetwork.id}/subnets/${containerInstanceSubnetName}'
 
 

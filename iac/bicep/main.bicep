@@ -38,7 +38,7 @@ param sqlserverAdminPassword string
 param databaseName string = 'LogCorner.EduSync.Speech.Database'
 
 param privateDnsZoneNames  array = [
-  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net'
+  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net'
 ]
 
 @description('Specifies the namespace of the application.')
@@ -94,9 +94,11 @@ module network 'modules/network.bicep' = {
     privatelink_subnet_addressPrefix:'10.200.5.0/24'
     applicationGatewayForContainersSubnetName: 'appgwforcontainers-subnet'
     applicationGatewayForContainersSubnetAddressPrefix: '10.200.6.0/24'
+    containerInstanceSubnetName: 'containerinstance-subnet'
+    containerInstanceSubnetAddressPrefix: '10.200.7.0/24'
   }
 }
-
+/*
 module peerFirstVnetSecondVnet 'modules/vnet_peering.bicep' = {
   name: 'peerFirstToSecond'
   scope: resourceGroup()
@@ -115,7 +117,7 @@ module peerSecondVnetFirstVnet 'modules/vnet_peering.bicep' = {
     existingRemoteVirtualNetworkName: network.outputs.virtualNetworkName
     existingRemoteVirtualNetworkResourceGroupName: resourceGroup().name
   }
-}
+}*/
 
 module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName in privateDnsZoneNames: {
   name: 'privateDnsZone-${privateDnsZoneName}'
@@ -124,7 +126,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     location: 'global'
     virtualNetworkId: [
       network.outputs.virtualNetworkId
-      '/subscriptions/023b2039-5c23-44b8-844e-c002f8ed431d/resourceGroups/RG-DATASYNCHRO-HUB/providers/Microsoft.Network/virtualNetworks/datasynchro-hub-vnet'
+      //'/subscriptions/023b2039-5c23-44b8-844e-c002f8ed431d/resourceGroups/RG-DATASYNCHRO-HUB/providers/Microsoft.Network/virtualNetworks/datasynchro-hub-vnet'
     ]
   }
 }]
@@ -224,6 +226,70 @@ module slqServerPrivateEndpoint 'modules/private_endpoint.bicep' = {
   ]
 }
 
+
+@description('Name of the private link subnet where the SQL Server private endpoint will be created.')
+param runScript string = loadTextContent('./scripts/run.ps1')
+var createTablesScriptRaw = loadTextContent('./scripts/createTables.sql')
+var createTablesScriptBase64 = base64(createTablesScriptRaw)
+@description('Name of the virtual network where the container instance subnet is located.')
+param storageAccountName string
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-04-01' = {
+  name: storageAccountName
+  kind: 'StorageV2'
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  properties: {
+    publicNetworkAccess: 'Disabled'
+    networkAcls: {
+      defaultAction: 'Deny'
+      bypass: 'AzureServices'
+    }
+  }
+}
+
+
+module storagePrivateEndpoint 'modules/private_endpoint.bicep' = { 
+
+  name: 'pe-${storageAccountName}'
+  params: {
+    location: location
+    privateEndpointName:  'pe-${storageAccountName}'
+    privateDnsZoneName : 'privatelink.file.core.windows.net'
+    endpointDnsGroupName: 'pe-${storageAccountName}/dnsgroup'
+    privateLinkConnexionServiceName: 'cn-${storageAccountName}'
+    groupIds:[
+      'file'
+    ]
+    subnetId: network.outputs.privatelink_subnet_id
+    privateLinkServiceId: storageAccount.id
+  }
+}
+
+module deploymentScript 'modules/deployment-script.bicep' =  {
+  name: 'deployment-script'
+  params: {
+    location: location
+    sqlServerName: '${sqlserverName}.database.windows.net'
+    databaseName: databaseName
+    sqlAdminUsername: sqlserverAdminLogin
+    sqlAdminPassword: sqlserverAdminPassword
+    runScript: runScript
+    createTablesScriptBase64: createTablesScriptBase64
+    subnetId: network.outputs.containerInstanceSubnet_id
+    storageAccountName : storageAccountName
+    userAssignedIdentityName: userAssignedIdentityName
+  }
+  dependsOn:   [
+    storagePrivateEndpoint
+    slqServerPrivateEndpoint
+  ]
+} 
+
+// *** Service Bus Namespace and Queue ***
+
 param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
 param serviceBusQueueName string = 'sb-queue-${prefix}'
 
@@ -273,7 +339,7 @@ module cosmosdb 'modules/cosmosdb.bicep' = {
     accountName: cosmosdbAccountName
     location: location
     databaseName: cosmosdbDatabaseName
-    workloadManagedIdentityName:workloadManagedIdentityName
+    managedIdentityName:userAssignedIdentityName
   }
 
 }
@@ -310,7 +376,7 @@ module keyvault 'modules/keyvault.bicep' = {
       privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
 dependsOn: [
-    aksCluster
+    //aksCluster
   ]
 }
 

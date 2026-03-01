@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
+using System;
 using System.Collections.Generic;
 
 namespace LogCorner.EduSync.Speech.Presentation
