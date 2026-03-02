@@ -10,6 +10,12 @@ param location string = resourceGroup().location
 @description('Specifies the name of the user assigned identity.')
 param userAssignedIdentityName string
 
+@description('Principal ID of the service principal to grant Azure Service Bus Data Owner role.')
+param serviceBusDataOwnerServicePrincipalId string
+
+@description('Principal ID of the admin user to grant Azure Service Bus Data Owner role.')
+param serviceBusDataOwnerAdminUserId string
+
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name: userAssignedIdentityName
 }
@@ -80,20 +86,20 @@ resource roleAssignmentUserManagedIdentity 'Microsoft.Authorization/roleAssignme
 }
 
 resource roleAssignmentServicePrincipal 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(AzureServiceBusDataOwnerReference.id, '27216efd-6abc-4bbe-aef1-bbe545a41dc4', serviceBusNamespace.id)
+  name: guid(AzureServiceBusDataOwnerReference.id, serviceBusDataOwnerServicePrincipalId, serviceBusNamespace.id)
   scope: serviceBusNamespace
   properties: {
-    principalId: '27216efd-6abc-4bbe-aef1-bbe545a41dc4'
+    principalId: serviceBusDataOwnerServicePrincipalId
     roleDefinitionId: AzureServiceBusDataOwnerReference.id
     principalType: 'servicePrincipal'
   }
 }
 
 resource roleAssignmentAdminUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(AzureServiceBusDataOwnerReference.id,'7abf4c5b-9638-4ec4-b830-ede0a8031b25', serviceBusNamespace.id)
+  name: guid(AzureServiceBusDataOwnerReference.id, serviceBusDataOwnerAdminUserId, serviceBusNamespace.id)
   scope: serviceBusNamespace
   properties: {
-    principalId: '7abf4c5b-9638-4ec4-b830-ede0a8031b25'
+    principalId: serviceBusDataOwnerAdminUserId
     roleDefinitionId: AzureServiceBusDataOwnerReference.id
     principalType: 'user'
   }

@@ -315,14 +315,18 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
 
 param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
 param serviceBusQueueName string = 'sb-queue-${prefix}'
+param serviceBusDataOwnerServicePrincipalId string
+
 
  module servicebus 'modules/serviceBus.bicep' = {
   name: serviceBusNamespaceName
   params: {
-    userAssignedIdentityName: managedIdentity.name
+    userAssignedIdentityName: workloadManagedIdentityName
     location: location
     serviceBusNamespaceName:serviceBusNamespaceName
     serviceBusQueueName: serviceBusQueueName
+    serviceBusDataOwnerServicePrincipalId: serviceBusDataOwnerServicePrincipalId
+    serviceBusDataOwnerAdminUserId: adminUserObjectId
   }
 
 }
@@ -357,8 +361,7 @@ param cosmosdbAccountName string = 'cosmos-${prefix}-002'
 param cosmosdbDatabaseName string = 'LogCorner.EduSync.Speech.Database'
 @description('Optional principal ID for Cosmos SQL Built-in Data Contributor (jumpbox/system identity). Leave empty to skip.')
 param cosmosJumpboxPrincipalId string 
-@description('Optional principal ID for Cosmos SQL Built-in Data Contributor (admin/user identity). Leave empty to skip.')
-param cosmosAdminPrincipalId string 
+
 
 module cosmosdb 'modules/cosmosdb.bicep' = {
   name: cosmosdbAccountName
@@ -368,7 +371,7 @@ module cosmosdb 'modules/cosmosdb.bicep' = {
     databaseName: cosmosdbDatabaseName
     managedIdentityName:workloadManagedIdentityName
     jumpboxPrincipalId: cosmosJumpboxPrincipalId
-    adminPrincipalId: cosmosAdminPrincipalId
+    adminPrincipalId: adminUserObjectId
   }
 
 }

@@ -61,7 +61,7 @@ resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentiti
 
 }
 
-
+/* 
 module AzureServiceBusDataOwnerrRole 'roleAssignment.bicep' = {
   name: 'AzureServiceBusDataOwnerRole'
   params: {
@@ -71,7 +71,7 @@ module AzureServiceBusDataOwnerrRole 'roleAssignment.bicep' = {
     principalType:'ServicePrincipal'
   }
 }
-
+ */
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
   name: ClusterName
   location: location
