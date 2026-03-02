@@ -11,7 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
 using System;
 using System.Collections.Generic;
-
+using LogCorner.EduSync.Speech.CosmosDb;
 namespace LogCorner.EduSync.Speech.Presentation
 {
     public class Startup
@@ -26,8 +26,8 @@ namespace LogCorner.EduSync.Speech.Presentation
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ISpeechUseCase, SpeechUseCase>();
-
             services.RegisterCosmosDependencies(Configuration);
+            services.AddTransient<IRepository, Repository>();
             services.AddCors(options =>
             {
                 options.AddPolicy(
@@ -60,11 +60,15 @@ namespace LogCorner.EduSync.Speech.Presentation
                 var userAssignedClientId = Configuration["UserAssignedClientId"];
                 var tenantId = Configuration["TenantId"];
 
-                var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? userAssignedClientId;
-                var azureTenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? tenantId;
+                var envManagedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID");
+                var envTenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID");
+                var managedIdentityClientId = envManagedIdentityClientId ?? userAssignedClientId;
+                var azureTenantId = envTenantId ?? tenantId;
+                var managedIdentityClientIdSource = !string.IsNullOrEmpty(envManagedIdentityClientId) ? "AZURE_CLIENT_ID" : "UserAssignedClientId";
+                var tenantIdSource = !string.IsNullOrEmpty(envTenantId) ? "AZURE_TENANT_ID" : "TenantId";
 
-                Console.WriteLine("AZURE_CLIENT_ID = ", managedIdentityClientId);
-                Console.WriteLine("AZURE_TENANT_ID = ", azureTenantId);
+                Console.WriteLine($"Resolved managed identity client id: '{managedIdentityClientId ?? "<null>"}' (source: {managedIdentityClientIdSource})");
+                Console.WriteLine($"Resolved tenant id: '{azureTenantId ?? "<null>"}' (source: {tenantIdSource})");
 
                 // For example, will discover Visual Studio or Azure CLI credentials
                 // in local environments and managed identity credentials in production deployments
@@ -72,6 +76,7 @@ namespace LogCorner.EduSync.Speech.Presentation
                 var credential = new DefaultAzureCredential();
                 if (!string.IsNullOrEmpty(managedIdentityClientId) && !string.IsNullOrEmpty(azureTenantId))
                 {
+                    Console.WriteLine("Using DefaultAzureCredential with ManagedIdentityClientId and TenantId options.");
                     credential = new DefaultAzureCredential(
                        new DefaultAzureCredentialOptions
                        {
@@ -79,6 +84,10 @@ namespace LogCorner.EduSync.Speech.Presentation
                            TenantId = azureTenantId
                        }
                    );
+                }
+                else
+                {
+                    Console.WriteLine("Using default DefaultAzureCredential chain without explicit ManagedIdentityClientId/TenantId.");
                 }
 
                 return new CosmosClient(Configuration["AzureCosmosDB:AccountEndpoint"], credential, cosmosClientOptions);

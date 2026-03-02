@@ -27,6 +27,7 @@
 
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\broker\LogCorner.EduSync.Speech.CosmosDb\LogCorner.EduSync.Speech.CosmosDb.csproj" />
     <ProjectReference Include="..\LogCorner.EduSync.Speech.Application\LogCorner.EduSync.Speech.Application.csproj" />
     <ProjectReference Include="..\LogCorner.EduSync.Speech.Infrastructure\LogCorner.EduSync.Speech.Infrastructure.csproj" />
     <ProjectReference Include="..\LogCorner.EduSync.Speech.ReadModel\LogCorner.EduSync.Speech.ReadModel.csproj" />

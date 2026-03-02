@@ -56,10 +56,9 @@ param serviceAccountNamespace string
 var AzureServiceBusDataOwner = '090c5cfd-751d-490a-894a-3ce6f1109419'
 
 //  This user-defined managed identity used by the workload to connect to the Azure services with a security token issued by Azue Active Directory
-resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name: workloadManagedIdentityName
-  location: location
-  tags: tags
+
 }
 
 

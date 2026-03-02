@@ -74,12 +74,6 @@ namespace LogCorner.EduSync.Speech.Infrastructure
             {
                 Database database = _cosmosClient.GetDatabase(databaseName);
 
-                // Ensure the container exists
-                ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(
-                    id: ContainerName,
-                    partitionKeyPath: "/id"
-                );
-
                 var container = database.GetContainer(ContainerName);
 
                 var response = await container.ReadItemAsync<T>(

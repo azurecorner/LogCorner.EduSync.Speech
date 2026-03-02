@@ -41,6 +41,8 @@ param privateDnsZoneNames  array = [
   'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net'
 ]
 
+param keyvault_name string = 'kv-${prefix}-003'
+
 @description('Specifies the namespace of the application.')
 param workloadIdentityserviceAccounNamespace string 
 
@@ -50,13 +52,34 @@ param workloadIdentityServiceAccountName string
 @description('Specifies the name of the workload managed identity.')
 param workloadManagedIdentityName string 
 
+//param hubVirtualNetworkId string
+param hubVirtualNetworkName string
 
+
+resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2020-11-01' existing = {
+name: hubVirtualNetworkName
+scope: resourceGroup('RG-DATASYNCHRO-HUB')
+
+}
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: userAssignedIdentityName
   location: location
   tags: tags
 }
+
+//  This user-defined managed identity used by the workload to connect to the Azure services with a security token issued by Azue Active Directory
+resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: workloadManagedIdentityName
+  location: location
+  tags: tags
+}
+
+resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedIdentity/userAssignedIdentities@2025-01-31-preview' = {
+  name: userAssignedIdentities_azure_alb_identity_name
+  location: location
+}
+
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
   name: logAnalyticsWorkspaceName
@@ -98,13 +121,13 @@ module network 'modules/network.bicep' = {
     containerInstanceSubnetAddressPrefix: '10.200.7.0/24'
   }
 }
-/*
+
 module peerFirstVnetSecondVnet 'modules/vnet_peering.bicep' = {
   name: 'peerFirstToSecond'
   scope: resourceGroup()
   params: {
     existingLocalVirtualNetworkName: network.outputs.virtualNetworkName
-    existingRemoteVirtualNetworkName: 'datasynchro-hub-vnet'
+    existingRemoteVirtualNetworkName: hubVirtualNetworkName
     existingRemoteVirtualNetworkResourceGroupName: 'RG-DATASYNCHRO-HUB'
   }
 }
@@ -113,11 +136,11 @@ module peerSecondVnetFirstVnet 'modules/vnet_peering.bicep' = {
   name: 'peerSecondToFirst'
   scope: resourceGroup('RG-DATASYNCHRO-HUB')
   params: {
-    existingLocalVirtualNetworkName: 'datasynchro-hub-vnet'
+    existingLocalVirtualNetworkName: hubVirtualNetworkName
     existingRemoteVirtualNetworkName: network.outputs.virtualNetworkName
     existingRemoteVirtualNetworkResourceGroupName: resourceGroup().name
   }
-}*/
+}
 
 module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName in privateDnsZoneNames: {
   name: 'privateDnsZone-${privateDnsZoneName}'
@@ -126,7 +149,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     location: 'global'
     virtualNetworkId: [
       network.outputs.virtualNetworkId
-      //'/subscriptions/023b2039-5c23-44b8-844e-c002f8ed431d/resourceGroups/RG-DATASYNCHRO-HUB/providers/Microsoft.Network/virtualNetworks/datasynchro-hub-vnet'
+     hubVirtualNetwork.id
     ]
   }
 }]
@@ -268,7 +291,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
-module deploymentScript 'modules/deployment-script.bicep' =  {
+/* module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -287,7 +310,7 @@ module deploymentScript 'modules/deployment-script.bicep' =  {
     slqServerPrivateEndpoint
   ]
 } 
-
+ */
 // *** Service Bus Namespace and Queue ***
 
 param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
@@ -332,6 +355,10 @@ module servicebusPrivateEndpoint 'modules/private_endpoint.bicep' = {
 
 param cosmosdbAccountName string = 'cosmos-${prefix}-002'
 param cosmosdbDatabaseName string = 'LogCorner.EduSync.Speech.Database'
+@description('Optional principal ID for Cosmos SQL Built-in Data Contributor (jumpbox/system identity). Leave empty to skip.')
+param cosmosJumpboxPrincipalId string 
+@description('Optional principal ID for Cosmos SQL Built-in Data Contributor (admin/user identity). Leave empty to skip.')
+param cosmosAdminPrincipalId string 
 
 module cosmosdb 'modules/cosmosdb.bicep' = {
   name: cosmosdbAccountName
@@ -339,7 +366,9 @@ module cosmosdb 'modules/cosmosdb.bicep' = {
     accountName: cosmosdbAccountName
     location: location
     databaseName: cosmosdbDatabaseName
-    managedIdentityName:userAssignedIdentityName
+    managedIdentityName:workloadManagedIdentityName
+    jumpboxPrincipalId: cosmosJumpboxPrincipalId
+    adminPrincipalId: cosmosAdminPrincipalId
   }
 
 }
@@ -366,12 +395,12 @@ module cosmosdbPrivateEndpoint 'modules/private_endpoint.bicep' = {
   ]
 }
 
-param keyvault_name string = 'kv-${prefix}-001'
+
 module keyvault 'modules/keyvault.bicep' = {
   name: keyvault_name
   params: {
     location: location
-    keyvault_name: 'kv-${prefix}-002'
+    keyvault_name: keyvault_name
       workloadManagedIdentityName:workloadManagedIdentityName
       privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
@@ -390,12 +419,8 @@ param applicationGatewayForContainersName string = 'appgwforcon-${prefix}'
 
 param nodeResourceGroupName string= 'MC_${resourceGroup().name}_${ClusterName}_${location}'
 
-resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedIdentity/userAssignedIdentities@2025-01-31-preview' = {
-  name: userAssignedIdentities_azure_alb_identity_name
-  location: location
-}
-
-/*  module gateway 'modules/applicationGatewayForContainers.bicep' = {
+/* 
+  module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
     
@@ -426,4 +451,4 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 } 
- */
+  */

@@ -22,12 +22,6 @@ namespace LogCorner.EduSync.Speech.CosmosDb
         {
           Database database = _cosmosClient.GetDatabase(databaseName);
 
-            // Ensure the container exists
-            ContainerResponse containerResponse = await database.CreateContainerIfNotExistsAsync(
-                id: ContainerName,
-                partitionKeyPath: "/id"
-            );
-
             Container container = database.GetContainer(ContainerName);
 
             string id = string.Empty;
@@ -100,6 +94,12 @@ namespace LogCorner.EduSync.Speech.CosmosDb
             catch (CosmosException ex)
             {
                 await writeOutputAsync($"Error: {ex.Message}");
+                await writeOutputAsync($"Cosmos error: {ex.Message}");
+                await writeOutputAsync($"StatusCode: {ex.StatusCode}");
+                await writeOutputAsync($"SubStatusCode: {ex.SubStatusCode}");
+                await writeOutputAsync($"ActivityId: {ex.ActivityId}");
+                await writeOutputAsync($"Diagnostics: {ex.Diagnostics}");
+                throw;
             }
         }
 
