@@ -1,4 +1,4 @@
-namespace: azure-resources
+namespace: azure-workloads
 serviceAccountName: workload-identity-sa
 azureWorkloadIdentityClientId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 

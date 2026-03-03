@@ -41,7 +41,7 @@ param privateDnsZoneNames  array = [
   'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net'
 ]
 
-param keyvault_name string = 'kv-${prefix}-003'
+param keyvault_name string 
 
 @description('Specifies the namespace of the application.')
 param workloadIdentityserviceAccounNamespace string 
@@ -155,7 +155,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
 }]
 
 
-/* module aksCluster 'modules/aks.bicep' = {
+ module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -175,7 +175,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
   }
-} */
+} 
  
 module containerRegistry 'modules/containerRegistry.bicep' = {
   name: 'containerRegistry'

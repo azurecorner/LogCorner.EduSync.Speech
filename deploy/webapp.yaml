@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-frontend-app
-  namespace: azure-resources
+  namespace: azure-workloads
   labels:
     app: webapp
 spec:
@@ -46,7 +46,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: webapp-service
-  namespace: azure-resources
+  namespace: azure-workloads
   labels:
     app: webapp
 

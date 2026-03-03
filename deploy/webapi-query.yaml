@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-api-query-app
-  namespace: azure-resources
+  namespace: azure-workloads
   labels:
     app: web-api-query
 spec:
@@ -42,7 +42,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: web-api-query-service
-  namespace: azure-resources
+  namespace: azure-workloads
   labels:
     app: web-api-query
 

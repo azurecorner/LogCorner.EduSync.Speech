@@ -2,7 +2,7 @@
 # kind: Deployment
 # metadata:
 #   name: otel-demo-chatbot
-#   namespace: azure-resources
+#   namespace: azure-workloads
 #   labels:
 #     app: chatbot
 # spec:  

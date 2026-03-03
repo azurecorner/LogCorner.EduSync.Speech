@@ -4,7 +4,7 @@ $AKS_NAME="datasynchro-aks"
 $RESOURCE_GROUP="RG-EVENT-DRIVEN-ARCHITECTURE"
 $IDENTITY_RESOURCE_NAME="azure_alb_identity"
 
-$HELM_NAMESPACE="azure-resources"
+$HELM_NAMESPACE="azure-workloads"
 $CONTROLLER_NAMESPACE="azure-alb-system"
 
 az aks show -g $RESOURCE_GROUP -n $AKS_NAME --query "oidcIssuerProfile.issuerUrl" -o tsv

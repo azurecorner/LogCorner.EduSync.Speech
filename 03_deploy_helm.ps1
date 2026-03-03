@@ -1,6 +1,6 @@
 $AKS_NAME="datasynchro-aks"
 $RESOURCE_GROUP="RG-EVENT-DRIVEN-ARCHITECTURE"
-$HELM_NAMESPACE="azure-resources"
+$HELM_NAMESPACE="azure-workloads"
 $RESOURCE_NAME="appgwforcon-datasynchro"
 $FRONTEND_NAME="datasynchro-frontend"
  

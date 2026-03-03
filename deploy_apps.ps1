@@ -1,7 +1,7 @@
 $AKS_NAME="datasynchro-aks"
 $RESOURCE_GROUP="RG-EVENT-DRIVEN-ARCHITECTURE"
 
-$HELM_NAMESPACE="azure-resources"
+$HELM_NAMESPACE="azure-workloads"
 
 $RESOURCE_NAME="appgwforcon-datasynchro"
 $FRONTEND_NAME="datasynchro-frontend"
@@ -45,7 +45,7 @@ kubectl apply -f .\deploy\namespace.yaml
 kubectl apply -f .\deploy\signalrhub.yaml
 kubectl apply -f .\deploy\curl-test.yaml
 
-kubectl exec -it curl-test -n azure-resources --   curl -v -k http://signalr-service/logcornerhub  
+kubectl exec -it curl-test -n azure-workloads --   curl -v -k http://signalr-service/logcornerhub  
 
 
 # web api command
@@ -73,7 +73,7 @@ kubectl apply -f .\deploy\webapp.yaml
  kubectl get httproute webapps-route -n $HELM_NAMESPACE -o yaml
 
  # verify deployment
- #kubectl  rollout restart deployment -n azure-resources
+ #kubectl  rollout restart deployment -n azure-workloads
 
  kubectl get svc -n $HELM_NAMESPACE
  kubectl get endpoints -n $HELM_NAMESPACE

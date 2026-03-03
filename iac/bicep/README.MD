@@ -34,23 +34,23 @@ kubectl apply -f namespace.yaml
 kubectl apply -f signalrhub.yaml
 kubectl apply -f curl-test.yaml
 
-kubectl exec -it curl-test -n azure-resources --   curl -v -k http://signalr-service/logcornerhub  
+kubectl exec -it curl-test -n azure-workloads --   curl -v -k http://signalr-service/logcornerhub  
 
 # webapi
 kubectl apply -f workload-identity-service-account.yaml
 kubectl apply -f webapi.yaml
 
-kubectl get pods -n azure-resources
-kubectl  rollout restart deployment -n azure-resources
+kubectl get pods -n azure-workloads
+kubectl  rollout restart deployment -n azure-workloads
 
 
-kubectl get pods -n azure-resources
-kubectl get svc -n azure-resources
+kubectl get pods -n azure-workloads
+kubectl get svc -n azure-workloads
 
 
-kubectl logs web-frontend-app-84bb97d577-mj9gp -n azure-resources
+kubectl logs web-frontend-app-84bb97d577-mj9gp -n azure-workloads
 
-kubectl exec -it curl-test -n azure-resources -- `
+kubectl exec -it curl-test -n azure-workloads -- `
   curl -v -k -X POST http://webapi-service/api/speech `
   -H "Content-Type: application/json" `
   -d "{
@@ -65,30 +65,30 @@ kubectl exec -it curl-test -n azure-resources -- `
 kubectl apply -f workload-identity-service-account.yaml
 kubectl apply -f broker.yaml
 
-kubectl get pods -n azure-resources
+kubectl get pods -n azure-workloads
 
 # web api query
 
 kubectl apply -f webapi-query.yaml
 
-kubectl get pods -n azure-resources
+kubectl get pods -n azure-workloads
 
 
-kubectl logs web-api-64d6f78cc5-ps27k -n azure-resources
+kubectl logs web-api-64d6f78cc5-ps27k -n azure-workloads
 
 
-kubectl exec -it curl-test -n azure-resources --   curl -v -k -X GET http://web-api-query-service/api/speech 
+kubectl exec -it curl-test -n azure-workloads --   curl -v -k -X GET http://web-api-query-service/api/speech 
 
 # web app front
 
 kubectl apply -f webapp.yaml
 
-kubectl get pods -n azure-resources
+kubectl get pods -n azure-workloads
 
 
-kubectl logs web-api-64d6f78cc5-ps27k -n azure-resources
+kubectl logs web-api-64d6f78cc5-ps27k -n azure-workloads
 
 
-kubectl exec -it curl-test -n azure-resources --   curl -v -k -X GET http://web-api-query-service/api/speech 
+kubectl exec -it curl-test -n azure-workloads --   curl -v -k -X GET http://web-api-query-service/api/speech 
 
-kubectl  rollout restart deployment -n azure-resources
+kubectl  rollout restart deployment -n azure-workloads
