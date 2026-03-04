@@ -8,7 +8,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    azure.workload.identity/client-id: c11d13d2-f3d2-4b30-af9f-2cbdf7ae3639 # "${USER_ASSIGNED_CLIENT_ID}"
+    azure.workload.identity/client-id: 6b7ff166-a810-4d74-827c-05a90598e7e2 # "${USER_ASSIGNED_CLIENT_ID}"
   name: workload-identity-sa #"${SERVICE_ACCOUNT_NAME}"
   namespace: azure-workloads #"${SERVICE_ACCOUNT_NAMESPACE}"
 ---

@@ -56,6 +56,18 @@ module KeyVaultSecretsOfficerRole 'roleAssignment.bicep' = {
   }
 }
 
+module KeyVaultCertificatesOfficerRole 'roleAssignment.bicep' = {
+  name: 'KeyVaultCertificatesOfficer'
+  params: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a4417e6f-fecd-4de8-b567-7b0420556985') // Key Vault Certificates Officer
+    identityPrincipalId: '7abf4c5b-9638-4ec4-b830-ede0a8031b25' // User Object ID
+    roleDescription: 'Perform any action on the certificates of a key vault, except manage permissions'
+    principalType:'User'
+  }
+}
+
+
+
 /*
 /*
 // Azure application gateway for containers needs to access secrets in the key vault, so we will assign the Key Vault Secrets User role to the managed identity used by the application gateway for containers and Key Vault Secrets Officer role to a user who will manage the secrets in the key vault.

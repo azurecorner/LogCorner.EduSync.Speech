@@ -43,6 +43,8 @@ var enablePrivateCluster = true
 @description('The role definition ID for the Kubernetes Service RBAC Cluster Admin role.')
 var kubernetesServiceRBACClusterAdminId = resourceId('Microsoft.Authorization/roleDefinitions', 'b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b')
 
+var keyVaultSecretsUserRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6') // Key Vault Secrets User Role
+
 resource privatednsZone 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   name: privateDNSZoneName
 }
@@ -53,12 +55,18 @@ param serviceAccountName string
 
 param serviceAccountNamespace string 
 
+param keyVaultName string
+
 var AzureServiceBusDataOwner = '090c5cfd-751d-490a-894a-3ce6f1109419'
 
 //  This user-defined managed identity used by the workload to connect to the Azure services with a security token issued by Azue Active Directory
 resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name: workloadManagedIdentityName
 
+}
+
+resource KeyVault 'Microsoft.KeyVault/vaults@2024-06-01' existing = {
+  name: keyVaultName
 }
 
 /* 
@@ -99,6 +107,9 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
         config: {
           logAnalyticsWorkspaceResourceID: LoganalyticID
         }
+      }
+       azureKeyvaultSecretsProvider: {
+        enabled: true
       }
     }
    
@@ -183,7 +194,17 @@ resource federatedIdentityCredentials 'Microsoft.ManagedIdentity/userAssignedIde
   }
 }
 
+resource KeyVaultSecretsUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 
+  scope: KeyVault
+  name: guid(KeyVault.id,workloadManagedIdentity.id,workloadManagedIdentity.name)
+  properties: {
+    roleDefinitionId: keyVaultSecretsUserRoleDefinitionId
+    description: 'Azure Kubernetes Service RBAC Cluster Admin Role to manage all resources in the cluster.'
+    principalId: workloadManagedIdentity.properties.principalId 
+    principalType: 'ServicePrincipal'
+  }
+} 
 
 
 output aksOidcIssuerUrl string = aksCluster.properties.oidcIssuerProfile.issuerURL 

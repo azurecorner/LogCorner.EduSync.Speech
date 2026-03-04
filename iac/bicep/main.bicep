@@ -52,14 +52,39 @@ param workloadIdentityServiceAccountName string
 @description('Specifies the name of the workload managed identity.')
 param workloadManagedIdentityName string 
 
-//param hubVirtualNetworkId string
 param hubVirtualNetworkName string
 
+param controllerServiceAccountName string = 'alb-controller-sa'
+
+param controllerNamespace string ='azure-alb-system'
+
+@description('Name of the private link subnet where the SQL Server private endpoint will be created.')
+param runScript string = loadTextContent('./scripts/run.ps1')
+var createTablesScriptRaw = loadTextContent('./scripts/createTables.sql')
+var createTablesScriptBase64 = base64(createTablesScriptRaw)
+@description('Name of the virtual network where the container instance subnet is located.')
+param storageAccountName string
+
+param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
+param serviceBusQueueName string = 'sb-queue-${prefix}'
+param serviceBusDataOwnerServicePrincipalId string
+
+param cosmosdbAccountName string = 'cosmos-${prefix}-002'
+param cosmosdbDatabaseName string = 'LogCorner.EduSync.Speech.Database'
+@description('Optional principal ID for Cosmos SQL Built-in Data Contributor (jumpbox/system identity). Leave empty to skip.')
+param cosmosJumpboxPrincipalId string 
+
+// Application Gateway for Containers
+
+param userAssignedIdentities_azure_alb_identity_name string = 'azure_alb_identity'
+@description('Specifies the name of the Application Gateway for Containers.')
+param applicationGatewayForContainersName string = 'appgwforcon-${prefix}'
+
+param nodeResourceGroupName string= 'MC_${resourceGroup().name}_${ClusterName}_${location}'
 
 resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2020-11-01' existing = {
-name: hubVirtualNetworkName
-scope: resourceGroup('RG-DATASYNCHRO-HUB')
-
+  name: hubVirtualNetworkName
+  scope: resourceGroup('RG-DATASYNCHRO-HUB')
 }
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
@@ -79,7 +104,6 @@ resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedId
   name: userAssignedIdentities_azure_alb_identity_name
   location: location
 }
-
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
   name: logAnalyticsWorkspaceName
@@ -154,8 +178,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
   }
 }]
 
-
- module aksCluster 'modules/aks.bicep' = {
+module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -163,13 +186,14 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     prefix: prefix
     userAssignedIdentities: managedIdentity.id
     acrName: containerRegistryName
-     vmSize: 'Standard_DS2_v2'
+    vmSize: 'Standard_DS2_v2'
     privateDNSZoneName: 'privatelink.${resourceGroup().location}.azmk8s.io'
+    keyVaultName: keyvault_name
     SubnetId: network.outputs.aks_subnet_id
-     tags: tags
-     adminGroupObjectIDs: [adminUserObjectId]
-      LoganalyticID: logAnalyticsWorkspace.id
-       serviceAccountNamespace: workloadIdentityserviceAccounNamespace
+    tags: tags
+    adminGroupObjectIDs: [adminUserObjectId]
+    LoganalyticID: logAnalyticsWorkspace.id
+    serviceAccountNamespace: workloadIdentityserviceAccounNamespace
     serviceAccountName: workloadIdentityServiceAccountName
     workloadManagedIdentityName: workloadManagedIdentityName
     workloadIdentityEnabled: true
@@ -189,9 +213,7 @@ module containerRegistry 'modules/containerRegistry.bicep' = {
   }
 }
 
-
 module registryPrivateEndpoint 'modules/private_endpoint.bicep' = { 
-
   name: 'pe-${containerRegistryName}'
   params: {
     location: location
@@ -208,11 +230,8 @@ module registryPrivateEndpoint 'modules/private_endpoint.bicep' = {
 
   dependsOn: [
     PrivateDnsZone
-  
   ]
 }
-
-
 
 module sqlserver 'modules/sql-server.bicep' = {
   name: 'sqlserver'
@@ -222,13 +241,10 @@ module sqlserver 'modules/sql-server.bicep' = {
     adminPassword: sqlserverAdminPassword
     databaseName: databaseName
     serverLocation: location
-
   }
-  
 }
 
 module slqServerPrivateEndpoint 'modules/private_endpoint.bicep' = { 
-
   name: 'pe-${sqlserverName}'
   params: {
     location: location
@@ -242,20 +258,10 @@ module slqServerPrivateEndpoint 'modules/private_endpoint.bicep' = {
     subnetId: network.outputs.privatelink_subnet_id
     privateLinkServiceId: sqlserver.outputs.id
   }
-
   dependsOn: [
     PrivateDnsZone
-
   ]
 }
-
-
-@description('Name of the private link subnet where the SQL Server private endpoint will be created.')
-param runScript string = loadTextContent('./scripts/run.ps1')
-var createTablesScriptRaw = loadTextContent('./scripts/createTables.sql')
-var createTablesScriptBase64 = base64(createTablesScriptRaw)
-@description('Name of the virtual network where the container instance subnet is located.')
-param storageAccountName string
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-04-01' = {
   name: storageAccountName
@@ -273,9 +279,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-04-01' = {
   }
 }
 
-
 module storagePrivateEndpoint 'modules/private_endpoint.bicep' = { 
-
   name: 'pe-${storageAccountName}'
   params: {
     location: location
@@ -313,11 +317,6 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
  */
 // *** Service Bus Namespace and Queue ***
 
-param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
-param serviceBusQueueName string = 'sb-queue-${prefix}'
-param serviceBusDataOwnerServicePrincipalId string
-
-
  module servicebus 'modules/serviceBus.bicep' = {
   name: serviceBusNamespaceName
   params: {
@@ -328,13 +327,9 @@ param serviceBusDataOwnerServicePrincipalId string
     serviceBusDataOwnerServicePrincipalId: serviceBusDataOwnerServicePrincipalId
     serviceBusDataOwnerAdminUserId: adminUserObjectId
   }
-
 }
 
-
-
 module servicebusPrivateEndpoint 'modules/private_endpoint.bicep' = { 
-
   name: 'pe-${serviceBusNamespaceName}'
   params: {
     location: location
@@ -351,17 +346,8 @@ module servicebusPrivateEndpoint 'modules/private_endpoint.bicep' = {
 
   dependsOn: [
     PrivateDnsZone
-
   ]
 }
-
-
-
-param cosmosdbAccountName string = 'cosmos-${prefix}-002'
-param cosmosdbDatabaseName string = 'LogCorner.EduSync.Speech.Database'
-@description('Optional principal ID for Cosmos SQL Built-in Data Contributor (jumpbox/system identity). Leave empty to skip.')
-param cosmosJumpboxPrincipalId string 
-
 
 module cosmosdb 'modules/cosmosdb.bicep' = {
   name: cosmosdbAccountName
@@ -373,11 +359,9 @@ module cosmosdb 'modules/cosmosdb.bicep' = {
     jumpboxPrincipalId: cosmosJumpboxPrincipalId
     adminPrincipalId: adminUserObjectId
   }
-
 }
 
 module cosmosdbPrivateEndpoint 'modules/private_endpoint.bicep' = { 
-
   name: 'pe-${cosmosdbAccountName}'
   params: {
     location: location
@@ -394,54 +378,35 @@ module cosmosdbPrivateEndpoint 'modules/private_endpoint.bicep' = {
 
   dependsOn: [
     PrivateDnsZone
-
   ]
 }
-
 
 module keyvault 'modules/keyvault.bicep' = {
   name: keyvault_name
   params: {
     location: location
     keyvault_name: keyvault_name
-      workloadManagedIdentityName:workloadManagedIdentityName
-      privatelink_subnet_id: network.outputs.privatelink_subnet_id
-  }
-dependsOn: [
-    //aksCluster
-  ]
-}
-
-
-// Application Gateway for Containers
-
-param userAssignedIdentities_azure_alb_identity_name string = 'azure_alb_identity'
-@description('Specifies the name of the Application Gateway for Containers.')
-param applicationGatewayForContainersName string = 'appgwforcon-${prefix}'
-
-
-param nodeResourceGroupName string= 'MC_${resourceGroup().name}_${ClusterName}_${location}'
-
-/* 
-  module gateway 'modules/applicationGatewayForContainers.bicep' = {
-  name:'gateway'
-  params: {
-    
-    trafficControllers_alb_name: applicationGatewayForContainersName
-    location: location
-    alb_subnet_id:network.outputs.applicationGatewayForContainersSubnet_id
-     nodeResourceGroupName: nodeResourceGroupName
-     userManagedIdentityprincipalId: userAssignedIdentities_azure_alb_identity_resource.properties.principalId
-  
+    workloadManagedIdentityName:workloadManagedIdentityName
+    privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
   dependsOn: [
     aksCluster
   ]
+}
+
+module gateway 'modules/applicationGatewayForContainers.bicep' = {
+  name:'gateway'
+  params: {
+    trafficControllers_alb_name: applicationGatewayForContainersName
+    location: location
+    alb_subnet_id:network.outputs.applicationGatewayForContainersSubnet_id
+    nodeResourceGroupName: nodeResourceGroupName
+    userManagedIdentityprincipalId: userAssignedIdentities_azure_alb_identity_resource.properties.principalId
+ }
+  dependsOn: [
+    aksCluster
+  ]
 } 
-
-param controllerServiceAccountName string = 'alb-controller-sa'
-
-param controllerNamespace string ='azure-alb-system'
  
 resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {
   parent: userAssignedIdentities_azure_alb_identity_resource
@@ -454,4 +419,4 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 } 
-  */
+  

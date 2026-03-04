@@ -36,15 +36,13 @@ resource trafficControllers_alb_test_name_frontend 'Microsoft.ServiceNetworking/
 
 
 module AppGwForContainersConfigurationManagerRole_roleAssignment 'roleAssignment.bicep' = {
-  
   name: 'applyReaderRoleToAksRG'
   scope: resourceGroup()
   params: {
-
     identityPrincipalId: userManagedIdentityprincipalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'fbc52c3f-28ad-4303-a892-8a056630b8f1') //'fbc52c3f-28ad-4303-a892-8a056630b8f1'
     roleDescription: 'Apply Reader role to the AKS managed cluster resource group for the newly provisioned identity'
-     principalType: 'ServicePrincipal'
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -60,17 +58,14 @@ module readerRole 'roleAssignment.bicep' = {
  
 }
 
-
 module subnetAlbNetworkContributorAssignment 'roleAssignment.bicep' = {
   name: 'subnetAlbNetworkContributorAssignment'
-
   params: {
     identityPrincipalId: userManagedIdentityprincipalId
     roleDefinitionId:subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7') // Network Contributor
     roleDescription:  'Grant Network Contributor role on subnet-alb to the ALB managed identity'
     principalType: 'ServicePrincipal'
   }
- 
-}
+ }
 
  

@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: azure-alb-resources
+  labels:
+    name: azure-alb-resources
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: azure-alb-system
+  labels:
+    name: azure-alb-system
+
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  namespace: azure-alb-resources
+spec:
+  acme:
+    #server: https://acme-v02.api.letsencrypt.org/directory # production endpoint
+    server: https://acme-staging-v02.api.letsencrypt.org/directory # staging endpoint
+    email: leyegora@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-private-key
+    solvers:
+      - http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: gateway-01
+                namespace: azure-alb-resources
+                kind: Gateway
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: letsencrypt-cert
+  namespace: azure-alb-resources
+spec:
+  secretName: letsencrypt-secret # name published to secret store
+  issuerRef:
+    name: letsencrypt-prod # ClusterIssuer resource name
+    kind: ClusterIssuer
+  dnsNames:
+    - app.logcorner-datasynchro.com # domain name to be used
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway-01
+  namespace: azure-alb-resources
+  annotations:
+    alb.networking.azure.io/alb-id: /subscriptions/023b2039-5c23-44b8-844e-c002f8ed431d/resourceGroups/RG-EVENT-DRIVEN-ARCHITECTURE/providers/Microsoft.ServiceNetworking/trafficControllers/appgwforcon-datasynchro
+    cert-manager.io/issuer: letsencrypt-prod
+spec:
+  gatewayClassName: azure-alb-external
+  listeners:
+  - name: http-listener
+    hostname: app.logcorner-datasynchro.com
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+        namespaces:
+          from: Same
+  - name: https-listener
+    hostname: app.logcorner-datasynchro.com
+    port: 443
+    protocol: HTTPS
+    tls:
+      certificateRefs:
+      - name: letsencrypt-secret
+    allowedRoutes:
+      namespaces:
+        from: Same
+  addresses:
+  - type: alb.networking.azure.io/alb-frontend
+    value: datasynchro-frontend
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: cert-manager-route
+  namespace: azure-alb-resources
+spec:
+  parentRefs:
+  - name: gateway-01
+  hostnames:
+  - "app.logcorner-datasynchro.com"
+  rules:
+  - backendRefs:
+    - name: backend-v1
+      port: 8080

@@ -5,14 +5,19 @@ param(
 if ($pfxPassword -isnot [System.Security.SecureString]) {
     $pfxPassword = ConvertTo-SecureString $pfxPassword -AsPlainText -Force
 }
-
+$pfxPassword = ConvertTo-SecureString "Evan@1234" -AsPlainText -Force
 $domain="cloud-devops-craft.com"
+
+
+    # Variables
+$vaultName = "kv-datasynchro-003"     # Replace with your Key Vault name
+$certificateName = "logcorner-datasync-cert"  # Replace with desired certificate name in Key Vault
 # Create the root signing cert
 # Get the current working directory
 $currentPath = Get-Location
 
 Write-Host "path = $currentPath"
-$currentPath = "$currentPath\iac\scripts"
+$currentPath = "$currentPath\certificate"
 
 Write-Host "Create the root signing cert"
 $root = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
@@ -44,10 +49,6 @@ Export-PfxCertificate -Cert $ssl -FilePath $currentPath\ssl\datasync-ssl.pfx `
     -ChainOption BuildChain -Password $pfxPassword # (read-host -AsSecureString -Prompt "password")
 
 
-
-    # Variables
-$vaultName = "kv-datasynchro-003"     # Replace with your Key Vault name
-$certificateName = "logcorner-datasync-cert"  # Replace with desired certificate name in Key Vault
 $pfxFilePath = "$currentPath\ssl\datasync-ssl.pfx" # Path to your PFX file
 #####$pfxPassword = Read-Host -AsSecureString -Prompt "Enter PFX password" # Securely input PFX password
 
