@@ -4,6 +4,14 @@ metadata:
   name: azure-workloads
 
 ---
+
+
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: azure-alb-resources
+# ---
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -12,6 +20,7 @@ metadata:
   name: workload-identity-sa #"${SERVICE_ACCOUNT_NAME}"
   namespace: azure-workloads #"${SERVICE_ACCOUNT_NAMESPACE}"
 ---
+
 apiVersion: v1
 kind: Pod
 metadata:

@@ -7,7 +7,7 @@ $IdentityResourceName = "azure_alb_identity"
 
 $GatewayControllerNamespace = "azure-alb-system"
 
-$ALB_RESOURCES_NAMESPACE = "azure-alb-resources"
+# $ALB_RESOURCES_NAMESPACE = "azure-alb-resources"
 $APPLICATION_FOR_CONTAINER_HOST_NAME = "app.logcorner-datasynchro.com"
 
 
@@ -67,10 +67,10 @@ kubectl exec busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE -- cat /mnt/
 kubectl exec busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE -- cat /mnt/secrets-store/$CERTIFICATE_NAME.key
 
 
-kubectl get gateway gateway-01 -n azure-alb-resources -o yaml
+kubectl get gateway gateway-01 -n $WORKLOAD_NAMESPACE -o yaml
 
 
-kubectl get httproute cert-manager-route -n azure-alb-resources -o yaml
+kubectl get httproute cert-manager-route -n $WORKLOAD_NAMESPACE -o yaml
 
 
 # Display all pods in the controller namespace with their labels
@@ -88,7 +88,7 @@ kubectl get svc -n $WORKLOAD_NAMESPACE
 kubectl get sa -n $WORKLOAD_NAMESPACE
 
 kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
-kubectl rollout restart deployment -n $ALB_RESOURCES_NAMESPACE
+kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
 
 kubectl get pods -n $WORKLOAD_NAMESPACE
 
@@ -97,8 +97,8 @@ kubectl get pods -n $WORKLOAD_NAMESPACE
 kubectl logs web-frontend-app-5d9cd74745-hbnrh -n $WORKLOAD_NAMESPACE
 
 
-kubectl get pods -n $ALB_RESOURCES_NAMESPACE
-$fqdn=$(kubectl get gateway "gateway-01" -n $ALB_RESOURCES_NAMESPACE -o jsonpath='{.status.addresses[0].value}')
+kubectl get pods -n $WORKLOAD_NAMESPACE
+$fqdn=$(kubectl get gateway "gateway-01" -n $WORKLOAD_NAMESPACE -o jsonpath='{.status.addresses[0].value}')
 
 Write-Host "fqdn=$fqdn"
 
