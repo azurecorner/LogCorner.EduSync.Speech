@@ -8,7 +8,7 @@ $IdentityResourceName = "azure_alb_identity"
 $GatewayControllerNamespace = "azure-alb-system"
 
 # $ALB_RESOURCES_NAMESPACE = "azure-alb-resources"
-$APPLICATION_FOR_CONTAINER_HOST_NAME = "app.logcorner-datasynchro.com"
+$APPLICATION_FOR_CONTAINER_HOST_NAME = "app.cloud-devops-craft.com"
 
 
 $UAMI="workload-managed-identity"
@@ -70,7 +70,7 @@ kubectl exec busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE -- cat /mnt/
 kubectl get gateway gateway-01 -n $WORKLOAD_NAMESPACE -o yaml
 
 
-kubectl get httproute cert-manager-route -n $WORKLOAD_NAMESPACE -o yaml
+kubectl get httproute http-route -n $WORKLOAD_NAMESPACE -o yaml
 
 
 # Display all pods in the controller namespace with their labels
@@ -107,5 +107,5 @@ $fqdnIp = (Resolve-DnsName $fqdn | Where-Object { $_.Type -eq "A" }).IPAddress
 Write-Host "fqdnIp=$fqdnIp"
 
 
-curl -k --resolve "${APPLICATION_FOR_CONTAINER_HOST_NAME}:443:${fqdnIp}" https://$APPLICATION_FOR_CONTAINER_HOST_NAME --insecure
+curl -k --resolve "${APPLICATION_FOR_CONTAINER_HOST_NAME}:443:${fqdnIp}" "https://$APPLICATION_FOR_CONTAINER_HOST_NAME/webapp/" --insecure
 
