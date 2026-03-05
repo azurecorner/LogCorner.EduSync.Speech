@@ -67,7 +67,7 @@ param storageAccountName string
 
 param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
 param serviceBusQueueName string = 'sb-queue-${prefix}'
-param serviceBusDataOwnerServicePrincipalId string
+
 
 param cosmosdbAccountName string = 'cosmos-${prefix}-002'
 param cosmosdbDatabaseName string = 'LogCorner.EduSync.Speech.Database'
@@ -324,7 +324,6 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
     location: location
     serviceBusNamespaceName:serviceBusNamespaceName
     serviceBusQueueName: serviceBusQueueName
-    serviceBusDataOwnerServicePrincipalId: serviceBusDataOwnerServicePrincipalId
     serviceBusDataOwnerAdminUserId: adminUserObjectId
   }
 }

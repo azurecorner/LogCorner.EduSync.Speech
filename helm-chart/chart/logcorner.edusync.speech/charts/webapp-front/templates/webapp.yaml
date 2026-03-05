@@ -39,7 +39,9 @@ spec:
             - name: WEBAPI_QUERY_URL
               value : http://web-api-query-service
             - name: HubUrl
-              value : http://20.19.23.109/signalr/logcornerhub #http://aeevdzcjeshjc7cy.fz55.alb.azure.com/signalr/logcornerhub
+              value : https://app.cloud-devops-craft.com/signalr/logcornerhub
+            - name: HubUrlInternal
+              value : http://signalr-service/signalr/logcornerhub
 
 ---
 apiVersion: v1

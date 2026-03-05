@@ -35,7 +35,7 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Kubernetes
             - name: allowedOrigins
-              value : http://localhost:4200
+              value : https://app.cloud-devops-craft.com
             - name: AzureCosmosDB__DatabaseName
               value: LogCorner.EduSync.Speech.Database
             - name: AzureCosmosDB__ContainerName

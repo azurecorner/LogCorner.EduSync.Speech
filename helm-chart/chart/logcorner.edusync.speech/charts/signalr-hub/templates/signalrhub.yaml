@@ -35,7 +35,7 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Kubernetes
             - name: allowedOrigins
-              value : http://20.74.44.230/ # http://aeevdzcjeshjc7cy.fz55.alb.azure.com # web app  IP
+              value : https://app.cloud-devops-craft.com # http://aeevdzcjeshjc7cy.fz55.alb.azure.com # web app  IP
             
 ---
 apiVersion: v1

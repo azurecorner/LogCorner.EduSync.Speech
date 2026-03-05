@@ -12,7 +12,7 @@ docker login "$acrName.azurecr.io" `
 
 
  # Build and push the SignalR HUB image
-docker build -t "$acrName.azurecr.io/signalr-hub:latest" -f .\src\Hub\LogCorner.EduSync.Notification.Server\Dockerfile .\src\ 
+docker build -t "$acrName.azurecr.io/signalr-hub:latest" -f .\src\Hub\LogCorner.EduSync.Notification.Server\Dockerfile .\src\  --no-cache
 docker push "$acrName.azurecr.io/signalr-hub:latest"
 
 # Build and push the Web API command image
@@ -20,11 +20,9 @@ docker build -t "$acrName.azurecr.io/web-api-command:latest" -f .\src\Command\Lo
 docker push "$acrName.azurecr.io/web-api-command:latest"
 
 
-
 # Build and push the Broker Service image
 docker build -t "$acrName.azurecr.io/broker-app:latest" -f .\src\broker\LogCorner.EduSync.Speech.WorkerService\Dockerfile .\src\ 
 docker push "$acrName.azurecr.io/broker-app:latest"
-
 
 
 # Build and push the Web API query image
@@ -33,6 +31,6 @@ docker push "$acrName.azurecr.io/web-api-query:latest"
 
 
 # Build and push the Web App image
-docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\Front\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ 
+docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\Front\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ --no-cache
 docker push "$acrName.azurecr.io/web-app:latest"
 

@@ -44,9 +44,12 @@ spec:
         - name: webapp-service
           namespace: azure-workloads
           port: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /signalr/
+      backendRefs:
+        - name: signalr-service
+          namespace: azure-workloads
+          port: 80
 
----
-
----
-
----

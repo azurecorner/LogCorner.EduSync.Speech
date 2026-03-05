@@ -6,10 +6,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient(); // register IHttpClientFactory
 
-var notificationHubEndpoint = builder.Configuration["HubUrl"];
+var publicHubEndpoint = builder.Configuration["HubUrl"];
+var internalHubEndpoint = builder.Configuration["HubUrlInternal"];
+var notificationHubEndpoint = string.IsNullOrWhiteSpace(internalHubEndpoint)
+    ? publicHubEndpoint!
+    : internalHubEndpoint;
 builder.Services.AddSignalRServices($"{notificationHubEndpoint}?clientName=LogCorner.EduSync.Speech.Consumer");
 
+var pathBase = builder.Configuration["pathBase"];
+
 var app = builder.Build();
+
+if (!string.IsNullOrWhiteSpace(pathBase))
+{
+    app.UsePathBase(new PathString(pathBase));
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -23,12 +34,6 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
-//app.UsePathBase("/webapp");
-var pathBase = builder.Configuration["pathBase"];
-if (!string.IsNullOrWhiteSpace(pathBase))
-{
-    app.UsePathBase(new PathString(pathBase));
-}
 app.MapStaticAssets();
 
 app.MapControllerRoute(
