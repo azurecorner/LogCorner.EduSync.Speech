@@ -2,88 +2,88 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mssql-config
-  namespace: azure-workloads
+  name: {{ .Values.database.configMapName }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: web-api-command-app
+    app: {{ .Values.labels.configApp }}
 data:
-  SQL_SERVER: "sqlserver-datasynchro.database.windows.net"
-  DB_NAME: "LogCorner.EduSync.Speech.Database"
-  USER_NAME: "logcorner"
+  SQL_SERVER: {{ .Values.database.sqlServer | quote }}
+  DB_NAME: {{ .Values.database.dbName | quote }}
+  USER_NAME: {{ .Values.database.userName | quote }}
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: mssql
-  namespace: azure-workloads
+  name: {{ .Values.database.secretName }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: web-api-command-app
+    app: {{ .Values.labels.configApp }}
 stringData:
-  DB_PASSWORD: MySecureP@ssword
+  DB_PASSWORD: {{ .Values.database.dbPassword | quote }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web-api-command
-  namespace: azure-workloads
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: webapi
+    app: {{ .Values.labels.app }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
-      app: webapi
+      app: {{ .Values.labels.app }}
   template:
     metadata:
       labels:
-        app: webapi
-        azure.workload.identity/use: "true"
+        app: {{ .Values.labels.app }}
+        azure.workload.identity/use: {{ .Values.workloadIdentity.use | quote }}
     spec:
-      serviceAccountName: workload-identity-sa
+      serviceAccountName: {{ .Values.serviceAccountName }}
       containers:
-        - name: web-api-command
-          image: datasynchroacr.azurecr.io/web-api-command:latest
+        - name: {{ .Values.deployment.containerName }}
+          image: "{{ .Values.image.repository }}.azurecr.io/{{ .Values.image.webApiCommandName }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: 5000
+            - containerPort: {{ .Values.deployment.containerPort }}
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "250m"
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
             limits:
-              memory: "256Mi"
-              cpu: "500m"
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
           env:
             - name: ASPNETCORE_URLS
-              value: http://+:5000
+              value: {{ .Values.env.aspNetCoreUrls | quote }}
             - name: ASPNETCORE_ENVIRONMENT
-              value: Kubernetes
+              value: {{ .Values.env.aspNetCoreEnvironment | quote }}
             - name: ServiceBusNamespace
-              value: sb-namespace-datasynchro.servicebus.windows.net
+              value: {{ .Values.env.serviceBusNamespace | quote }}
             - name: ServiceBusQueueName
-              value: sb-queue-datasynchro
+              value: {{ .Values.env.serviceBusQueueName | quote }}
             - name: allowedOrigins
-              value : http://aeevdzcjeshjc7cy.fz55.alb.azure.com # web app  IP
+              value: {{ .Values.env.allowedOrigins | quote }}
             # Reference the ConfigMap for non-sensitive connection details
             - name: SQL_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: mssql-config
+                  name: {{ .Values.database.configMapName }}
                   key: SQL_SERVER
             - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: mssql-config
+                  name: {{ .Values.database.configMapName }}
                   key: DB_NAME
             - name: USER_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: mssql-config
+                  name: {{ .Values.database.configMapName }}
                   key: USER_NAME
             # Reference the Secret for the password
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mssql
+                  name: {{ .Values.database.secretName }}
                   key: DB_PASSWORD
             - name: ConnectionStrings__SpeechDB
               value: "Data Source=$(SQL_SERVER);Initial Catalog=$(DB_NAME);User=$(USER_NAME);Password=$(DB_PASSWORD)"
@@ -91,17 +91,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: webapi-service
-  namespace: azure-workloads
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: webapi
+    app: {{ .Values.labels.app }}
 
 spec:
   selector:
-    app: webapi
+    app: {{ .Values.labels.app }}
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 5000
-  type: ClusterIP
+    - protocol: {{ .Values.service.protocol }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+  type: {{ .Values.service.type }}
 

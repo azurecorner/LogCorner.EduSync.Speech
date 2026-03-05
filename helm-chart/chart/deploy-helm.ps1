@@ -75,6 +75,7 @@ helm upgrade --install  $RELEASE_NAME  logcorner.edusync.speech --set azureWorkl
                                                                 --set applicationGatewayForContainerResourceId=$ApplicationForContainerResourceId `
                                                                 --set tenantId=$KEYVAULT_TENANT 
 
+kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
 kubectl get pods -n $WORKLOAD_NAMESPACE
 
 kubectl exec busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE -- ls /mnt/secrets-store/ 
@@ -93,8 +94,7 @@ kubectl get svc -n $WORKLOAD_NAMESPACE
 
 kubectl get sa -n $WORKLOAD_NAMESPACE
 
-kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
-kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
+
 
 kubectl get pods -n $WORKLOAD_NAMESPACE
 
