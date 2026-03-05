@@ -1,66 +1,65 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: broker-app
-  namespace: azure-workloads
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: broker
+    app: {{ .Values.labels.app }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
-      app: broker
+      app: {{ .Values.labels.app }}
   template:
     metadata:
       labels:
-        app: broker
-        azure.workload.identity/use: "true"
+        app: {{ .Values.labels.app }}
+        azure.workload.identity/use: {{ .Values.workloadIdentity.use | quote }}
     spec:
-      serviceAccountName: workload-identity-sa
+      serviceAccountName: {{ .Values.serviceAccountName }}
       containers:
-        - name: broker-app
-          image: datasynchroacr.azurecr.io/broker-app:latest
+        - name: {{ .Values.deployment.containerName }}
+          image: "{{ .Values.image.repository }}.azurecr.io/{{ .Values.image.brokerAppName }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: 5000
+            - containerPort: {{ .Values.deployment.containerPort }}
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "250m"
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
             limits:
-              memory: "256Mi"
-              cpu: "500m"
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
           env:
-          
             - name: DOTNET_ENVIRONMENT
-              value: Kubernetes
+              value: {{ .Values.env.dotnetEnvironment | quote }}
             - name: ServiceBusNamespace
-              value: sb-namespace-datasynchro.servicebus.windows.net
+              value: {{ .Values.env.serviceBusNamespace | quote }}
             - name: ServiceBusQueueName
-              value: sb-queue-datasynchro
+              value: {{ .Values.env.serviceBusQueueName | quote }}
             - name: HubUrl
-              value: http://signalr-service/logcornerhub
+              value: {{ .Values.env.hubUrl | quote }}
             - name: AzureCosmosDB__DatabaseName
-              value: LogCorner.EduSync.Speech.Database
+              value: {{ .Values.env.azureCosmosDbDatabaseName | quote }}
             - name: AzureCosmosDB__ContainerName
-              value: Speech
+              value: {{ .Values.env.azureCosmosDbContainerName | quote }}
             - name: AzureCosmosDB__AccountEndpoint
-              value: https://cosmos-datasynchro-002.documents.azure.com:443/
+              value: {{ .Values.env.azureCosmosDbAccountEndpoint | quote }}
 
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: broker-service
-  namespace: azure-workloads
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: broker
+    app: {{ .Values.labels.app }}
 
 spec:
   selector:
-    app: broker
+    app: {{ .Values.labels.app }}
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 5000
-  type: ClusterIP
+    - protocol: {{ .Values.service.protocol }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+  type: {{ .Values.service.type }}

@@ -1,6 +1,6 @@
 apiVersion: v2
-name: db-linux
+name: service-broker
 appVersion: "3.6"
-description: A Helm chart for speech command api service Database sql server 2019 
+description: A Helm chart for the service broker of the speech command API
 version: 1.0.0
 type: application

@@ -2,7 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: gateway-01
-  namespace: azure-workloads
+  namespace: {{ .Values.namespace }}
   annotations:
     alb.networking.azure.io/alb-id: {{ .Values.applicationGatewayForContainerResourceId }} # "${APPLICATION_GATEWAY_FOR_CONTAINER_RESOURCE_ID}"
 spec:
@@ -19,17 +19,17 @@ spec:
       certificateRefs:
       - kind : Secret
         group: ""
-        name: logcorner-datasync-cert
+        name: {{ .Values.secretName }}
   addresses:
   - type: alb.networking.azure.io/alb-frontend
-    value: datasynchro-frontend
+    value: {{ .Values.applicationGatewayForContainerFrontEndName }}
 ---
 
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: http-route
-  namespace: azure-workloads
+  namespace: {{ .Values.namespace }}
 spec:
   parentRefs:
     - name: gateway-01
@@ -42,7 +42,7 @@ spec:
             value: /webapp/
       backendRefs:
         - name: webapp-service
-          namespace: azure-workloads
+          namespace: {{ .Values.namespace }}
           port: 80
     - matches:
         - path:
@@ -50,6 +50,6 @@ spec:
             value: /signalr/
       backendRefs:
         - name: signalr-service
-          namespace: azure-workloads
+          namespace: {{ .Values.namespace }}
           port: 80
 
