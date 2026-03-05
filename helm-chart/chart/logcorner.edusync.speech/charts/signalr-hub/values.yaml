@@ -1,14 +1,36 @@
-secret:
-  sqlserverdb_password: "MyC0m9l&xP@ssw0rd"
-namespace: helm
+namespace: azure-workloads
+
+labels:
+  app: signalr
+
+deployment:
+  name: signalr-hub
+  containerName: signalr-hub
+  replicas: 1
+  containerPort: 5000
+
 image:
-  initsqljob:
-    repository: logcornerhub/logcorner-edusync-speech-mssql-tools
-    tag: "latest"
-  sqldatabase:
-    repository: mcr.microsoft.com/mssql/server
-    tag: "2019-latest"
+  repository: datasynchroacr
+  signalrHubName: signalr-hub
+  tag: latest
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "250m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+
+env:
+  aspNetCoreUrls: "http://+:5000"
+  pathBase: "/signalr"
+  aspNetCoreEnvironment: "Kubernetes"
+  allowedOrigins: "https://app.cloud-devops-craft.com"
+
 service:
-  type: ClusterIP
-  port: 1433
-  targetPort: 1433
+  name: signalr-service
+  protocol: TCP
+  port: 80
+  targetPort: 5000
+  type: LoadBalancer

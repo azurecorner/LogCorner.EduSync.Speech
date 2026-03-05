@@ -1,56 +1,56 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: signalr-hub
-  namespace: azure-workloads
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: signalr
+    app: {{ .Values.labels.app }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
-      app: signalr
+      app: {{ .Values.labels.app }}
   template:
     metadata:
       labels:
-        app: signalr
+        app: {{ .Values.labels.app }}
     spec:
       containers:
-        - name: signalr-hub
-          image: datasynchroacr.azurecr.io/signalr-hub:latest
+        - name: {{ .Values.deployment.containerName }}
+          image: "{{ .Values.image.repository }}.azurecr.io/{{ .Values.image.signalrHubName }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: 5000
+            - containerPort: {{ .Values.deployment.containerPort }}
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "250m"
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
             limits:
-              memory: "256Mi"
-              cpu: "500m"
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
           env:
             - name: ASPNETCORE_URLS
-              value: http://+:5000
+              value: {{ .Values.env.aspNetCoreUrls | quote }}
             - name: pathBase
-              value: /signalr
+              value: {{ .Values.env.pathBase | quote }}
             - name: ASPNETCORE_ENVIRONMENT
-              value: Kubernetes
+              value: {{ .Values.env.aspNetCoreEnvironment | quote }}
             - name: allowedOrigins
-              value : https://app.cloud-devops-craft.com # http://aeevdzcjeshjc7cy.fz55.alb.azure.com # web app  IP
+              value: {{ .Values.env.allowedOrigins | quote }}
             
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: signalr-service
-  namespace: azure-workloads
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: signalr
+    app: {{ .Values.labels.app }}
 
 spec:
   selector:
-    app: signalr
+    app: {{ .Values.labels.app }}
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 5000
-  type: LoadBalancer
+    - protocol: {{ .Values.service.protocol }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+  type: {{ .Values.service.type }}
