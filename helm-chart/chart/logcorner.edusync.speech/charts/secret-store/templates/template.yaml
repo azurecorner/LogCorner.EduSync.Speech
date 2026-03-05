@@ -1,68 +1,68 @@
 
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-    azure.workload.identity/client-id: 6b7ff166-a810-4d74-827c-05a90598e7e2
-  name: workload-identity-sa
-  namespace: azure-workloads
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   annotations:
+#     azure.workload.identity/client-id: 6b7ff166-a810-4d74-827c-05a90598e7e2
+#   name: workload-identity-sa
+#   namespace: azure-workloads
+# ---
+
+# apiVersion: secrets-store.csi.x-k8s.io/v1
+# kind: SecretProviderClass
+# metadata:
+#   name: secret-provider-class # needs to be unique per namespace
+#   namespace: azure-workloads
+# spec:
+#   provider: azure
+#   secretObjects:                            # secretObjects defines the desired state of synced K8s secret objects
+#     - secretName:  logcorner-datasync-cert
+#       type: kubernetes.io/tls
+#       data: 
+#         - objectName: logcorner-datasync-cert
+#           key: tls.key
+#         - objectName: logcorner-datasync-cert
+#           key: tls.crt
+#   parameters:
+#     usePodIdentity: "false"
+#     clientID: 6b7ff166-a810-4d74-827c-05a90598e7e2 # Setting this to use workload identity
+#     keyvaultName: kv-datasynchro-003     # Set to the name of your key vault
+#     cloudName: ""                         # [OPTIONAL for Azure] if not provided, the Azure environment defaults to AzurePublicCloud
+#     objects:  |
+#       array:
+#         - |
+#           objectName: logcorner-datasync-cert             # Set to the name of your secret
+#           objectType: secret              # object types: secret, key, or cert
+#           objectVersion: ""               # [OPTIONAL] object versions, default to latest if empty
+#     tenantId: "f12a747a-cddf-4426-96ff-ebe055e215a3"        # The tenant ID of the key vault
 ---
 
-apiVersion: secrets-store.csi.x-k8s.io/v1
-kind: SecretProviderClass
-metadata:
-  name: secret-provider-class # needs to be unique per namespace
-  namespace: azure-workloads
-spec:
-  provider: azure
-  secretObjects:                            # secretObjects defines the desired state of synced K8s secret objects
-    - secretName:  logcorner-datasync-cert
-      type: kubernetes.io/tls
-      data: 
-        - objectName: logcorner-datasync-cert
-          key: tls.key
-        - objectName: logcorner-datasync-cert
-          key: tls.crt
-  parameters:
-    usePodIdentity: "false"
-    clientID: 6b7ff166-a810-4d74-827c-05a90598e7e2 # Setting this to use workload identity
-    keyvaultName: kv-datasynchro-003     # Set to the name of your key vault
-    cloudName: ""                         # [OPTIONAL for Azure] if not provided, the Azure environment defaults to AzurePublicCloud
-    objects:  |
-      array:
-        - |
-          objectName: logcorner-datasync-cert             # Set to the name of your secret
-          objectType: secret              # object types: secret, key, or cert
-          objectVersion: ""               # [OPTIONAL] object versions, default to latest if empty
-    tenantId: "f12a747a-cddf-4426-96ff-ebe055e215a3"        # The tenant ID of the key vault
----
-
-kind: Pod
-apiVersion: v1
-metadata:
-  name: busybox-secrets-store-inline-wi
-  namespace: azure-workloads
-  labels:
-    azure.workload.identity/use: "true"
-spec:
-  serviceAccountName: workload-identity-sa
-  containers:
-    - name: busybox
-      image: registry.k8s.io/e2e-test-images/busybox:1.29-4 #registry.k8s.io/e2e-test-images/busybox:1.29-4
-      command:
-        - "/bin/sleep"
-        - "10000"
-      volumeMounts:
-      - name: secrets-store01-inline
-        mountPath: "/mnt/secrets-store"
-        readOnly: true
-  volumes:
-    - name: secrets-store01-inline
-      csi:
-        driver: secrets-store.csi.k8s.io
-        readOnly: true
-        volumeAttributes:
-          secretProviderClass: secret-provider-class
+# kind: Pod
+# apiVersion: v1
+# metadata:
+#   name: busybox-secrets-store-inline-wi
+#   namespace: azure-workloads
+#   labels:
+#     azure.workload.identity/use: "true"
+# spec:
+#   serviceAccountName: workload-identity-sa
+#   containers:
+#     - name: busybox
+#       image: registry.k8s.io/e2e-test-images/busybox:1.29-4 #registry.k8s.io/e2e-test-images/busybox:1.29-4
+#       command:
+#         - "/bin/sleep"
+#         - "10000"
+#       volumeMounts:
+#       - name: secrets-store01-inline
+#         mountPath: "/mnt/secrets-store"
+#         readOnly: true
+#   volumes:
+#     - name: secrets-store01-inline
+#       csi:
+#         driver: secrets-store.csi.k8s.io
+#         readOnly: true
+#         volumeAttributes:
+#           secretProviderClass: secret-provider-class
 
 
 ---

@@ -4,7 +4,7 @@ metadata:
   name: gateway-01
   namespace: azure-workloads
   annotations:
-    alb.networking.azure.io/alb-id: /subscriptions/023b2039-5c23-44b8-844e-c002f8ed431d/resourceGroups/RG-EVENT-DRIVEN-ARCHITECTURE/providers/Microsoft.ServiceNetworking/trafficControllers/appgwforcon-datasynchro
+    alb.networking.azure.io/alb-id: {{ .Values.applicationGatewayForContainerResourceId }} # "${APPLICATION_GATEWAY_FOR_CONTAINER_RESOURCE_ID}"
 spec:
   gatewayClassName: azure-alb-external
   listeners:

@@ -4,3 +4,7 @@ azureWorkloadIdentityClientId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 
 applicationGatewayForContainerResourceId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 applicationGatewayForContainerFrontEndName: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+
+keyvaultName: kv-datasynchro-003
+secretName: logcorner-datasync-cert
+tenantId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX

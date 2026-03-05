@@ -20,6 +20,7 @@ $SERVICE_ACCOUNT_NAME="workload-identity-sa"  # sample name; can be changed
 
 $SECRET_PROVIDER_CLASS_NAME="azure-kvname-wi" # sample name; can be changed
 $CERTIFICATE_NAME="logcorner-datasync-cert"
+$ApplicationForContainerName="appgwforcon-datasynchro"
 
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 
@@ -33,7 +34,13 @@ Write-Host "KEYVAULT_TENANT: $KEYVAULT_TENANT"
 $AKS_OIDC_ISSUER="$(az aks show --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --query "oidcIssuerProfile.issuerUrl" -o tsv)"
 write-host "AKS_OIDC_ISSUER: $AKS_OIDC_ISSUER"
 
-az aks get-credentials --resource-group RG-EVENT-DRIVEN-ARCHITECTURE --name datasynchro-aks --overwrite-existing
+
+$ApplicationForContainerResource = Get-AzResource -ResourceGroupName $RESOURCE_GROUP -ResourceType "Microsoft.ServiceNetworking/trafficControllers" -Name $ApplicationForContainerName
+$ApplicationForContainerResourceId = $ApplicationForContainerResource.ResourceId
+
+write-host "ApplicationForContainerResourceId: $ApplicationForContainerResourceId"
+
+az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 
 choco install kubernetes-cli azure-kubelogin
 
@@ -49,16 +56,31 @@ helm upgrade --install alb-controller oci://mcr.microsoft.com/application-lb/cha
   --create-namespace `
   --namespace $GatewayControllerNamespace `
   --version 1.9.11 `
-  --set albController.podIdentity.clientID=$(az identity show -g $ResourceGroup -n $IdentityResourceName --query clientId -o tsv) `
+  --set albController.podIdentity.clientID=$(az identity show -g $RESOURCE_GROUP -n $IdentityResourceName --query clientId -o tsv) `
   --skip-schema-validation
 
-  #
+$ALB_CONTROLLER_CLIENT_ID = kubectl get deploy alb-controller -n $GatewayControllerNamespace -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="AZURE_CLIENT_ID")].value}'
+if ([string]::IsNullOrWhiteSpace($ALB_CONTROLLER_CLIENT_ID)) {
+  throw "ALB controller AZURE_CLIENT_ID is empty. Verify IdentityResourceName and RESOURCE_GROUP, then rerun Helm install."
+}
+Write-Host "ALB_CONTROLLER_CLIENT_ID: $ALB_CONTROLLER_CLIENT_ID"
 
 
-# 
-kubectl get pods -n $WORKLOAD_NAMESPACE 
+# Display all pods in the controller namespace with their labels
+kubectl get pod  -n  $GatewayControllerNamespace  --show-labels
+
+# Wait for the ALB controller pod to be ready (timeout: 3 minutes)
+kubectl wait pod  -n $GatewayControllerNamespace  -l app=alb-controller --for=condition=Ready  --timeout=180s
 
 # kubectl describe pod busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE
+
+
+
+helm upgrade --install  $RELEASE_NAME  logcorner.edusync.speech --set azureWorkloadIdentityClientId=$USER_ASSIGNED_CLIENT_ID `
+                                                                --set applicationGatewayForContainerResourceId=$ApplicationForContainerResourceId `
+                                                                --set tenantId=$KEYVAULT_TENANT 
+
+kubectl get pods -n $WORKLOAD_NAMESPACE
 
 kubectl exec busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE -- ls /mnt/secrets-store/ 
 
@@ -71,17 +93,6 @@ kubectl get gateway gateway-01 -n $WORKLOAD_NAMESPACE -o yaml
 
 
 kubectl get httproute http-route -n $WORKLOAD_NAMESPACE -o yaml
-
-
-# Display all pods in the controller namespace with their labels
-kubectl get pod  -n  $GatewayControllerNamespace  --show-labels
-
-# Wait for the ALB controller pod to be ready (timeout: 3 minutes)
-kubectl wait pod  -n $GatewayControllerNamespace  -l app=alb-controller --for=condition=Ready  --timeout=180s
-
-helm upgrade --install  $RELEASE_NAME  logcorner.edusync.speech
-
-kubectl get pods -n $WORKLOAD_NAMESPACE
 
 kubectl get svc -n $WORKLOAD_NAMESPACE
 
