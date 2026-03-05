@@ -3,7 +3,7 @@ $RESOURCE_GROUP = "RG-EVENT-DRIVEN-ARCHITECTURE"
 $WORKLOAD_NAMESPACE = "azure-workloads"
 $RELEASE_NAME = "logcorner-command"
 
-$IdentityResourceName = "azure_alb_identity"
+$ALB_IDENTITY_NAME = "azure_alb_identity"
 
 $GatewayControllerNamespace = "azure-alb-system"
 
@@ -13,14 +13,9 @@ $APPLICATION_FOR_CONTAINER_HOST_NAME = "app.cloud-devops-craft.com"
 
 $UAMI="workload-managed-identity"
 $CLUSTER_NAME="datasynchro-aks"
-$KEYVAULT_NAME ="kv-datasynchro-003"
 
-$SERVICE_ACCOUNT_NAME="workload-identity-sa"  # sample name; can be changed
-
-
-$SECRET_PROVIDER_CLASS_NAME="azure-kvname-wi" # sample name; can be changed
 $CERTIFICATE_NAME="logcorner-datasync-cert"
-$ApplicationForContainerName="appgwforcon-datasynchro"
+$APP_GATEWAY_FOR_CONTAINER_NAME="appgwforcon-datasynchro"
 
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 
@@ -35,7 +30,7 @@ $AKS_OIDC_ISSUER="$(az aks show --resource-group $RESOURCE_GROUP --name $CLUSTER
 write-host "AKS_OIDC_ISSUER: $AKS_OIDC_ISSUER"
 
 
-$ApplicationForContainerResource = Get-AzResource -ResourceGroupName $RESOURCE_GROUP -ResourceType "Microsoft.ServiceNetworking/trafficControllers" -Name $ApplicationForContainerName
+$ApplicationForContainerResource = Get-AzResource -ResourceGroupName $RESOURCE_GROUP -ResourceType "Microsoft.ServiceNetworking/trafficControllers" -Name $APP_GATEWAY_FOR_CONTAINER_NAME
 $ApplicationForContainerResourceId = $ApplicationForContainerResource.ResourceId
 
 write-host "ApplicationForContainerResourceId: $ApplicationForContainerResourceId"
@@ -56,12 +51,12 @@ helm upgrade --install alb-controller oci://mcr.microsoft.com/application-lb/cha
   --create-namespace `
   --namespace $GatewayControllerNamespace `
   --version 1.9.11 `
-  --set albController.podIdentity.clientID=$(az identity show -g $RESOURCE_GROUP -n $IdentityResourceName --query clientId -o tsv) `
+  --set albController.podIdentity.clientID=$(az identity show -g $RESOURCE_GROUP -n $ALB_IDENTITY_NAME --query clientId -o tsv) `
   --skip-schema-validation
 
 $ALB_CONTROLLER_CLIENT_ID = kubectl get deploy alb-controller -n $GatewayControllerNamespace -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="AZURE_CLIENT_ID")].value}'
 if ([string]::IsNullOrWhiteSpace($ALB_CONTROLLER_CLIENT_ID)) {
-  throw "ALB controller AZURE_CLIENT_ID is empty. Verify IdentityResourceName and RESOURCE_GROUP, then rerun Helm install."
+  throw "ALB controller AZURE_CLIENT_ID is empty. Verify ALB_IDENTITY_NAME and RESOURCE_GROUP, then rerun Helm install."
 }
 Write-Host "ALB_CONTROLLER_CLIENT_ID: $ALB_CONTROLLER_CLIENT_ID"
 
@@ -104,8 +99,6 @@ kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
 kubectl get pods -n $WORKLOAD_NAMESPACE
 
 # helm uninstall $RELEASE_NAME  logcorner.edusync.speech
-
-kubectl logs web-frontend-app-5d9cd74745-hbnrh -n $WORKLOAD_NAMESPACE
 
 
 kubectl get pods -n $WORKLOAD_NAMESPACE

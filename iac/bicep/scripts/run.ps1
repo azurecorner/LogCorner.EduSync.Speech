@@ -25,10 +25,14 @@ try {
         Write-Output "Installing SqlServer module..."
         Install-Module -Name SqlServer -Force -AllowClobber -Scope CurrentUser
     }
+
+    Import-Module SqlServer -ErrorAction Stop
 } catch {
     Write-Error "Error installing SqlServer module: $_"
     exit 1
 }
+
+$invokeSqlCmd = Get-Command Invoke-Sqlcmd -ErrorAction SilentlyContinue
 
 # Determine the correct temporary storage path within Azure Deployment Scripts
 $tempFolder = if ($Env:AZ_SCRIPTS_TEMP) { $Env:AZ_SCRIPTS_TEMP } else { "/mnt/azscripts/azscriptinput" }
@@ -47,9 +51,34 @@ Write-Output "Executing SQL script against database [$databaseName] on server [$
 
 try 
 {
-    $constr = "Server=tcp:$($sqlServerName),1433;Database=$($databaseName);User ID=$($sqlAdminUsername);Password=$($sqlAdminPassword);Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" # "Server=tcp:$sqlServerName,1433;Database=$databaseName;User ID=$sqlAdminUsername;Password=$sqlAdminPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-  
-    Invoke-Sqlcmd -ConnectionString  $constr   -InputFile $tempSqlFile
+    $constr = "Server=tcp:$($sqlServerName),1433;Database=$($databaseName);User ID=$($sqlAdminUsername);Password=$($sqlAdminPassword);Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" # "Server=tcp:$sqlServerName,1433;Database=$sqlDatabaseName;User ID=$sqlAdminUsername;Password=$sqlAdminPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+   
+    Write-Output "Connection string prepared for server [$sqlServerName], database [$databaseName]."
+
+    if ($null -ne $invokeSqlCmd) {
+        Invoke-Sqlcmd -ConnectionString $constr -InputFile $tempSqlFile -ErrorAction Stop
+    }
+    else {
+        Write-Output "Invoke-Sqlcmd is unavailable. Falling back to ADO.NET batch execution."
+
+        $goSplitter = [regex]::new("(?im)^\s*GO\s*;?\s*(?:--.*)?$")
+        $batches = $goSplitter.Split($sqlScript) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+
+        $connection = [System.Data.SqlClient.SqlConnection]::new($constr)
+        $connection.Open()
+        try {
+            foreach ($batch in $batches) {
+                $command = $connection.CreateCommand()
+                $command.CommandTimeout = 300
+                $command.CommandText = $batch
+                [void]$command.ExecuteNonQuery()
+            }
+        }
+        finally {
+            $connection.Close()
+            $connection.Dispose()
+        }
+    }
 
     Write-Output "SQL script executed successfully."
 } catch {

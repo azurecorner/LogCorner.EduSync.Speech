@@ -38,7 +38,7 @@ param sqlserverAdminPassword string
 param databaseName string = 'LogCorner.EduSync.Speech.Database'
 
 param privateDnsZoneNames  array = [
-  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','datasynchro.com','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net'
+  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net'
 ]
 
 param keyvault_name string 
@@ -178,7 +178,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
   }
 }]
 
-module aksCluster 'modules/aks.bicep' = {
+/* module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -199,7 +199,7 @@ module aksCluster 'modules/aks.bicep' = {
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
   }
-} 
+}  */
  
 module containerRegistry 'modules/containerRegistry.bicep' = {
   name: 'containerRegistry'
@@ -295,7 +295,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
-/* module deploymentScript 'modules/deployment-script.bicep' =  {
+ module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -314,7 +314,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
     slqServerPrivateEndpoint
   ]
 } 
- */
+ 
 // *** Service Bus Namespace and Queue ***
 
  module servicebus 'modules/serviceBus.bicep' = {
@@ -379,7 +379,7 @@ module cosmosdbPrivateEndpoint 'modules/private_endpoint.bicep' = {
     PrivateDnsZone
   ]
 }
-
+/* 
 module keyvault 'modules/keyvault.bicep' = {
   name: keyvault_name
   params: {
@@ -419,3 +419,4 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
   }
 } 
   
+ */
