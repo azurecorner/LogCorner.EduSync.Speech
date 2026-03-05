@@ -1,62 +1,62 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web-frontend-app
-  namespace: azure-workloads
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: webapp
+    app: {{ .Values.labels.app }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
-      app: webapp
+      app: {{ .Values.labels.app }}
   template:
     metadata:
       labels:
-        app: webapp
+        app: {{ .Values.labels.app }}
     spec:
       containers:
-        - name: web-frontend-app
-          image: datasynchroacr.azurecr.io/web-app:latest
+        - name: {{ .Values.deployment.containerName }}
+          image: "{{ .Values.image.repository }}.azurecr.io/{{ .Values.image.webAppName }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: 5000
+            - containerPort: {{ .Values.deployment.containerPort }}
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "250m"
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
             limits:
-              memory: "256Mi"
-              cpu: "500m"
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
           env:
             - name: ASPNETCORE_URLS
-              value: http://+:5000
+              value: {{ .Values.env.aspNetCoreUrls | quote }}
             - name: pathBase
-              value: /webapp
+              value: {{ .Values.env.pathBase | quote }}
             - name: ASPNETCORE_ENVIRONMENT
-              value: Kubernetes
+              value: {{ .Values.env.aspNetCoreEnvironment | quote }}
             - name: WEBAPI_COMMAND_URL
-              value : http://webapi-service
+              value: {{ .Values.env.webApiCommandUrl | quote }}
             - name: WEBAPI_QUERY_URL
-              value : http://web-api-query-service
+              value: {{ .Values.env.webApiQueryUrl | quote }}
             - name: HubUrl
-              value : https://app.cloud-devops-craft.com/signalr/logcornerhub
+              value: {{ .Values.env.hubUrl | quote }}
             - name: HubUrlInternal
-              value : http://signalr-service/signalr/logcornerhub
+              value: {{ .Values.env.hubUrlInternal | quote }}
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: webapp-service
-  namespace: azure-workloads
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: webapp
+    app: {{ .Values.labels.app }}
 
 spec:
   selector:
-    app: webapp
+    app: {{ .Values.labels.app }}
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 5000
-  type: LoadBalancer
+    - protocol: {{ .Values.service.protocol }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+  type: {{ .Values.service.type }}

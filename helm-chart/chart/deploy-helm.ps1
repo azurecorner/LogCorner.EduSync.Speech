@@ -95,9 +95,6 @@ kubectl get svc -n $WORKLOAD_NAMESPACE
 kubectl get sa -n $WORKLOAD_NAMESPACE
 
 
-
-kubectl get pods -n $WORKLOAD_NAMESPACE
-
 # helm uninstall $RELEASE_NAME  logcorner.edusync.speech
 
 

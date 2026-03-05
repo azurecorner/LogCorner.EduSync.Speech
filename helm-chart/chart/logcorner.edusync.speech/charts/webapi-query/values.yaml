@@ -1,14 +1,42 @@
-secret:
-  sqlserverdb_password: "MyC0m9l&xP@ssw0rd"
-namespace: helm
+namespace: azure-workloads
+serviceAccountName: workload-identity-sa
+
+labels:
+  app: web-api-query
+
+workloadIdentity:
+  use: "true"
+
+deployment:
+  name: web-api-query-app
+  containerName: web-api-query-app
+  replicas: 1
+  containerPort: 5000
+
 image:
-  initsqljob:
-    repository: logcornerhub/logcorner-edusync-speech-mssql-tools
-    tag: "latest"
-  sqldatabase:
-    repository: mcr.microsoft.com/mssql/server
-    tag: "2019-latest"
+  repository: datasynchroacr
+  webApiQueryName: web-api-query
+  tag: latest
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "250m"
+
+env:
+  aspNetCoreUrls: "http://+:5000"
+  aspNetCoreEnvironment: Kubernetes
+  allowedOrigins: https://app.cloud-devops-craft.com
+  azureCosmosDbDatabaseName: LogCorner.EduSync.Speech.Database
+  azureCosmosDbContainerName: Speech
+  azureCosmosDbAccountEndpoint: https://cosmos-datasynchro-002.documents.azure.com:443/
+
 service:
+  name: web-api-query-service
+  protocol: TCP
+  port: 80
+  targetPort: 5000
   type: ClusterIP
-  port: 1433
-  targetPort: 1433
