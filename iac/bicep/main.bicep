@@ -423,34 +423,3 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
   }
 } 
   
- /*
- param apiManagementName string = 'datasynchro-apim-111'
-
-param selfHostedGatewayName string = 'api-gateway-on-aks'
-
-
-
- module infrastructure 'modules/api-management.bicep' = {
-  name: 'api-management'
-  params: {
-    location: location
-    apiManagementName: apiManagementName
-    selfHostedGatewayName: selfHostedGatewayName
-    keyVaultName : keyvault_name
-    userAssignedIdentityName: workloadManagedIdentityName
-    apimSubnetId: network.outputs.apimSubnet_id
-    apiManagementCustomDnsName: 'cloud-devops-craft.com'
-    apiManagementPortalCustomHostname: 'portal.cloud-devops-craft.com'
-    apiManagementManagementCustomHostname: 'management.cloud-devops-craft.com'
-    apiManagementProxyCustomHostname: 'api.cloud-devops-craft.com'
-    hubVirtualNetworkId: hubVirtualNetwork.id
-    virtualNetworkId: network.outputs.virtualNetworkId
-    certificateName: 'logcorner-datasync-cert'
-
-  }
- dependsOn: [
-
-    keyvault
-  ]
-}
-*/

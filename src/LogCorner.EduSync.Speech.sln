@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11505.172 d18.3
+VisualStudioVersion = 18.3.11505.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C49F873D-4091-4616-8B06-3862A28E020F}"
 EndProject
@@ -61,6 +61,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testing", "testing", "{7A431C13-37E1-4544-A3ED-B8FA78B3B60E}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "LogCorner.EduSync.Speech.Database", "LogCorner.EduSync.Speech.Database\LogCorner.EduSync.Speech.Database.sqlproj", "{621A9CC6-B394-4265-AA4E-E723160BED4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +152,12 @@ Global
 		{4A275F33-3B41-9CE0-6CCB-355A29878B9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A275F33-3B41-9CE0-6CCB-355A29878B9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A275F33-3B41-9CE0-6CCB-355A29878B9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{621A9CC6-B394-4265-AA4E-E723160BED4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{621A9CC6-B394-4265-AA4E-E723160BED4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{621A9CC6-B394-4265-AA4E-E723160BED4A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{621A9CC6-B394-4265-AA4E-E723160BED4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{621A9CC6-B394-4265-AA4E-E723160BED4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{621A9CC6-B394-4265-AA4E-E723160BED4A}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -174,6 +182,7 @@ Global
 		{4354EB72-AC10-4DD1-ADCF-6683B0D45728} = {38726F27-1A69-405C-A286-4162402BF9BB}
 		{D810065C-B0B5-6759-9EA9-331E34BEC8E9} = {7A34F7E5-71B4-43CE-AF8C-4B7B007EE30D}
 		{4A275F33-3B41-9CE0-6CCB-355A29878B9B} = {7A34F7E5-71B4-43CE-AF8C-4B7B007EE30D}
+		{621A9CC6-B394-4265-AA4E-E723160BED4A} = {A77AFCCB-1346-4212-96EB-8E713485ACF4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5279CE35-3C1B-4719-9C6B-F96FE2C24172}

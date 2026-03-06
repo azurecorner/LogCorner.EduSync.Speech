@@ -54,16 +54,16 @@ spec:
           port: 80
 
 ---
-apiVersion: alb.networking.azure.io/v1
-kind: WebApplicationFirewallPolicy
-metadata:
-  name: appgwc-waf-policy
-  namespace: {{ .Values.namespace }}
-spec:
-  targetRef:
-    group: gateway.networking.k8s.io
-    kind: HTTPRoute
-    name: http-route
-    namespace: {{ .Values.namespace }}
-  webApplicationFirewall:
-    id: {{ .Values.webApplicationFirewallResourceId }}
+# apiVersion: alb.networking.azure.io/v1
+# kind: WebApplicationFirewallPolicy
+# metadata:
+#   name: appgwc-waf-policy
+#   namespace: {{ .Values.namespace }}
+# spec:
+#   targetRef:
+#     group: gateway.networking.k8s.io
+#     kind: HTTPRoute
+#     name: http-route
+#     namespace: {{ .Values.namespace }}
+#   webApplicationFirewall:
+#     id: {{ .Values.webApplicationFirewallResourceId }}

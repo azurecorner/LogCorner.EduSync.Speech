@@ -1,5 +1,0 @@
-global:
-  namespace: helm
-  tag: "10"
-  userAssignedIdentityID:  XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX 
-  tenantId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX  
