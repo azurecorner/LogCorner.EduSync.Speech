@@ -1,6 +1,7 @@
 # LogCorner.EduSync
 Building microservices through Event Driven Architecture
 
+# How to Set Up OpenTelemetry on Azure Kubernetes Service (AKS) =>  https://oneuptime.com/blog/post/2026-02-06-opentelemetry-azure-kubernetes-service-aks/view
 
 $resourceGroupName="RG-EVENT-DRIVEN-ARCHITECTURE"
 

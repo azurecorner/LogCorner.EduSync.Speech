@@ -12,6 +12,11 @@ param aks_subnet_name string
 param aks_subnet_addressPrefix string
 
 param appgw_subnet_name string
+param appgw_subnet_addressPrefix string
+
+param appim_subnet_name string
+param appim_subnet_addressPrefix string
+
 
 param privatelink_subnet_name string
 param privatelink_subnet_addressPrefix string
@@ -21,9 +26,6 @@ param applicationGatewayForContainersSubnetName string
 
 @description('Specifies the address prefix of the subnet which contains the Application Gateway for Containers.')
 param applicationGatewayForContainersSubnetAddressPrefix string
-
-param appgw_subnet_addressPrefix string
-
 
 
 @description('Specifies the name of the subnet which contains the Application Gateway for Containers.')
@@ -98,12 +100,43 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-01-01' = {
           ]
         }
       }
+       {
+        name: appim_subnet_name
+        properties: {
+          addressPrefix: appim_subnet_addressPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
+          privateLinkServiceNetworkPolicies: 'Disabled'
+          networkSecurityGroup: {
+            id: nsgApiManagemnt.id
+         }
+        }
+     }
     ]
   }
 }
 
-
-
+resource nsgApiManagemnt 'Microsoft.Network/networkSecurityGroups@2024-01-01' = {
+  name: '${appim_subnet_name}-nsg'
+  location: location
+  properties: {
+    securityRules: [
+      {
+        name: 'apim-in'
+        properties: {
+          direction: 'Inbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          description: 'API Management inbound'
+          priority: 100
+          sourceAddressPrefix: 'ApiManagement'
+          sourcePortRange: '*'
+          destinationAddressPrefix: 'VirtualNetwork'
+          destinationPortRange: '3443'
+        }
+      }
+    ]
+  }
+}
 
 output virtualNetworkObject object = virtualNetwork
 output virtualNetworkName string = virtualNetwork.name
@@ -116,5 +149,6 @@ output applicationGatewayForContainersSubnet_name string = virtualNetwork.proper
 
 
 output containerInstanceSubnet_id string = '${virtualNetwork.id}/subnets/${containerInstanceSubnetName}'
+output apimSubnet_id string = '${virtualNetwork.id}/subnets/${appim_subnet_name}'
 
 

@@ -1,4 +1,3 @@
-
 $RESOURCE_GROUP = "RG-EVENT-DRIVEN-ARCHITECTURE"
 $WORKLOAD_NAMESPACE = "azure-workloads"
 $RELEASE_NAME = "logcorner-command"
@@ -17,6 +16,8 @@ $CLUSTER_NAME="datasynchro-aks"
 $CERTIFICATE_NAME="logcorner-datasync-cert"
 $APP_GATEWAY_FOR_CONTAINER_NAME="appgwforcon-datasynchro"
 
+$WAF_POLICY_NAME="appgwc-waf-policy"
+
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 
 $USER_ASSIGNED_CLIENT_ID="$(az identity show --resource-group $RESOURCE_GROUP --name $UAMI --query 'clientId' -o tsv)"
@@ -30,10 +31,26 @@ $AKS_OIDC_ISSUER="$(az aks show --resource-group $RESOURCE_GROUP --name $CLUSTER
 write-host "AKS_OIDC_ISSUER: $AKS_OIDC_ISSUER"
 
 
+# Retrieve the Application Gateway for Containers resource to get its Resource ID for use in the Helm chart deployment. This is necessary because the ALB controller needs to associate the Application Gateway for Containers with the deployed workloads.
+
 $ApplicationForContainerResource = Get-AzResource -ResourceGroupName $RESOURCE_GROUP -ResourceType "Microsoft.ServiceNetworking/trafficControllers" -Name $APP_GATEWAY_FOR_CONTAINER_NAME
 $ApplicationForContainerResourceId = $ApplicationForContainerResource.ResourceId
 
 write-host "ApplicationForContainerResourceId: $ApplicationForContainerResourceId"
+
+
+# Retrieve the Web Application Firewall Policy resource to get its Resource ID for use in the Helm chart deployment. This is necessary because the ALB controller needs to associate the
+
+$webApplicationFirewall = Get-AzResource -ResourceGroupName $RESOURCE_GROUP -ResourceType "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies" -Name $WAF_POLICY_NAME -ErrorAction SilentlyContinue
+
+if ($null -eq $webApplicationFirewall) {
+    throw "Web Application Firewall Policy '$WAF_POLICY_NAME' not found in resource group '$RESOURCE_GROUP'"
+}
+
+Write-Host "Web Application Firewall Policy found: $($webApplicationFirewall.Name) with ID: $($webApplicationFirewall.ResourceId)"
+$webApplicationFirewallResourceId = $webApplicationFirewall.ResourceId
+
+write-host "webApplicationFirewallResourceId: $webApplicationFirewallResourceId"
 
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 
@@ -73,6 +90,7 @@ kubectl wait pod  -n $GatewayControllerNamespace  -l app=alb-controller --for=co
 
 helm upgrade --install  $RELEASE_NAME  logcorner.edusync.speech --set azureWorkloadIdentityClientId=$USER_ASSIGNED_CLIENT_ID `
                                                                 --set applicationGatewayForContainerResourceId=$ApplicationForContainerResourceId `
+                                                                --set webApplicationFirewallResourceId=$webApplicationFirewallResourceId `
                                                                 --set tenantId=$KEYVAULT_TENANT 
 
 kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
@@ -110,3 +128,8 @@ Write-Host "fqdnIp=$fqdnIp"
 
 curl -k --resolve "${APPLICATION_FOR_CONTAINER_HOST_NAME}:443:${fqdnIp}" "https://$APPLICATION_FOR_CONTAINER_HOST_NAME/webapp/" --insecure
 
+# self hosted gateway test
+
+kubectl exec -it curl-test -n azure-workloads -- curl -v -k http://10.0.137.205/api/speech
+
+kubectl exec -it curl-test -n azure-workloads -- curl -v -k http://web-api-query-service.azure-workloads.svc.cluster.local/api/speech

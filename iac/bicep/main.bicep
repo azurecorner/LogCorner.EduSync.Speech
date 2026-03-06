@@ -143,6 +143,8 @@ module network 'modules/network.bicep' = {
     applicationGatewayForContainersSubnetAddressPrefix: '10.200.6.0/24'
     containerInstanceSubnetName: 'containerinstance-subnet'
     containerInstanceSubnetAddressPrefix: '10.200.7.0/24'
+    appim_subnet_name: 'apim-subnet'
+    appim_subnet_addressPrefix: '10.200.8.0/24'
   }
 }
 
@@ -178,7 +180,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
   }
 }]
 
-/* module aksCluster 'modules/aks.bicep' = {
+module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -199,7 +201,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
   }
-}  */
+}   
  
 module containerRegistry 'modules/containerRegistry.bicep' = {
   name: 'containerRegistry'
@@ -295,7 +297,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
- module deploymentScript 'modules/deployment-script.bicep' =  {
+/*  module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -313,7 +315,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
     storagePrivateEndpoint
     slqServerPrivateEndpoint
   ]
-} 
+}  */
  
 // *** Service Bus Namespace and Queue ***
 
@@ -379,7 +381,7 @@ module cosmosdbPrivateEndpoint 'modules/private_endpoint.bicep' = {
     PrivateDnsZone
   ]
 }
-/* 
+
 module keyvault 'modules/keyvault.bicep' = {
   name: keyvault_name
   params: {
@@ -389,7 +391,7 @@ module keyvault 'modules/keyvault.bicep' = {
     privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
   dependsOn: [
-    aksCluster
+    /* aksCluster */
   ]
 }
 
@@ -401,11 +403,13 @@ module gateway 'modules/applicationGatewayForContainers.bicep' = {
     alb_subnet_id:network.outputs.applicationGatewayForContainersSubnet_id
     nodeResourceGroupName: nodeResourceGroupName
     userManagedIdentityprincipalId: userAssignedIdentities_azure_alb_identity_resource.properties.principalId
+    appgwc_waf_policy_name: 'appgwc-waf-policy'
+    appgwc_security_policy_name: 'appgwc-security-policy'
  }
   dependsOn: [
-    aksCluster
+ //   aksCluster
   ]
-} 
+}  
  
 resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {
   parent: userAssignedIdentities_azure_alb_identity_resource
@@ -419,4 +423,34 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
   }
 } 
   
- */
+ /*
+ param apiManagementName string = 'datasynchro-apim-111'
+
+param selfHostedGatewayName string = 'api-gateway-on-aks'
+
+
+
+ module infrastructure 'modules/api-management.bicep' = {
+  name: 'api-management'
+  params: {
+    location: location
+    apiManagementName: apiManagementName
+    selfHostedGatewayName: selfHostedGatewayName
+    keyVaultName : keyvault_name
+    userAssignedIdentityName: workloadManagedIdentityName
+    apimSubnetId: network.outputs.apimSubnet_id
+    apiManagementCustomDnsName: 'cloud-devops-craft.com'
+    apiManagementPortalCustomHostname: 'portal.cloud-devops-craft.com'
+    apiManagementManagementCustomHostname: 'management.cloud-devops-craft.com'
+    apiManagementProxyCustomHostname: 'api.cloud-devops-craft.com'
+    hubVirtualNetworkId: hubVirtualNetwork.id
+    virtualNetworkId: network.outputs.virtualNetworkId
+    certificateName: 'logcorner-datasync-cert'
+
+  }
+ dependsOn: [
+
+    keyvault
+  ]
+}
+*/

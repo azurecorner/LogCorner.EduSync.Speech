@@ -9,14 +9,14 @@ param nodeResourceGroupName string
 @description('Specifies the location.')
 param location string 
 
-resource trafficControllers_alb_resource 'Microsoft.ServiceNetworking/trafficControllers@2025-03-01-preview' = {
+resource applicationGatewayForContainer 'Microsoft.ServiceNetworking/trafficControllers@2025-03-01-preview' = {
   name: trafficControllers_alb_name
   location: location
   properties: {}
 }
 
-resource trafficControllers_alb_test_name_association 'Microsoft.ServiceNetworking/trafficControllers/associations@2025-03-01-preview' = {
-  parent: trafficControllers_alb_resource
+resource trafficControllers_network_association 'Microsoft.ServiceNetworking/trafficControllers/associations@2025-03-01-preview' = {
+  parent: applicationGatewayForContainer
   name: 'datasynchro-association'
   location: location
   properties: {
@@ -27,11 +27,96 @@ resource trafficControllers_alb_test_name_association 'Microsoft.ServiceNetworki
   }
 }
 
-resource trafficControllers_alb_test_name_frontend 'Microsoft.ServiceNetworking/trafficControllers/frontends@2025-03-01-preview' = {
-  parent: trafficControllers_alb_resource
+resource trafficControllers_frontend 'Microsoft.ServiceNetworking/trafficControllers/frontends@2025-03-01-preview' = {
+  parent: applicationGatewayForContainer
   name: 'datasynchro-frontend'
   location: location
   properties: {}
+}
+
+@description('Specifies the name of the Application Gateway for Containers WAF policy.')
+param appgwc_waf_policy_name string 
+
+@description('Specifies the name of the Application Gateway for Containers security policy.')
+param appgwc_security_policy_name string 
+
+
+resource waf_policy 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies@2024-07-01' = {
+  name: appgwc_waf_policy_name
+  location: location
+  properties: {
+    customRules: [
+      {
+        name: 'RateLimite'
+        priority: 3
+        ruleType: 'RateLimitRule'
+        rateLimitDuration: 'OneMin'
+        action: 'Block'
+        rateLimitThreshold: 100
+        matchConditions: [
+          {
+            matchVariables: [
+              {
+                variableName: 'RemoteAddr'
+              }
+            ]
+            operator: 'IPMatch'
+            negationConditon: false
+            matchValues: [
+              '52.250.216.29'
+            ]
+            transforms: []
+          }
+        ]
+        groupByUserSession: [
+          {
+            groupByVariables: [
+              {
+                variableName: 'ClientAddr'
+              }
+            ]
+          }
+        ]
+        state: 'Enabled'
+      }
+    ]
+    policySettings: {
+      requestBodyCheck: true
+      maxRequestBodySizeInKb: 128
+      fileUploadLimitInMb: 100
+      state: 'Enabled'
+      mode: 'Prevention'
+      requestBodyInspectLimitInKB: 128
+      fileUploadEnforcement: true
+      requestBodyEnforcement: true
+    }
+    managedRules: {
+      managedRuleSets: [
+        {
+          ruleSetType: 'Microsoft_DefaultRuleSet'
+          ruleSetVersion: '2.1'
+          ruleGroupOverrides: []
+        }
+        {
+          ruleSetType: 'Microsoft_BotManagerRuleSet'
+          ruleSetVersion: '1.1'
+          ruleGroupOverrides: []
+        }
+      ]
+      exclusions: []
+    }
+  }
+}
+
+resource security_policy 'Microsoft.ServiceNetworking/trafficControllers/securityPolicies@2025-03-01-preview' = {
+  parent: applicationGatewayForContainer
+  location: location
+  name: appgwc_security_policy_name 
+  properties: {
+    wafPolicy: {
+      id: waf_policy.id
+    }
+}
 }
 
 
