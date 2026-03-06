@@ -108,6 +108,8 @@ kubectl get gateway gateway-01 -n $WORKLOAD_NAMESPACE -o yaml
 
 kubectl get httproute http-route -n $WORKLOAD_NAMESPACE -o yaml
 
+kubectl get webapplicationfirewallpolicy -n $WORKLOAD_NAMESPACE $WAF_POLICY_NAME -o yaml
+
 kubectl get svc -n $WORKLOAD_NAMESPACE
 
 kubectl get sa -n $WORKLOAD_NAMESPACE

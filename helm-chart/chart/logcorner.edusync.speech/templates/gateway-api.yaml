@@ -57,7 +57,7 @@ spec:
 apiVersion: alb.networking.azure.io/v1
 kind: WebApplicationFirewallPolicy
 metadata:
-  name: $WafPolicyName
+  name: appgwc-waf-policy
   namespace: {{ .Values.namespace }}
 spec:
   targetRef:
