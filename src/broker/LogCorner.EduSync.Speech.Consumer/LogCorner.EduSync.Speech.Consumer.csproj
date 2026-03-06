@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Hub\LogCorner.EduSync.Notification.Common\LogCorner.EduSync.Notification.Common.csproj" />
+    <ProjectReference Include="..\LogCorner.EduSync.Speech.CosmosDb\LogCorner.EduSync.Speech.CosmosDb.csproj" />
+    <ProjectReference Include="..\LogCorner.EduSync.Speech.Projection\LogCorner.EduSync.Speech.Repository.csproj" />
+    <ProjectReference Include="..\ServiceBus\LogCorner.EduSync.Speech.ServiceBus.csproj" />
+  </ItemGroup>
+</Project>

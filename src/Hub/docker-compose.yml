@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  logcorner.edusync.notification.server:
+    image: ${DOCKER_REGISTRY-}/logcorner-edusync-notification-server
+    build:
+      context: .
+      dockerfile: LogCorner.EduSync.Notification.Server/Dockerfile
+    networks:
+      - speech_network
+
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
+
+networks:
+  speech_network:
+    external:
+      name: speech_network
+
+
+

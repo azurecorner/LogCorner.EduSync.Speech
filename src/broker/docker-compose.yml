@@ -1,0 +1,60 @@
+version: '3.4'
+#KAFKA 
+services:
+  
+#ELASTIC SEARCH, KIBANA
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      ES_JAVA_OPTS: '-Xms256m -Xmx256m'
+      network.bind_host: 0.0.0.0
+      network.host: 0.0.0.0
+      discovery.type: single-node
+    networks:
+      - speech_network
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.17.4
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - speech_network
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+  #TELEMETRY
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    restart: on-failure
+    ports:
+      - 9412:9411
+    networks:
+      - speech_network
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    container_name: jaeger
+    restart: on-failure
+    ports:
+      - 5775:5775/udp
+      - 5778:5778
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 9411:9411
+      - 14268:14268
+      - 16686:16686
+    networks:
+      - speech_network
+
+networks:
+  speech_network:
+    driver: bridge
+
+
+

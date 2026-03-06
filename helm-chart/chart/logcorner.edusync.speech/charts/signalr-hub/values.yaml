@@ -1,0 +1,36 @@
+namespace: azure-workloads
+
+labels:
+  app: signalr
+
+deployment:
+  name: signalr-hub
+  containerName: signalr-hub
+  replicas: 1
+  containerPort: 5000
+
+image:
+  repository: datasynchroacr
+  signalrHubName: signalr-hub
+  tag: latest
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "250m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+
+env:
+  aspNetCoreUrls: "http://+:5000"
+  pathBase: "/signalr"
+  aspNetCoreEnvironment: "Kubernetes"
+  allowedOrigins: "https://app.cloud-devops-craft.com"
+
+service:
+  name: signalr-service
+  protocol: TCP
+  port: 80
+  targetPort: 5000
+  type: ClusterIP

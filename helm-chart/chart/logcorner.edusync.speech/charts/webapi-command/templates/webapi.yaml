@@ -1,0 +1,107 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.database.configMapName }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.labels.configApp }}
+data:
+  SQL_SERVER: {{ .Values.database.sqlServer | quote }}
+  DB_NAME: {{ .Values.database.dbName | quote }}
+  USER_NAME: {{ .Values.database.userName | quote }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.database.secretName }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.labels.configApp }}
+stringData:
+  DB_PASSWORD: {{ .Values.database.dbPassword | quote }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.labels.app }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labels.app }}
+        azure.workload.identity/use: {{ .Values.workloadIdentity.use | quote }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      containers:
+        - name: {{ .Values.deployment.containerName }}
+          image: "{{ .Values.image.repository }}.azurecr.io/{{ .Values.image.webApiCommandName }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.deployment.containerPort }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+          env:
+            - name: ASPNETCORE_URLS
+              value: {{ .Values.env.aspNetCoreUrls | quote }}
+            - name: ASPNETCORE_ENVIRONMENT
+              value: {{ .Values.env.aspNetCoreEnvironment | quote }}
+            - name: ServiceBusNamespace
+              value: {{ .Values.env.serviceBusNamespace | quote }}
+            - name: ServiceBusQueueName
+              value: {{ .Values.env.serviceBusQueueName | quote }}
+            - name: allowedOrigins
+              value: {{ .Values.env.allowedOrigins | quote }}
+            # Reference the ConfigMap for non-sensitive connection details
+            - name: SQL_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.database.configMapName }}
+                  key: SQL_SERVER
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.database.configMapName }}
+                  key: DB_NAME
+            - name: USER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.database.configMapName }}
+                  key: USER_NAME
+            # Reference the Secret for the password
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.secretName }}
+                  key: DB_PASSWORD
+            - name: ConnectionStrings__SpeechDB
+              value: "Data Source=$(SQL_SERVER);Initial Catalog=$(DB_NAME);User=$(USER_NAME);Password=$(DB_PASSWORD)"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.labels.app }}
+
+spec:
+  selector:
+    app: {{ .Values.labels.app }}
+  ports:
+    - protocol: {{ .Values.service.protocol }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+  type: {{ .Values.service.type }}
+

@@ -1,0 +1,12 @@
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error && !loading" class="error">{{ error }}</div>
+
+<div *ngIf="speech && !loading && !error">
+  <h2>{{ speech.title }}</h2>
+  <p><strong>Description:</strong> {{ speech.description }}</p>
+  <p><strong>URL:</strong> <a [href]="speech.url" target="_blank">{{ speech.url }}</a></p>
+  <p><strong>Type:</strong> {{ speech.type?.name }}</p>
+  <p><strong>Version:</strong> {{ speech.version }}</p>
+
+  <p><a routerLink="/speeches">⬅ Back to list</a></p>
+</div>

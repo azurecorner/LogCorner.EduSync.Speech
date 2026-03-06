@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "LogCorner.EduSync.Speech.Producer": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

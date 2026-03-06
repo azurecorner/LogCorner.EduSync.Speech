@@ -1,0 +1,50 @@
+namespace: azure-workloads
+serviceAccountName: workload-identity-sa
+
+labels:
+  app: webapi
+  configApp: web-api-command-app
+
+workloadIdentity:
+  use: "true"
+
+database:
+  configMapName: mssql-config
+  secretName: mssql
+  sqlServer: sqlserver-datasynchro.database.windows.net
+  dbName: LogCorner.EduSync.Speech.Database
+  userName: logcorner
+  dbPassword: "MySecureP@ssword"
+
+deployment:
+  name: web-api-command
+  containerName: web-api-command
+  replicas: 1
+  containerPort: 5000
+
+image:
+  repository: datasynchroacr
+  webApiCommandName: web-api-command
+  tag: latest
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "250m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+
+env:
+  aspNetCoreUrls: "http://+:5000"
+  aspNetCoreEnvironment: Kubernetes
+  serviceBusNamespace: sb-namespace-datasynchro.servicebus.windows.net
+  serviceBusQueueName: sb-queue-datasynchro
+  allowedOrigins: http://aeevdzcjeshjc7cy.fz55.alb.azure.com
+
+service:
+  name: webapi-service
+  protocol: TCP
+  port: 80
+  targetPort: 5000
+  type: ClusterIP

@@ -1,0 +1,43 @@
+namespace: azure-workloads
+serviceAccountName: workload-identity-sa
+
+labels:
+  app: broker
+
+workloadIdentity:
+  use: "true"
+
+deployment:
+  name: broker-app
+  containerName: broker-app
+  replicas: 1
+  containerPort: 5000
+
+image:
+  repository: datasynchroacr
+  brokerAppName: broker-app
+  tag: latest
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "250m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+
+env:
+  dotnetEnvironment: Kubernetes
+  serviceBusNamespace: sb-namespace-datasynchro.servicebus.windows.net
+  serviceBusQueueName: sb-queue-datasynchro
+  hubUrl: http://signalr-service/logcornerhub
+  azureCosmosDbDatabaseName: LogCorner.EduSync.Speech.Database
+  azureCosmosDbContainerName: Speech
+  azureCosmosDbAccountEndpoint: https://cosmos-datasynchro-002.documents.azure.com:443/
+
+service:
+  name: broker-service
+  type: ClusterIP
+  protocol: TCP
+  port: 80
+  targetPort: 5000

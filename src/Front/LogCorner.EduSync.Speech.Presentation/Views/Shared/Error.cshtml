@@ -1,0 +1,35 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="container my-5">
+    <div class="text-center">
+        <h1 class="display-4 text-danger">Oops! An error occurred.</h1>
+        <h2 class="h5 text-danger mb-4">We couldn't process your request.</h2>
+
+        @if (Model.ShowRequestId)
+        {
+            <p>
+                <strong>Request ID:</strong>
+                <code>@Model.RequestId</code>
+            </p>
+        }
+
+        <div class="alert alert-warning mt-4">
+            <h5>Development Mode</h5>
+            <p>
+                Switching to <strong>Development</strong> environment will display detailed error information.
+                <br />
+                <strong>Note:</strong> This should not be enabled on deployed applications as it may expose sensitive data.
+            </p>
+            <p>
+                To enable locally, set <code>ASPNETCORE_ENVIRONMENT=Development</code> and restart the application.
+            </p>
+        </div>
+
+        <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+            Back to Home
+        </a>
+    </div>
+</div>

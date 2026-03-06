@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.labels.app }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labels.app }}
+    spec:
+      containers:
+        - name: {{ .Values.deployment.containerName }}
+          image: "{{ .Values.image.repository }}.azurecr.io/{{ .Values.image.webAppName }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.deployment.containerPort }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+          env:
+            - name: ASPNETCORE_URLS
+              value: {{ .Values.env.aspNetCoreUrls | quote }}
+            - name: pathBase
+              value: {{ .Values.env.pathBase | quote }}
+            - name: ASPNETCORE_ENVIRONMENT
+              value: {{ .Values.env.aspNetCoreEnvironment | quote }}
+            - name: WEBAPI_COMMAND_URL
+              value: {{ .Values.env.webApiCommandUrl | quote }}
+            - name: WEBAPI_QUERY_URL
+              value: {{ .Values.env.webApiQueryUrl | quote }}
+            - name: HubUrl
+              value: {{ .Values.env.hubUrl | quote }}
+            - name: HubUrlInternal
+              value: {{ .Values.env.hubUrlInternal | quote }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.labels.app }}
+
+spec:
+  selector:
+    app: {{ .Values.labels.app }}
+  ports:
+    - protocol: {{ .Values.service.protocol }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+  type: {{ .Values.service.type }}

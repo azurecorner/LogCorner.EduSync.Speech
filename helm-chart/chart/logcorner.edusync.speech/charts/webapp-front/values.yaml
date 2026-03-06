@@ -1,0 +1,39 @@
+namespace: azure-workloads
+
+labels:
+  app: webapp
+
+deployment:
+  name: web-frontend-app
+  containerName: web-frontend-app
+  replicas: 1
+  containerPort: 5000
+
+image:
+  repository: datasynchroacr
+  webAppName: web-app
+  tag: latest
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "250m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+
+env:
+  aspNetCoreUrls: "http://+:5000"
+  pathBase: /webapp
+  aspNetCoreEnvironment: Kubernetes
+  webApiCommandUrl: http://webapi-service
+  webApiQueryUrl: http://web-api-query-service
+  hubUrl: https://app.cloud-devops-craft.com/signalr/logcornerhub
+  hubUrlInternal: http://signalr-service/signalr/logcornerhub
+
+service:
+  name: webapp-service
+  protocol: TCP
+  port: 80
+  targetPort: 5000
+  type: ClusterIP

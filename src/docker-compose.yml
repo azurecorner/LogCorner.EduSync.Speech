@@ -2,23 +2,41 @@ version: '3.4'
 
 services:
   # web api service
-  logcorner.edusync.speech.presentation:
-    image: logcorner-edusync-speech-presentation
+  logcorner.edusync.speech.command:
+    image: logcornerhub/logcorner-edusync-speech-command
     build:
       context: .
-      dockerfile: LogCorner.EduSync.Speech/LogCorner.EduSync.Speech.Presentation/Dockerfile
+      dockerfile: LogCorner.EduSync.Speech.Presentation/Dockerfile
     depends_on:
-      - logcorner.edusync.speech.presentation.data
- 
+      - logcorner.edusync.speech.command.data
+    networks:
+      - speech_network
  # database service
-  logcorner.edusync.speech.presentation.data:
-    image: logcorner-edusync-speech-presentation-data
+  logcorner.edusync.speech.command.data:
+    image: logcornerhub/logcorner-edusync-speech-command-data
     build:
-      context: LogCorner.EduSync.Speech/LogCorner.EduSync.Speech.Database/Docker
+      context: LogCorner.EduSync.Speech.Database/Docker
       dockerfile: Dockerfile
       args:
-        SA_PASSWORD: PassW0rd
-        
-
+        SA_PASSWORD: MyC0m9l&xP@ssw0rd
+    networks:
+      - speech_network    
+  # database mssql-tools
+  logcorner.edusync.speech.mssql-tools:
+    image: logcornerhub/logcorner-edusync-speech-mssql-tools
+    build:
+      context: LogCorner.EduSync.Speech.Database/Docker
+      dockerfile: mssql-tools/Dockerfile
+  
  
+
+networks:
+  speech_network:
+    external:
+      name: speech_network
+
+
+
+
+
 

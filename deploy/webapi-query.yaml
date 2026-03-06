@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-api-query-app
+  namespace: azure-workloads
+  labels:
+    app: web-api-query
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-api-query
+  template:
+    metadata:
+      labels:
+        app: web-api-query
+    spec:
+      containers:
+        - name: web-api-query-app
+          image: datasynchroacr.azurecr.io/web-api-query:latest
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:5000
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Kubernetes
+            - name: allowedOrigins
+              value : http://localhost:4200
+            - name: AzureCosmosDB__ConnectionString
+              value: AccountEndpoint=AccountEndpoint=https://cosmos-datasynchro-002.documents.azure.com:443/;AccountKey=MDE27LlrJgfwO6tbm1199ENG6P9wXNs2moMkf7WVRrlFZtAxEsmL24GiI60QgCMwNd7NFTE7CYS3ACDbN3c2UQ==;
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-api-query-service
+  namespace: azure-workloads
+  labels:
+    app: web-api-query
+
+spec:
+  selector:
+    app: web-api-query
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP

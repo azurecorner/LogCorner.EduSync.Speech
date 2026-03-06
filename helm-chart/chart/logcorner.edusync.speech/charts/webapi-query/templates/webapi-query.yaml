@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.labels.app }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labels.app }}
+        azure.workload.identity/use: {{ .Values.workloadIdentity.use | quote }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      containers:
+        - name: {{ .Values.deployment.containerName }}
+          image: "{{ .Values.image.repository }}.azurecr.io/{{ .Values.image.webApiQueryName }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.deployment.containerPort }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+          env:
+            - name: ASPNETCORE_URLS
+              value: {{ .Values.env.aspNetCoreUrls | quote }}
+            - name: ASPNETCORE_ENVIRONMENT
+              value: {{ .Values.env.aspNetCoreEnvironment | quote }}
+            - name: allowedOrigins
+              value: {{ .Values.env.allowedOrigins | quote }}
+            - name: AzureCosmosDB__DatabaseName
+              value: {{ .Values.env.azureCosmosDbDatabaseName | quote }}
+            - name: AzureCosmosDB__ContainerName
+              value: {{ .Values.env.azureCosmosDbContainerName | quote }}
+            - name: AzureCosmosDB__AccountEndpoint
+              value: {{ .Values.env.azureCosmosDbAccountEndpoint | quote }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.labels.app }}
+
+spec:
+  selector:
+    app: {{ .Values.labels.app }}
+  ports:
+    - protocol: {{ .Values.service.protocol }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+  type: {{ .Values.service.type }}
