@@ -105,28 +105,39 @@ resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedId
   location: location
 }
 
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
-  name: logAnalyticsWorkspaceName
-  tags: tags
-  location: location
-  properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
-  }
-}
+// Observability parameters
 
-resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightName
-  location: location
-  tags: tags
-  kind: 'other'
-  properties: {
-    Application_Type: 'web'
-    WorkspaceResourceId: logAnalyticsWorkspace.id
-  }
-}
- 
+
+// *** Optional: Deploy Managed Prometheus and Grafana if monitoring is required. ***
+@description('Specifies whether create or not Azure Monitor managed service for Prometheus and Azure Managed Grafana resources.')
+param prometheusAndGrafanaEnabled bool 
+
+@description('Specifies the name of the managed Prometheus resource.')
+param managedPrometheusName string
+
+@description('Specifies the name of the managed Grafana resource.')
+param managedGrafana string
+
+@description('Specifies the SKU of the managed Grafana resource.')
+param    skuName string 
+
+@description('Specifies the API key for the managed Grafana resource.')
+param    apiKey string 
+
+
+@description('Specifies whether to create an action group for alerting.')
+param actionGroupEnabled bool
+
+@description('Specifies the name of the action group.') 
+param actionGroupShortName string
+
+@description('Specifies the email address to use for the action group.')
+@secure()
+param actionGroupEmailvaAddress string
+
+@description('Specifies whether to use the common alert schema for the action group.')
+param actionGroupUseCommonAlertSchema  bool
+
 module network 'modules/network.bicep' = {
   name: '${prefix}-network'
   params: {
@@ -186,7 +197,7 @@ module aksCluster 'modules/aks.bicep' = {
     ClusterName: ClusterName
     location: location
     prefix: prefix
-    userAssignedIdentities: managedIdentity.id
+    // userAssignedIdentities: managedIdentity.id
     acrName: containerRegistryName
     vmSize: 'Standard_DS2_v2'
     privateDNSZoneName: 'privatelink.${resourceGroup().location}.azmk8s.io'
@@ -194,7 +205,7 @@ module aksCluster 'modules/aks.bicep' = {
     SubnetId: network.outputs.aks_subnet_id
     tags: tags
     adminGroupObjectIDs: [adminUserObjectId]
-    LoganalyticID: logAnalyticsWorkspace.id
+    LoganalyticID: monitoring.outputs.logAnalyticsWorkspaceId
     serviceAccountNamespace: workloadIdentityserviceAccounNamespace
     serviceAccountName: workloadIdentityServiceAccountName
     workloadManagedIdentityName: workloadManagedIdentityName
@@ -210,7 +221,7 @@ module containerRegistry 'modules/containerRegistry.bicep' = {
     sku: containerRegistrySku
     adminUserEnabled : false
     location: location
-     workspaceId: logAnalyticsWorkspace.id
+     workspaceId: monitoring.outputs.logAnalyticsWorkspaceId
     tags: tags
   }
 }
@@ -297,7 +308,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
-/*  module deploymentScript 'modules/deployment-script.bicep' =  {
+ module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -315,7 +326,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
     storagePrivateEndpoint
     slqServerPrivateEndpoint
   ]
-}  */
+}  
  
 // *** Service Bus Namespace and Queue ***
 
@@ -394,7 +405,7 @@ module keyvault 'modules/keyvault.bicep' = {
     /* aksCluster */
   ]
 }
-
+/* 
 module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
@@ -407,9 +418,9 @@ module gateway 'modules/applicationGatewayForContainers.bicep' = {
     appgwc_security_policy_name: 'appgwc-security-policy'
  }
   dependsOn: [
- //   aksCluster
+   aksCluster
   ]
-}  
+}    */
  
 resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {
   parent: userAssignedIdentities_azure_alb_identity_resource
@@ -423,3 +434,51 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
   }
 } 
   
+// OBSERVABILITY MODULES
+
+
+module monitoring 'modules/monitoring.bicep' = {
+  name: '${prefix}-monitoring'
+  params: {
+ logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
+ appInsightName: applicationInsightName
+ sku: 'PerGB2018'
+   type: 'web'
+    requestSource: 'CustomDeployment'
+     name: '${prefix}-actionGroup'
+    enabled: actionGroupEnabled
+    groupShortName: actionGroupShortName
+    emailAddress: actionGroupEmailvaAddress
+    useCommonAlertSchema: actionGroupUseCommonAlertSchema
+  }
+}
+
+module prometheus 'modules/managedPrometheus.bicep' = if (prometheusAndGrafanaEnabled){
+  name: '${prefix}-managedPrometheus'
+  params: {
+    name: managedPrometheusName
+    publicNetworkAccess: 'Enabled'
+    location: location
+    tags: tags
+    clusterName: ClusterName
+    actionGroupId: actionGroupEnabled ? monitoring.outputs.actionGroupId : ''
+  }
+}
+
+module grafana 'modules/managedGrafana.bicep' =  if (prometheusAndGrafanaEnabled){
+  name: '${prefix}-managedGrafana'
+  params: {
+    name: managedGrafana
+    prometheusName: managedPrometheusName
+    location: location
+    tags: tags
+    skuName: skuName
+    apiKey: apiKey
+    userId: adminUserObjectId
+  }
+
+  dependsOn: [
+    prometheus
+  ]
+}      
+

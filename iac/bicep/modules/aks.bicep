@@ -4,8 +4,8 @@ param location string = resourceGroup().location
 @description('The name prefix for all resources.')
 param prefix string
 
-@description('The name of the user assigned identity to be used by the AKS cluster.')
-param userAssignedIdentities string 
+// @description('The name of the user assigned identity to be used by the AKS cluster.')
+// param userAssignedIdentities string 
 
 
 @description('Log analytics ID on Input.')
@@ -85,10 +85,10 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
   location: location
   tags: tags
   identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userAssignedIdentities}': {}
-    }
+    type: 'SystemAssigned'
+    // userAssignedIdentities: {
+    //   '${userAssignedIdentities}': {}
+    // }
   }
   properties: {
     dnsPrefix: '${prefix}-aks-dns'
@@ -102,12 +102,12 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
     }
 
     addonProfiles: {
-        omsAgent: {
+      /*   omsAgent: {
         enabled: true
         config: {
           logAnalyticsWorkspaceResourceID: LoganalyticID
         }
-      }
+      } */
        azureKeyvaultSecretsProvider: {
         enabled: true
       }
@@ -131,6 +131,15 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
         vnetSubnetID: SubnetId
       }      
     ]
+     azureMonitorProfile: {
+      metrics: {
+        enabled: true
+        kubeStateMetrics: {
+          metricAnnotationsAllowList: ''
+          metricLabelsAllowlist: ''
+        }
+      }
+    }
     autoScalerProfile: {
       expander: 'random'
     }

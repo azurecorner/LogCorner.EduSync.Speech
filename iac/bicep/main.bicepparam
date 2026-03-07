@@ -30,11 +30,24 @@ param workloadIdentityserviceAccounNamespace  = 'azure-workloads'
 
 param workloadIdentityServiceAccountName  = 'workload-identity-sa'
 
-//param cosmosAdminPrincipalId = '7abf4c5b-9638-4ec4-b830-ede0a8031b25' // Object ID of the user or service principal to be granted admin access to Cosmos DB. Replace with actual value.
-
 param cosmosJumpboxPrincipalId =  '367790c8-560f-4506-8f81-47bba7117b26' // Object ID of the user or service principal to be granted access to Cosmos DB from a jumpbox. Replace with actual value.
 
-//param serviceBusDataOwnerAdminUserId = '7abf4c5b-9638-4ec4-b830-ede0a8031b25'
-//param serviceBusDataOwnerServicePrincipalId = '27216efd-6abc-4bbe-aef1-bbe545a41dc4' // BICEP_SP => Object ID of the user or service principal to be granted admin access to Service Bus. Replace with actual value.
-
 param keyvault_name =  'kv-datasynchro-003'
+
+param actionGroupEmailvaAddress =  'leyegora@gmail.com'
+
+param actionGroupEnabled =  true
+
+param actionGroupShortName =  'dsyncagrp'
+
+param actionGroupUseCommonAlertSchema = true
+
+param  apiKey  ='Enabled'
+
+param managedGrafana =  'datasynchro-grafana'
+
+param managedPrometheusName =  'datasynchro-prometheus'
+
+param prometheusAndGrafanaEnabled =  true
+
+param  skuName  = 'Standard'
