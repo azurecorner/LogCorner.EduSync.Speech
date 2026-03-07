@@ -4,7 +4,7 @@ $RELEASE_NAME = "logcorner-command"
 
 $ALB_IDENTITY_NAME = "azure_alb_identity"
 
-$GatewayControllerNamespace = "azure-alb-system"
+$GATEWAY_CONTROLLER_NAMESPACE = "azure-alb-system"
 
 # $ALB_RESOURCES_NAMESPACE = "azure-alb-resources"
 $APPLICATION_FOR_CONTAINER_HOST_NAME = "app.cloud-devops-craft.com"
@@ -66,12 +66,12 @@ kubelogin convert-kubeconfig -l azurecli
 # Skip schema validation to avoid potential Helm chart validation issues
 helm upgrade --install alb-controller oci://mcr.microsoft.com/application-lb/charts/alb-controller `
   --create-namespace `
-  --namespace $GatewayControllerNamespace `
+  --namespace $GATEWAY_CONTROLLER_NAMESPACE `
   --version 1.9.11 `
   --set albController.podIdentity.clientID=$(az identity show -g $RESOURCE_GROUP -n $ALB_IDENTITY_NAME --query clientId -o tsv) `
   --skip-schema-validation
 
-$ALB_CONTROLLER_CLIENT_ID = kubectl get deploy alb-controller -n $GatewayControllerNamespace -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="AZURE_CLIENT_ID")].value}'
+$ALB_CONTROLLER_CLIENT_ID = kubectl get deploy alb-controller -n $GATEWAY_CONTROLLER_NAMESPACE -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="AZURE_CLIENT_ID")].value}'
 if ([string]::IsNullOrWhiteSpace($ALB_CONTROLLER_CLIENT_ID)) {
   throw "ALB controller AZURE_CLIENT_ID is empty. Verify ALB_IDENTITY_NAME and RESOURCE_GROUP, then rerun Helm install."
 }
@@ -79,10 +79,10 @@ Write-Host "ALB_CONTROLLER_CLIENT_ID: $ALB_CONTROLLER_CLIENT_ID"
 
 
 # Display all pods in the controller namespace with their labels
-kubectl get pod  -n  $GatewayControllerNamespace  --show-labels
+kubectl get pod  -n  $GATEWAY_CONTROLLER_NAMESPACE  --show-labels
 
 # Wait for the ALB controller pod to be ready (timeout: 3 minutes)
-kubectl wait pod  -n $GatewayControllerNamespace  -l app=alb-controller --for=condition=Ready  --timeout=180s
+kubectl wait pod  -n $GATEWAY_CONTROLLER_NAMESPACE  -l app=alb-controller --for=condition=Ready  --timeout=180s
 
 # kubectl describe pod busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE
 
@@ -93,7 +93,7 @@ helm upgrade --install  $RELEASE_NAME  logcorner.edusync.speech --set azureWorkl
                                                                 --set webApplicationFirewallResourceId=$webApplicationFirewallResourceId `
                                                                 --set tenantId=$KEYVAULT_TENANT 
 
-kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
+#kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
 kubectl get pods -n $WORKLOAD_NAMESPACE
 
 kubectl exec busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE -- ls /mnt/secrets-store/ 

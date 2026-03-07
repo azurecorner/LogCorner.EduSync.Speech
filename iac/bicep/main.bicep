@@ -197,7 +197,7 @@ module aksCluster 'modules/aks.bicep' = {
     ClusterName: ClusterName
     location: location
     prefix: prefix
-    // userAssignedIdentities: managedIdentity.id
+    userAssignedIdentities: managedIdentity.id
     acrName: containerRegistryName
     vmSize: 'Standard_DS2_v2'
     privateDNSZoneName: 'privatelink.${resourceGroup().location}.azmk8s.io'
@@ -308,7 +308,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
- module deploymentScript 'modules/deployment-script.bicep' =  {
+/*  module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -327,7 +327,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
     slqServerPrivateEndpoint
   ]
 }  
- 
+  */
 // *** Service Bus Namespace and Queue ***
 
  module servicebus 'modules/serviceBus.bicep' = {
@@ -405,7 +405,7 @@ module keyvault 'modules/keyvault.bicep' = {
     /* aksCluster */
   ]
 }
-/* 
+
 module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
@@ -417,10 +417,10 @@ module gateway 'modules/applicationGatewayForContainers.bicep' = {
     appgwc_waf_policy_name: 'appgwc-waf-policy'
     appgwc_security_policy_name: 'appgwc-security-policy'
  }
-  dependsOn: [
+  /* dependsOn: [
    aksCluster
-  ]
-}    */
+  ] */
+}    
  
 resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {
   parent: userAssignedIdentities_azure_alb_identity_resource
@@ -432,7 +432,7 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
       'api://AzureADTokenExchange'
     ]
   }
-} 
+}  
   
 // OBSERVABILITY MODULES
 

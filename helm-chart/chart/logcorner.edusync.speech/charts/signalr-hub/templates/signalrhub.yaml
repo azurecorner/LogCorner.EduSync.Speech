@@ -12,6 +12,8 @@ spec:
       app: {{ .Values.labels.app }}
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-dotnet: "monitoring/demo-instrumentation"
       labels:
         app: {{ .Values.labels.app }}
     spec:

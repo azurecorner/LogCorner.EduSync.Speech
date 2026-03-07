@@ -4,8 +4,8 @@ param location string = resourceGroup().location
 @description('The name prefix for all resources.')
 param prefix string
 
-// @description('The name of the user assigned identity to be used by the AKS cluster.')
-// param userAssignedIdentities string 
+@description('The name of the user assigned identity to be used by the AKS cluster.')
+param userAssignedIdentities string 
 
 
 @description('Log analytics ID on Input.')
@@ -80,15 +80,15 @@ module AzureServiceBusDataOwnerrRole 'roleAssignment.bicep' = {
   }
 }
  */
-resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
+resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-10-02-preview' = {
   name: ClusterName
   location: location
   tags: tags
   identity: {
-    type: 'SystemAssigned'
-    // userAssignedIdentities: {
-    //   '${userAssignedIdentities}': {}
-    // }
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userAssignedIdentities}': {}
+    }
   }
   properties: {
     dnsPrefix: '${prefix}-aks-dns'
@@ -139,6 +139,21 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
           metricLabelsAllowlist: ''
         }
       }
+
+       appMonitoring: {
+        autoInstrumentation: {
+          enabled: true
+        }
+        openTelemetryLogs: {
+          enabled: true
+          port: 4317
+        }
+        openTelemetryMetrics: {
+          enabled: true
+          port: 4318
+        }
+      }
+      
     }
     autoScalerProfile: {
       expander: 'random'
