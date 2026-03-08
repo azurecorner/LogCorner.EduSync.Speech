@@ -158,6 +158,6 @@ curl -k --resolve "${APPLICATION_FOR_CONTAINER_HOST_NAME}:443:${fqdnIp}" "https:
 
 # self hosted gateway test
 
-kubectl exec -it curl-test -n azure-workloads -- curl -v -k http://10.0.137.205/api/speech
+#kubectl exec -it curl-test -n azure-workloads -- curl -v -k http://10.0.137.205/api/speech
 
 kubectl exec -it curl-test -n azure-workloads -- curl -v -k http://web-api-query-service.azure-workloads.svc.cluster.local/api/speech

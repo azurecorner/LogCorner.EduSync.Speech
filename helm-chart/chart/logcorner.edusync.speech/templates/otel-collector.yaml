@@ -3,7 +3,7 @@
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
-  name: otel-collector
+  name: otel-service
   namespace: monitoring
 spec:
   image: otel/opentelemetry-collector-contrib:0.145.0
@@ -50,7 +50,7 @@ metadata:
   namespace: monitoring
 spec:
   exporter:
-      endpoint: http://otel-collector-collector.monitoring.svc.cluster.local:4318
+      endpoint: http://otel-service.monitoring.svc.cluster.local:4318
   propagators:
     - tracecontext
     - baggage
