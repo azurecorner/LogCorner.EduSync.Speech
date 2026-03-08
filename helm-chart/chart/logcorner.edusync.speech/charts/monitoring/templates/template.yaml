@@ -51,7 +51,7 @@
 # apiVersion: opentelemetry.io/v1alpha1
 # kind: Instrumentation
 # metadata:
-#   name: demo-instrumentation
+#   name: otel-instrumentation
 #   namespace: monitoring
 # spec:
 #   exporter:

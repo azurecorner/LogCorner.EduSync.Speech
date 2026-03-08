@@ -3,16 +3,11 @@
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
-  name: demo
+  name: otel-collector
   namespace: monitoring
 spec:
   image: otel/opentelemetry-collector-contrib:0.145.0
-  env:
-    - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-      valueFrom:
-        secretKeyRef:
-          name: appinsights-conn
-          key: APPLICATIONINSIGHTS_CONNECTION_STRING
+  
   config:
     receivers:
       otlp:
@@ -51,11 +46,11 @@ spec:
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
-  name: demo-instrumentation
+  name: otel-instrumentation
   namespace: monitoring
 spec:
   exporter:
-      endpoint: http://demo-collector.monitoring.svc.cluster.local:4318
+      endpoint: http://otel-collector-collector.monitoring.svc.cluster.local:4318
   propagators:
     - tracecontext
     - baggage

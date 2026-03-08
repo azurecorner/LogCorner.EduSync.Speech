@@ -6,9 +6,7 @@ $ALB_IDENTITY_NAME = "azure_alb_identity"
 
 $GATEWAY_CONTROLLER_NAMESPACE = "azure-alb-system"
 
-# $ALB_RESOURCES_NAMESPACE = "azure-alb-resources"
 $APPLICATION_FOR_CONTAINER_HOST_NAME = "app.cloud-devops-craft.com"
-
 
 $UAMI="workload-managed-identity"
 $CLUSTER_NAME="datasynchro-aks"
@@ -30,14 +28,12 @@ Write-Host "KEYVAULT_TENANT: $KEYVAULT_TENANT"
 $AKS_OIDC_ISSUER="$(az aks show --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --query "oidcIssuerProfile.issuerUrl" -o tsv)"
 write-host "AKS_OIDC_ISSUER: $AKS_OIDC_ISSUER"
 
-
 # Retrieve the Application Gateway for Containers resource to get its Resource ID for use in the Helm chart deployment. This is necessary because the ALB controller needs to associate the Application Gateway for Containers with the deployed workloads.
 
 $ApplicationForContainerResource = Get-AzResource -ResourceGroupName $RESOURCE_GROUP -ResourceType "Microsoft.ServiceNetworking/trafficControllers" -Name $APP_GATEWAY_FOR_CONTAINER_NAME
 $ApplicationForContainerResourceId = $ApplicationForContainerResource.ResourceId
 
 write-host "ApplicationForContainerResourceId: $ApplicationForContainerResourceId"
-
 
 # Retrieve the Web Application Firewall Policy resource to get its Resource ID for use in the Helm chart deployment. This is necessary because the ALB controller needs to associate the
 
@@ -51,7 +47,6 @@ Write-Host "Web Application Firewall Policy found: $($webApplicationFirewall.Nam
 $webApplicationFirewallResourceId = $webApplicationFirewall.ResourceId
 
 write-host "webApplicationFirewallResourceId: $webApplicationFirewallResourceId"
-
 
 $APP_INSIGHTS_NAME = "datasyncappi"
 ## Retrieve application insights connection string for monitoring configuration in Helm chart$APP_INSIGHTS_NAME = "datasyncappi"
@@ -95,8 +90,6 @@ if ([string]::IsNullOrWhiteSpace($otelCollectorCrd)) {
   kubectl wait --for=condition=Established crd/instrumentations.opentelemetry.io --timeout=180s
 }
 
-
-
 # Deploy or upgrade the ALB controller using Helm
 # The controller uses workload identity (managed identity client ID) for Azure authentication
 # Skip schema validation to avoid potential Helm chart validation issues
@@ -113,7 +106,6 @@ if ([string]::IsNullOrWhiteSpace($ALB_CONTROLLER_CLIENT_ID)) {
 }
 Write-Host "ALB_CONTROLLER_CLIENT_ID: $ALB_CONTROLLER_CLIENT_ID"
 
-
 # Display all pods in the controller namespace with their labels
 kubectl get pod  -n  $GATEWAY_CONTROLLER_NAMESPACE  --show-labels
 
@@ -123,14 +115,14 @@ kubectl wait pod  -n $GATEWAY_CONTROLLER_NAMESPACE  -l app=alb-controller --for=
 # kubectl describe pod busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE
 
 
-
 helm upgrade --install  $RELEASE_NAME  logcorner.edusync.speech --set azureWorkloadIdentityClientId=$USER_ASSIGNED_CLIENT_ID `
                                                                 --set applicationGatewayForContainerResourceId=$ApplicationForContainerResourceId `
                                                                 --set webApplicationFirewallResourceId=$webApplicationFirewallResourceId `
                                                                 --set-string "applicationInsights.connectionString=$APP_INSIGHTS_CONNECTION_STRING" `
                                                                 --set tenantId=$KEYVAULT_TENANT 
 
-#kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
+#
+kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
 kubectl get pods -n $WORKLOAD_NAMESPACE
 
 kubectl exec busybox-secrets-store-inline-wi -n $WORKLOAD_NAMESPACE -- ls /mnt/secrets-store/ 
@@ -151,9 +143,7 @@ kubectl get svc -n $WORKLOAD_NAMESPACE
 
 kubectl get sa -n $WORKLOAD_NAMESPACE
 
-
 # helm uninstall $RELEASE_NAME  logcorner.edusync.speech
-
 
 kubectl get pods -n $WORKLOAD_NAMESPACE
 $fqdn=$(kubectl get gateway "gateway-01" -n $WORKLOAD_NAMESPACE -o jsonpath='{.status.addresses[0].value}')
@@ -163,7 +153,6 @@ Write-Host "fqdn=$fqdn"
 $fqdnIp = (Resolve-DnsName $fqdn | Where-Object { $_.Type -eq "A" }).IPAddress
 
 Write-Host "fqdnIp=$fqdnIp"
-
 
 curl -k --resolve "${APPLICATION_FOR_CONTAINER_HOST_NAME}:443:${fqdnIp}" "https://$APPLICATION_FOR_CONTAINER_HOST_NAME/webapp/" --insecure
 
