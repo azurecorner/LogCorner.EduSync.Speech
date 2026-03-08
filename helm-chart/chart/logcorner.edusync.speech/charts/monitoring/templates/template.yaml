@@ -1,64 +1,64 @@
 
 
-apiVersion: opentelemetry.io/v1beta1
-kind: OpenTelemetryCollector
-metadata:
-  name: demo
-  namespace: monitoring
-spec:
-  image: otel/opentelemetry-collector-contrib:0.145.0
-  env:
-    - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-      valueFrom:
-        secretKeyRef:
-          name: appinsights-conn
-          key: APPLICATIONINSIGHTS_CONNECTION_STRING
-  config:
-    receivers:
-      otlp:
-        protocols:
-          grpc:
-            endpoint: 0.0.0.0:4317
-          http:
-            endpoint: 0.0.0.0:4318
-    processors:
-      memory_limiter:
-        check_interval: 1s
-        limit_percentage: 75
-        spike_limit_percentage: 15
-    exporters:
-      debug:
-        verbosity: basic
-      azuremonitor:
-        connection_string: ${env:APPLICATIONINSIGHTS_CONNECTION_STRING}
+# apiVersion: opentelemetry.io/v1beta1
+# kind: OpenTelemetryCollector
+# metadata:
+#   name: demo
+#   namespace: monitoring
+# spec:
+#   image: otel/opentelemetry-collector-contrib:0.145.0
+#   env:
+#     - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+#       valueFrom:
+#         secretKeyRef:
+#           name: appinsights-conn
+#           key: APPLICATIONINSIGHTS_CONNECTION_STRING
+#   config:
+#     receivers:
+#       otlp:
+#         protocols:
+#           grpc:
+#             endpoint: 0.0.0.0:4317
+#           http:
+#             endpoint: 0.0.0.0:4318
+#     processors:
+#       memory_limiter:
+#         check_interval: 1s
+#         limit_percentage: 75
+#         spike_limit_percentage: 15
+#     exporters:
+#       debug:
+#         verbosity: basic
+#       azuremonitor:
+#         connection_string: "${APPLICATIONINSIGHTS_CONNECTION_STRING}"
 
-    service:
-      pipelines:
-        traces:
-          receivers: [otlp]
-          processors: [memory_limiter]
-          exporters: [debug, azuremonitor]
-        metrics:
-          receivers: [otlp]
-          processors: [memory_limiter]
-          exporters: [debug, azuremonitor]
-        logs:
-          receivers: [otlp]
-          processors: [memory_limiter]
-          exporters: [debug, azuremonitor]
----
+#     service:
+#       pipelines:
+#         traces:
+#           receivers: [otlp]
+#           processors: [memory_limiter]
+#           exporters: [debug, azuremonitor]
+#         metrics:
+#           receivers: [otlp]
+#           processors: [memory_limiter]
+#           exporters: [debug, azuremonitor]
+#         logs:
+#           receivers: [otlp]
+#           processors: [memory_limiter]
+#           exporters: [debug, azuremonitor]
+# ---
 
-apiVersion: opentelemetry.io/v1alpha1
-kind: Instrumentation
-metadata:
-  name: demo-instrumentation
-  namespace: monitoring
-spec:
-  exporter:
-      endpoint: http://demo-collector.monitoring.svc.cluster.local:4318
-  propagators:
-    - tracecontext
-    - baggage
-  sampler:
-    type: parentbased_traceidratio
-    argument: "1"
+# apiVersion: opentelemetry.io/v1alpha1
+# kind: Instrumentation
+# metadata:
+#   name: demo-instrumentation
+#   namespace: monitoring
+# spec:
+#   exporter:
+#       endpoint: http://demo-collector.monitoring.svc.cluster.local:4318
+#   propagators:
+#     - tracecontext
+#     - baggage
+#   sampler:
+#     type: parentbased_traceidratio
+#     argument: "1"

@@ -138,16 +138,12 @@ resource nsgApiManagemnt 'Microsoft.Network/networkSecurityGroups@2024-01-01' = 
   }
 }
 
-output virtualNetworkObject object = virtualNetwork
 output virtualNetworkName string = virtualNetwork.name
 output virtualNetworkId string = virtualNetwork.id
-output aks_subnet_id string = virtualNetwork.properties.subnets[0].id
-output appgw_subnet_id string = virtualNetwork.properties.subnets[1].id
-output privatelink_subnet_id string = virtualNetwork.properties.subnets[2].id
+output aks_subnet_id string = '${virtualNetwork.id}/subnets/${aks_subnet_name}'
+output appgw_subnet_id string = '${virtualNetwork.id}/subnets/${appgw_subnet_name}' //virtualNetwork.properties.subnets[1].id
+output privatelink_subnet_id string = '${virtualNetwork.id}/subnets/${privatelink_subnet_name}' //virtualNetwork.properties.subnets[2].id
 output applicationGatewayForContainersSubnet_id string = '${virtualNetwork.id}/subnets/${applicationGatewayForContainersSubnetName}'
-output applicationGatewayForContainersSubnet_name string = virtualNetwork.properties.subnets[3].name
-
-
 output containerInstanceSubnet_id string = '${virtualNetwork.id}/subnets/${containerInstanceSubnetName}'
 output apimSubnet_id string = '${virtualNetwork.id}/subnets/${appim_subnet_name}'
 

@@ -308,7 +308,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
-/*  module deploymentScript 'modules/deployment-script.bicep' =  {
+module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -327,7 +327,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
     slqServerPrivateEndpoint
   ]
 }  
-  */
+  
 // *** Service Bus Namespace and Queue ***
 
  module servicebus 'modules/serviceBus.bicep' = {
@@ -402,7 +402,7 @@ module keyvault 'modules/keyvault.bicep' = {
     privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
   dependsOn: [
-    /* aksCluster */
+    aksCluster 
   ]
 }
 
@@ -417,9 +417,9 @@ module gateway 'modules/applicationGatewayForContainers.bicep' = {
     appgwc_waf_policy_name: 'appgwc-waf-policy'
     appgwc_security_policy_name: 'appgwc-security-policy'
  }
-  /* dependsOn: [
+dependsOn: [
    aksCluster
-  ] */
+  ]
 }    
  
 resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {

@@ -52,13 +52,49 @@ $webApplicationFirewallResourceId = $webApplicationFirewall.ResourceId
 
 write-host "webApplicationFirewallResourceId: $webApplicationFirewallResourceId"
 
-az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 
-choco install kubernetes-cli azure-kubelogin
+$APP_INSIGHTS_NAME = "datasyncappi"
+## Retrieve application insights connection string for monitoring configuration in Helm chart$APP_INSIGHTS_NAME = "datasyncappi"
 
-helm repo add "stable" "https://charts.helm.sh/stable"
+$APP_INSIGHTS_CONNECTION_STRING = az monitor app-insights component show `
+  --app $APP_INSIGHTS_NAME `
+  --resource-group $RESOURCE_GROUP `
+  --query connectionString `
+  -o tsv
 
-kubelogin convert-kubeconfig -l azurecli
+if ([string]::IsNullOrWhiteSpace($APP_INSIGHTS_CONNECTION_STRING)) {
+  throw "Application Insights connection string not found for '$APP_INSIGHTS_NAME' in resource group '$RESOURCE_GROUP'."
+}
+
+Write-Host "APP_INSIGHTS_CONNECTION_STRING: $APP_INSIGHTS_CONNECTION_STRING"
+
+# Get AKS credentials to configure kubectl access to the cluster. This is required for subsequent kubectl and Helm commands to interact with the cluster.
+
+#az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
+
+<# 
+  choco install kubernetes-cli azure-kubelogin
+
+  helm repo add "stable" "https://charts.helm.sh/stable"
+
+  kubelogin convert-kubeconfig -l azurecli 
+#>
+
+# Ensure OpenTelemetry CRDs exist before Helm renders monitoring resources
+$otelCollectorCrd = kubectl get crd opentelemetrycollectors.opentelemetry.io --ignore-not-found
+if ([string]::IsNullOrWhiteSpace($otelCollectorCrd)) {
+  Write-Host "OpenTelemetry CRDs not found. Installing OpenTelemetry Operator and CRDs..."
+  helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+  helm repo update
+  kubectl create namespace opentelemetry-operator-system --dry-run=client -o yaml | kubectl apply -f -
+  helm upgrade --install opentelemetry-operator open-telemetry/opentelemetry-operator `
+    --namespace opentelemetry-operator-system `
+    --set admissionWebhooks.certManager.enabled=false
+
+  kubectl wait --for=condition=Established crd/opentelemetrycollectors.opentelemetry.io --timeout=180s
+  kubectl wait --for=condition=Established crd/instrumentations.opentelemetry.io --timeout=180s
+}
+
 
 
 # Deploy or upgrade the ALB controller using Helm
@@ -91,6 +127,7 @@ kubectl wait pod  -n $GATEWAY_CONTROLLER_NAMESPACE  -l app=alb-controller --for=
 helm upgrade --install  $RELEASE_NAME  logcorner.edusync.speech --set azureWorkloadIdentityClientId=$USER_ASSIGNED_CLIENT_ID `
                                                                 --set applicationGatewayForContainerResourceId=$ApplicationForContainerResourceId `
                                                                 --set webApplicationFirewallResourceId=$webApplicationFirewallResourceId `
+                                                                --set-string "applicationInsights.connectionString=$APP_INSIGHTS_CONNECTION_STRING" `
                                                                 --set tenantId=$KEYVAULT_TENANT 
 
 #kubectl rollout restart deployment -n $WORKLOAD_NAMESPACE
