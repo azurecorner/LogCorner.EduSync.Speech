@@ -406,7 +406,7 @@ module keyvault 'modules/keyvault.bicep' = {
   ]
 }
 
-module gateway 'modules/applicationGatewayForContainers.bicep' = {
+/* module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
     trafficControllers_alb_name: applicationGatewayForContainersName
@@ -421,7 +421,7 @@ dependsOn: [
    aksCluster
   ]
 }    
- 
+  */
 resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {
   parent: userAssignedIdentities_azure_alb_identity_resource
   name: userAssignedIdentities_azure_alb_identity_name
@@ -480,5 +480,26 @@ module grafana 'modules/managedGrafana.bicep' =  if (prometheusAndGrafanaEnabled
   dependsOn: [
     prometheus
   ]
-}      
+}    
 
+param apiManagementName string = 'datasynchro-apim-004'
+
+param selfHostedGatewayName string = 'api-gateway-on-kubernetes'
+
+module api_management 'modules/api-management.bicep' = {
+  name: 'api-management'
+  params: {
+    location: location
+    apiManagementName: apiManagementName
+    selfHostedGatewayName: selfHostedGatewayName
+    keyVaultName : keyvault_name
+    userAssignedIdentityName: workloadManagedIdentityName
+    apimSubnetId: network.outputs.apimSubnet_id
+    apiManagementCustomDnsName: 'cloud-devops-craft.com'
+    apiManagementPortalCustomHostname: 'portal.cloud-devops-craft.com'
+    apiManagementManagementCustomHostname: 'management.cloud-devops-craft.com'
+    apiManagementProxyCustomHostname: 'api.cloud-devops-craft.com'
+
+  }
+ 
+}
