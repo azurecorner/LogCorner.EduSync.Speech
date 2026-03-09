@@ -194,7 +194,6 @@ export class LongPollingTransport implements ITransport {
             } else {
                 this._logger.log(LogLevel.Trace, "(LongPolling transport) DELETE request accepted.");
             }
-
         } finally {
             this._logger.log(LogLevel.Trace, "(LongPolling transport) Stop finished.");
 

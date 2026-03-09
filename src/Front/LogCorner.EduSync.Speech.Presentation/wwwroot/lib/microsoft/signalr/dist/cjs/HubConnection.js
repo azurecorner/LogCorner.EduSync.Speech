@@ -288,9 +288,9 @@ class HubConnection {
         };
         promiseQueue = this._sendWithProtocol(invocationDescriptor)
             .catch((e) => {
-            subject.error(e);
-            delete this._callbacks[invocationDescriptor.invocationId];
-        });
+                subject.error(e);
+                delete this._callbacks[invocationDescriptor.invocationId];
+            });
         this._launchStreams(streams, promiseQueue);
         return subject;
     }
@@ -363,10 +363,10 @@ class HubConnection {
             };
             const promiseQueue = this._sendWithProtocol(invocationDescriptor)
                 .catch((e) => {
-                reject(e);
-                // invocationId will always have a value for a non-blocking invocation
-                delete this._callbacks[invocationDescriptor.invocationId];
-            });
+                    reject(e);
+                    // invocationId will always have a value for a non-blocking invocation
+                    delete this._callbacks[invocationDescriptor.invocationId];
+                });
             this._launchStreams(streams, promiseQueue);
         });
         return p;
@@ -453,8 +453,8 @@ class HubConnection {
                     case IHubProtocol_1.MessageType.Invocation:
                         this._invokeClientMethod(message)
                             .catch((e) => {
-                            this._logger.log(ILogger_1.LogLevel.Error, `Invoke client method threw error: ${(0, Utils_1.getErrorString)(e)}`);
-                        });
+                                this._logger.log(ILogger_1.LogLevel.Error, `Invoke client method threw error: ${(0, Utils_1.getErrorString)(e)}`);
+                            });
                         break;
                     case IHubProtocol_1.MessageType.StreamItem:
                     case IHubProtocol_1.MessageType.Completion: {
@@ -772,14 +772,14 @@ class HubConnection {
         this._callbacks = {};
         Object.keys(callbacks)
             .forEach((key) => {
-            const callback = callbacks[key];
-            try {
-                callback(null, error);
-            }
-            catch (e) {
-                this._logger.log(ILogger_1.LogLevel.Error, `Stream 'error' callback called with '${error}' threw error: ${(0, Utils_1.getErrorString)(e)}`);
-            }
-        });
+                const callback = callbacks[key];
+                try {
+                    callback(null, error);
+                }
+                catch (e) {
+                    this._logger.log(ILogger_1.LogLevel.Error, `Stream 'error' callback called with '${error}' threw error: ${(0, Utils_1.getErrorString)(e)}`);
+                }
+            });
     }
     _cleanupPingTimer() {
         if (this._pingServerHandle) {

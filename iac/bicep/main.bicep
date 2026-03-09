@@ -486,7 +486,7 @@ param apiManagementName string = 'datasynchro-apim-004'
 
 param selfHostedGatewayName string = 'api-gateway-on-kubernetes'
 
-module api_management 'modules/api-management.bicep' = {
+/* module api_management 'modules/api-management.bicep' = {
   name: 'api-management'
   params: {
     location: location
@@ -502,4 +502,75 @@ module api_management 'modules/api-management.bicep' = {
 
   }
  
+}
+ */
+
+ 
+@description('Specifies whether creating the Azure OpenAi resource or not.')
+param openAiEnabled bool = true
+
+@description('Specifies the name of the Azure OpenAI resource.')
+param openAiName string = 'datasynchro-openai'
+
+@description('Specifies the resource model definition representing SKU.')
+param openAiSku object = {
+  name: 'S0'
+}
+
+@description('Specifies the identity of the OpenAI resource.')
+param openAiIdentity object = {
+  type: 'SystemAssigned'
+}
+
+@description('Specifies an optional subdomain name used for token-based authentication.')
+param openAiCustomSubDomainName string = ''
+
+@description('Specifies whether or not public endpoint access is allowed for this account..')
+@allowed([
+  'Enabled'
+  'Disabled'
+])
+param openAiPublicNetworkAccess string = 'Enabled'
+
+@description('Specifies the OpenAI deployments to create.')
+param openAiDeployments array = [
+/*   {
+    name: 'text-embedding-ada-002'
+    version: '2'
+    raiPolicyName: ''
+    capacity: 1
+    scaleType: 'Manual'
+  } */
+  {
+    name: 'gpt-35-turbo'
+    version: '0301'
+    raiPolicyName: ''
+    capacity: null
+    scaleType: 'Standard'
+  }
+  {
+    name: 'text-davinci-003'
+    version: '1'
+    raiPolicyName: ''
+    capacity: null
+    scaleType: 'Standard'
+  }
+]
+
+@description('Specifies the name of the private link to the Azure OpenAI resource.')
+param openAiPrivateEndpointName string =  'openai-private-endpoint'
+
+ module openAi 'modules/openAi.bicep' = if (openAiEnabled) {
+  name: 'openAi'
+  params: {
+    name: openAiName
+    sku: openAiSku
+    identity: openAiIdentity
+    customSubDomainName: empty(openAiCustomSubDomainName) ? toLower(openAiName) : openAiCustomSubDomainName
+    publicNetworkAccess: openAiPublicNetworkAccess
+    deployments: openAiDeployments
+    workspaceId: monitoring.outputs.logAnalyticsWorkspaceId
+    location: location
+    tags: tags
+  }
 }

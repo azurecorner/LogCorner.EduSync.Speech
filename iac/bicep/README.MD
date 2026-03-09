@@ -15,6 +15,8 @@ New-AzResourceGroupDeployment `
 
 # https://learn.microsoft.com/en-us/samples/azure-samples/aks-application-gateway-for-containers-bicep/aks-application-gateway-for-containers-bicep/
 
+# https://github.com/Azure-Samples/aks-managed-prometheus-and-grafana-bicep/tree/main
+
 # application gateway for container
 
 az provider register --namespace Microsoft.ContainerService
