@@ -38,7 +38,7 @@ param sqlserverAdminPassword string
 param databaseName string = 'LogCorner.EduSync.Speech.Database'
 
 param privateDnsZoneNames  array = [
-  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net'
+  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net','privatelink.cognitiveservices.azure.com'
 ]
 
 param keyvault_name string 
@@ -191,7 +191,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
   }
 }]
 
-module aksCluster 'modules/aks.bicep' = {
+/* module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -212,7 +212,7 @@ module aksCluster 'modules/aks.bicep' = {
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
   }
-}   
+}    */
  
 module containerRegistry 'modules/containerRegistry.bicep' = {
   name: 'containerRegistry'
@@ -308,7 +308,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
-module deploymentScript 'modules/deployment-script.bicep' =  {
+/* module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -326,7 +326,7 @@ module deploymentScript 'modules/deployment-script.bicep' =  {
     storagePrivateEndpoint
     slqServerPrivateEndpoint
   ]
-}  
+}   */
   
 // *** Service Bus Namespace and Queue ***
 
@@ -401,9 +401,9 @@ module keyvault 'modules/keyvault.bicep' = {
     workloadManagedIdentityName:workloadManagedIdentityName
     privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
-  dependsOn: [
+  /* dependsOn: [
     aksCluster 
-  ]
+  ] */
 }
 
 /* module gateway 'modules/applicationGatewayForContainers.bicep' = {
@@ -421,7 +421,7 @@ dependsOn: [
    aksCluster
   ]
 }    
-  */
+  
 resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {
   parent: userAssignedIdentities_azure_alb_identity_resource
   name: userAssignedIdentities_azure_alb_identity_name
@@ -433,7 +433,7 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 }  
-  
+  */
 // OBSERVABILITY MODULES
 
 
@@ -453,7 +453,7 @@ module monitoring 'modules/monitoring.bicep' = {
   }
 }
 
-module prometheus 'modules/managedPrometheus.bicep' = if (prometheusAndGrafanaEnabled){
+/* module prometheus 'modules/managedPrometheus.bicep' = if (prometheusAndGrafanaEnabled){
   name: '${prefix}-managedPrometheus'
   params: {
     name: managedPrometheusName
@@ -480,13 +480,13 @@ module grafana 'modules/managedGrafana.bicep' =  if (prometheusAndGrafanaEnabled
   dependsOn: [
     prometheus
   ]
-}    
+}     */
 
 param apiManagementName string = 'datasynchro-apim-004'
 
 param selfHostedGatewayName string = 'api-gateway-on-kubernetes'
-
-/* module api_management 'modules/api-management.bicep' = {
+/* 
+ module api_management 'modules/api-management.bicep' = {
   name: 'api-management'
   params: {
     location: location
@@ -503,8 +503,7 @@ param selfHostedGatewayName string = 'api-gateway-on-kubernetes'
   }
  
 }
- */
-
+  */
  
 @description('Specifies whether creating the Azure OpenAi resource or not.')
 param openAiEnabled bool = true
@@ -542,19 +541,19 @@ param openAiDeployments array = [
     scaleType: 'Manual'
   } */
   {
-    name: 'gpt-35-turbo'
-    version: '0301'
+    name: 'gpt-4.1-mini'
+    version: '2025-04-14'
     raiPolicyName: ''
     capacity: null
     scaleType: 'Standard'
   }
-  {
-    name: 'text-davinci-003'
-    version: '1'
-    raiPolicyName: ''
-    capacity: null
-    scaleType: 'Standard'
-  }
+  // {
+  //   name: 'text-davinci-003'
+  //   version: '1'
+  //   raiPolicyName: ''
+  //   capacity: null
+  //  // scaleType: 'Standard'
+  // }
 ]
 
 @description('Specifies the name of the private link to the Azure OpenAI resource.')
@@ -563,14 +562,14 @@ param openAiPrivateEndpointName string =  'openai-private-endpoint'
  module openAi 'modules/openAi.bicep' = if (openAiEnabled) {
   name: 'openAi'
   params: {
-    name: openAiName
-    sku: openAiSku
-    identity: openAiIdentity
-    customSubDomainName: empty(openAiCustomSubDomainName) ? toLower(openAiName) : openAiCustomSubDomainName
-    publicNetworkAccess: openAiPublicNetworkAccess
-    deployments: openAiDeployments
-    workspaceId: monitoring.outputs.logAnalyticsWorkspaceId
+    foundry_name: openAiName
     location: location
-    tags: tags
+    foundry_sku: 'S0'
+    project_name: '${openAiName}-project'
+    PrivateDnsZone:'privatelink.cognitiveservices.azure.com'
+    privatelink_subnet_id: network.outputs.privatelink_subnet_id
+    workloadManagedIdentityName: workloadManagedIdentity.name
+    workspaceId: monitoring.outputs.logAnalyticsWorkspaceId
   }
 }
+ 

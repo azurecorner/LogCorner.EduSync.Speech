@@ -102,7 +102,8 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-10-02-previ
     }
 
     addonProfiles: {
-      /*   omsAgent: {
+      /* 
+        omsAgent: {
         enabled: true
         config: {
           logAnalyticsWorkspaceResourceID: LoganalyticID
