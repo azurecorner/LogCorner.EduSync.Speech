@@ -1,4 +1,4 @@
-using ChatBot.Controllers;
+using LogCorner.EduSync.Speech.ChatBotService.Controllers;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +37,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors();

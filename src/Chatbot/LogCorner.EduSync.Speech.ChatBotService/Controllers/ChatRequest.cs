@@ -1,4 +1,4 @@
-﻿namespace ChatBot.Controllers
+﻿namespace LogCorner.EduSync.Speech.ChatBotService.Controllers
 {
     public class ChatRequest
     {

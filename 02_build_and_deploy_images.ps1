@@ -34,3 +34,9 @@ docker push "$acrName.azurecr.io/web-api-query:latest"
 docker build -t "$acrName.azurecr.io/web-app:latest" -f .\src\Front\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ --no-cache
 docker push "$acrName.azurecr.io/web-app:latest"
 
+
+
+# Build and push the Chat Bot image C:\Users\logcorner\source\repos\LogCorner.EduSync.Speech\src\Chatbot\LogCorner.EduSync.Speech.ChatBotService\Dockerfile
+docker build -t "$acrName.azurecr.io/chat-bot:latest" -f .\src\Chatbot\LogCorner.EduSync.Speech.ChatBotService\Dockerfile .\src\ --no-cache
+docker push "$acrName.azurecr.io/chat-bot:latest"
+

@@ -190,8 +190,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     ]
   }
 }]
-
-/* module aksCluster 'modules/aks.bicep' = {
+ module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -212,7 +211,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
   }
-}    */
+}    
  
 module containerRegistry 'modules/containerRegistry.bicep' = {
   name: 'containerRegistry'
@@ -401,12 +400,12 @@ module keyvault 'modules/keyvault.bicep' = {
     workloadManagedIdentityName:workloadManagedIdentityName
     privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
-  /* dependsOn: [
+  dependsOn: [
     aksCluster 
-  ] */
+  ]
 }
 
-/* module gateway 'modules/applicationGatewayForContainers.bicep' = {
+module gateway 'modules/applicationGatewayForContainers.bicep' = {
   name:'gateway'
   params: {
     trafficControllers_alb_name: applicationGatewayForContainersName
@@ -433,7 +432,7 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
     ]
   }
 }  
-  */
+  
 // OBSERVABILITY MODULES
 
 
@@ -453,7 +452,7 @@ module monitoring 'modules/monitoring.bicep' = {
   }
 }
 
-/* module prometheus 'modules/managedPrometheus.bicep' = if (prometheusAndGrafanaEnabled){
+module prometheus 'modules/managedPrometheus.bicep' = if (prometheusAndGrafanaEnabled){
   name: '${prefix}-managedPrometheus'
   params: {
     name: managedPrometheusName
@@ -480,13 +479,13 @@ module grafana 'modules/managedGrafana.bicep' =  if (prometheusAndGrafanaEnabled
   dependsOn: [
     prometheus
   ]
-}     */
+}     
 
-param apiManagementName string = 'datasynchro-apim-004'
+param apiManagementName string = 'datasynchro-apim-005'
 
-param selfHostedGatewayName string = 'api-gateway-on-kubernetes'
-/* 
- module api_management 'modules/api-management.bicep' = {
+param selfHostedGatewayName string = 'api-gateway-kubernetes'
+
+/*  module api_management 'modules/api-management.bicep' = {
   name: 'api-management'
   params: {
     location: location
@@ -502,8 +501,8 @@ param selfHostedGatewayName string = 'api-gateway-on-kubernetes'
 
   }
  
-}
-  */
+} */
+  
  
 @description('Specifies whether creating the Azure OpenAi resource or not.')
 param openAiEnabled bool = true

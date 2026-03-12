@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ChatBot.Controllers
+namespace LogCorner.EduSync.Speech.ChatBotService.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -3,7 +3,7 @@ using Azure.Identity;
 using OpenAI.Chat;
 using System.Text;
 
-namespace ChatBot.Controllers
+namespace LogCorner.EduSync.Speech.ChatBotService.Controllers
 {
     public class ChatbotService : IAsyncDisposable
     {
@@ -11,32 +11,20 @@ namespace ChatBot.Controllers
 
         public ChatbotService()
         {
-  
-            var ep =  Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")  ?? "https://datasynchro-openai-001.openai.azure.com/";
-            var deploy =  Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT")  ?? "gpt-4o";
+            var endpoint = new Uri("https://datasynchro-openai.cognitiveservices.azure.com/");
+            var deploymentName = "gpt-4.1-mini";
 
-            var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID"); // ?? "15d279b6-5ea0-4a27-80b4-af67115998de";
-            var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID");//?? "f12a747a-cddf-4426-96ff-ebe055e215a3";
-
-            Console.WriteLine("AZURE_CLIENT_ID = ", managedIdentityClientId);
-            Console.WriteLine("AZURE_TENANT_ID = ", tenantId);
-
-            // For example, will discover Visual Studio or Azure CLI credentials
-            // in local environments and managed identity credentials in production deployments
             var credential = new DefaultAzureCredential(
-                new DefaultAzureCredentialOptions
-                {
-                  /*
-                    ManagedIdentityClientId = managedIdentityClientId,
-                    TenantId = tenantId
-                  */
-     
-                }
-            );
-
-             var azureClient = new AzureOpenAIClient(new Uri(ep), credential);
-            _chatClient = azureClient.GetChatClient(deploy);
+                       new DefaultAzureCredentialOptions
+                       {
+                           ManagedIdentityClientId = "b97a8e8b-2374-4b68-b0cf-358f3af44f95", // workload-managed-identity
+                           TenantId = "f12a747a-cddf-4426-96ff-ebe055e215a3"
+                       }
+                   );
+            AzureOpenAIClient azureClient = new(endpoint, credential);
+            _chatClient = azureClient.GetChatClient(deploymentName);
         }
+
         public ValueTask DisposeAsync()
         {
             throw new NotImplementedException();
