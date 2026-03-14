@@ -1,34 +1,127 @@
 ﻿@model LogCorner.EduSync.Speech.Presentation.Controllers.ChatMessageRequest
 
 @{
-    ViewData["Title"] = "SendMessage";
+    ViewData["Title"] = "AI Chatbot";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>AI Chatbot</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="SendMessage">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+    <div class="col-md-6">
+        <form id="chatForm">
+            <div id="validationErrors" class="text-danger"></div>
+           
+            <div class="form-group mb-3">
                 <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+                <input asp-for="UserId" class="form-control" placeholder="Optional" />
+            </div> 
+            
+            <div class="form-group mb-3">
                 <label asp-for="Message" class="control-label"></label>
-                <input asp-for="Message" class="form-control" />
-                <span asp-validation-for="Message" class="text-danger"></span>
+                <textarea asp-for="Message" class="form-control" rows="4" placeholder="Type your message..."></textarea>
             </div>
+            
             <div class="form-group">
-                <input type="submit" value="SendMessage" class="btn btn-primary" />
+                <button type="submit" id="sendBtn" class="btn btn-primary">
+                    <span id="btnText">Send Message</span>
+                    <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<div>
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div id="responseContainer"></div>
+    </div>
+</div>
+
+<div class="mt-3">
     <a asp-action="Index">Back to List</a>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('chatForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = document.querySelector('input[name="UserId"]').value;
+            const message = document.querySelector('textarea[name="Message"]').value;
+            const sendBtn = document.getElementById('sendBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const responseContainer = document.getElementById('responseContainer');
+            const validationErrors = document.getElementById('validationErrors');
+            
+            // Clear previous messages
+            validationErrors.innerHTML = '';
+            
+            // Validate
+            if (!message.trim()) {
+                validationErrors.innerHTML = 'Message is required';
+                return;
+            }
+            
+            // Show loading state
+            sendBtn.disabled = true;
+            btnText.classList.add('d-none');
+            btnSpinner.classList.remove('d-none');
+            responseContainer.innerHTML = '<div class="alert alert-info">Sending message...</div>';
+            
+            try {
+                const response = await fetch('/Chat/SendMessage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: userId || null,
+                        message: message
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    responseContainer.innerHTML = `
+                        <div class="alert alert-success">
+                            <h5><i class="bi bi-robot"></i> AI Response:</h5>
+                            <p>${escapeHtml(data.reply)}</p>
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i> Processing time: ${data.processingTime}ms
+                            </small>
+                        </div>
+                    `;
+                } else {
+                    responseContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> ${escapeHtml(data.error || 'Unknown error')}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                responseContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> Failed to connect to chatbot service. 
+                        Please ensure the service is running on https://localhost:7070
+                    </div>
+                `;
+                console.error('Error:', error);
+            } finally {
+                // Reset button state
+                sendBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+            }
+        });
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+}
 
