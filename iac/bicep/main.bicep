@@ -508,7 +508,7 @@ param selfHostedGatewayName string = 'api-gateway-kubernetes'
 param openAiEnabled bool = true
 
 @description('Specifies the name of the Azure OpenAI resource.')
-param openAiName string = 'datasynchro-openai'
+param openAiName string = 'datasynchro-openai-001'
 
 @description('Specifies the resource model definition representing SKU.')
 param openAiSku object = {
