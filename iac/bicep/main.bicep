@@ -80,6 +80,15 @@ param userAssignedIdentities_azure_alb_identity_name string = 'azure_alb_identit
 @description('Specifies the name of the Application Gateway for Containers.')
 param applicationGatewayForContainersName string = 'appgwforcon-${prefix}'
 
+  
+// Azure OpenAI Service
+@description('Specifies whether creating the Azure OpenAi resource or not.')
+param openAiEnabled bool = true
+
+@description('Specifies the name of the Azure OpenAI resource.')
+param openAiName string = 'datasynchro-openai-001'
+
+
 param nodeResourceGroupName string= 'MC_${resourceGroup().name}_${ClusterName}_${location}'
 
 resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2020-11-01' existing = {
@@ -199,12 +208,10 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     userAssignedIdentities: managedIdentity.id
     acrName: containerRegistryName
     vmSize: 'Standard_DS2_v2'
-    privateDNSZoneName: 'privatelink.${resourceGroup().location}.azmk8s.io'
     keyVaultName: keyvault_name
     SubnetId: network.outputs.aks_subnet_id
     tags: tags
     adminGroupObjectIDs: [adminUserObjectId]
-    LoganalyticID: monitoring.outputs.logAnalyticsWorkspaceId
     serviceAccountNamespace: workloadIdentityserviceAccounNamespace
     serviceAccountName: workloadIdentityServiceAccountName
     workloadManagedIdentityName: workloadManagedIdentityName
@@ -253,6 +260,7 @@ module sqlserver 'modules/sql-server.bicep' = {
     adminPassword: sqlserverAdminPassword
     databaseName: databaseName
     serverLocation: location
+    clientIpAddress: '86.245.251.176'
   }
 }
 
@@ -307,7 +315,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
-/* module deploymentScript 'modules/deployment-script.bicep' =  {
+module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -325,7 +333,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
     storagePrivateEndpoint
     slqServerPrivateEndpoint
   ]
-}   */
+}  
   
 // *** Service Bus Namespace and Queue ***
 
@@ -481,82 +489,8 @@ module grafana 'modules/managedGrafana.bicep' =  if (prometheusAndGrafanaEnabled
   ]
 }     
 
-param apiManagementName string = 'datasynchro-apim-005'
 
-param selfHostedGatewayName string = 'api-gateway-kubernetes'
 
-/*  module api_management 'modules/api-management.bicep' = {
-  name: 'api-management'
-  params: {
-    location: location
-    apiManagementName: apiManagementName
-    selfHostedGatewayName: selfHostedGatewayName
-    keyVaultName : keyvault_name
-    userAssignedIdentityName: workloadManagedIdentityName
-    apimSubnetId: network.outputs.apimSubnet_id
-    apiManagementCustomDnsName: 'cloud-devops-craft.com'
-    apiManagementPortalCustomHostname: 'portal.cloud-devops-craft.com'
-    apiManagementManagementCustomHostname: 'management.cloud-devops-craft.com'
-    apiManagementProxyCustomHostname: 'api.cloud-devops-craft.com'
-
-  }
- 
-} */
-  
- 
-@description('Specifies whether creating the Azure OpenAi resource or not.')
-param openAiEnabled bool = true
-
-@description('Specifies the name of the Azure OpenAI resource.')
-param openAiName string = 'datasynchro-openai-001'
-
-@description('Specifies the resource model definition representing SKU.')
-param openAiSku object = {
-  name: 'S0'
-}
-
-@description('Specifies the identity of the OpenAI resource.')
-param openAiIdentity object = {
-  type: 'SystemAssigned'
-}
-
-@description('Specifies an optional subdomain name used for token-based authentication.')
-param openAiCustomSubDomainName string = ''
-
-@description('Specifies whether or not public endpoint access is allowed for this account..')
-@allowed([
-  'Enabled'
-  'Disabled'
-])
-param openAiPublicNetworkAccess string = 'Enabled'
-
-@description('Specifies the OpenAI deployments to create.')
-param openAiDeployments array = [
-/*   {
-    name: 'text-embedding-ada-002'
-    version: '2'
-    raiPolicyName: ''
-    capacity: 1
-    scaleType: 'Manual'
-  } */
-  {
-    name: 'gpt-4.1-mini'
-    version: '2025-04-14'
-    raiPolicyName: ''
-    capacity: null
-    scaleType: 'Standard'
-  }
-  // {
-  //   name: 'text-davinci-003'
-  //   version: '1'
-  //   raiPolicyName: ''
-  //   capacity: null
-  //  // scaleType: 'Standard'
-  // }
-]
-
-@description('Specifies the name of the private link to the Azure OpenAI resource.')
-param openAiPrivateEndpointName string =  'openai-private-endpoint'
 
  module openAi 'modules/openAi.bicep' = if (openAiEnabled) {
   name: 'openAi'

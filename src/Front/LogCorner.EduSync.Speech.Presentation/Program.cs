@@ -9,7 +9,7 @@ builder.Services.AddHttpClient(); // register IHttpClientFactory
 // Add ChatBot HttpClient with configuration
 builder.Services.AddHttpClient("ChatBotClient", client =>
 {
-    var chatBotUrl = builder.Configuration["ChatBotUrl"] ?? "https://localhost:7070";
+    var chatBotUrl = builder.Configuration["ChatBotUrl"] ?? throw new InvalidOperationException("ChatBotUrl configuration is missing.");
     client.BaseAddress = new Uri(chatBotUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
 });

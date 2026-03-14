@@ -1,9 +1,11 @@
 ﻿@model LogCorner.EduSync.Speech.Presentation.Controllers.ChatMessageRequest
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
     ViewData["Title"] = "AI Chatbot";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var currentUserId = User.Identity?.Name ?? "anonymous";
+    var pathBase = Configuration["pathBase"] ?? string.Empty;
 }
 
 <h1>AI Chatbot</h1>
@@ -46,6 +48,8 @@
 
 @section Scripts {
     <script>
+        const pathBase = '@pathBase';
+        
         document.getElementById('chatForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -73,7 +77,7 @@
             responseContainer.innerHTML = '<div class="alert alert-info">Sending message...</div>';
             
             try {
-                const response = await fetch('/Chat/SendMessage', {
+                const response = await fetch(`${pathBase}/Chat/SendMessage`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -107,7 +111,7 @@
                 responseContainer.innerHTML = `
                     <div class="alert alert-danger">
                         <strong>Error:</strong> Failed to connect to chatbot service. 
-                        Please ensure the service is running on https://localhost:7070
+                        Please ensure the service is running on ${pathBase}
                     </div>
                 `;
                 console.error('Error:', error);

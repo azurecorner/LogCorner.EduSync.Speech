@@ -30,6 +30,7 @@ env:
   webApiQueryUrl: http://web-api-query-service
   hubUrl: https://app.cloud-devops-craft.com/signalr/logcornerhub
   hubUrlInternal: http://signalr-service/signalr/logcornerhub
+  ChatBotUrl: http://chatbot-service 
 
 service:
   name: webapp-service

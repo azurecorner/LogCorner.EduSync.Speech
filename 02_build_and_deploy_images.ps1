@@ -26,7 +26,7 @@ docker push "$acrName.azurecr.io/broker-app:latest"
 
 
 # Build and push the Web API query image
-docker build -t "$acrName.azurecr.io/web-api-query:latest" -f .\src\Query\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ 
+docker build -t "$acrName.azurecr.io/web-api-query:latest" -f .\src\Query\LogCorner.EduSync.Speech.Presentation\Dockerfile .\src\ --no-cache
 docker push "$acrName.azurecr.io/web-api-query:latest"
 
 
