@@ -9,4 +9,5 @@ namespace LogCorner.EduSync.Speech.Presentation.Models
         public SpeechType Type { get; set; }
         public int Version { get; set; }
     }
+
 }

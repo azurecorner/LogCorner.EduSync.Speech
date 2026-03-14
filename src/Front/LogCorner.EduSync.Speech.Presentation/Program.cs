@@ -6,6 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient(); // register IHttpClientFactory
 
+// Add ChatBot HttpClient with configuration
+builder.Services.AddHttpClient("ChatBotClient", client =>
+{
+    var chatBotUrl = builder.Configuration["ChatBotUrl"] ?? "https://localhost:7070";
+    client.BaseAddress = new Uri(chatBotUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 var publicHubEndpoint = builder.Configuration["HubUrl"];
 var internalHubEndpoint = builder.Configuration["HubUrlInternal"];
 var notificationHubEndpoint = string.IsNullOrWhiteSpace(internalHubEndpoint)

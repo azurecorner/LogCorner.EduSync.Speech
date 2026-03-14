@@ -11,13 +11,13 @@ namespace LogCorner.EduSync.Speech.ChatBotService.Controllers
 
         public ChatbotService()
         {
-            var endpoint = new Uri("https://datasynchro-openai.cognitiveservices.azure.com/");
+            var endpoint = new Uri("https://datasynchro-openai-001.cognitiveservices.azure.com/");
             var deploymentName = "gpt-4.1-mini";
 
             var credential = new DefaultAzureCredential(
                        new DefaultAzureCredentialOptions
                        {
-                           ManagedIdentityClientId = "b97a8e8b-2374-4b68-b0cf-358f3af44f95", // workload-managed-identity
+                           ManagedIdentityClientId = "c13bc131-8273-4623-88ad-a76c2eeb181d", // workload-managed-identity
                            TenantId = "f12a747a-cddf-4426-96ff-ebe055e215a3"
                        }
                    );
