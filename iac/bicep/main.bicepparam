@@ -8,6 +8,23 @@ param tags  = {
 }
 param hubVirtualNetworkName = 'VNET-HUB'
 
+// Network - VNet address space
+param virtualNetworkAddressSpace = ['10.200.0.0/16']
+
+// Network - Subnets
+param aks_subnet_name = 'aks-subnet'
+param aks_subnet_addressPrefix = '10.200.0.0/22'
+param appgw_subnet_name = 'appgw-subnet'
+param appgw_subnet_addressPrefix = '10.200.4.0/24'
+param privatelink_subnet_name = 'privatelink-subnet'
+param privatelink_subnet_addressPrefix = '10.200.5.0/24'
+param applicationGatewayForContainersSubnetName = 'appgwforcontainers-subnet'
+param applicationGatewayForContainersSubnetAddressPrefix = '10.200.6.0/24'
+param containerInstanceSubnetName = 'containerinstance-subnet'
+param containerInstanceSubnetAddressPrefix = '10.200.7.0/24'
+param appim_subnet_name = 'apim-subnet'
+param appim_subnet_addressPrefix = '10.200.8.0/24'
+
 param userAssignedIdentityName = 'managed-identity'
 param logAnalyticsWorkspaceName  = 'law-datasynchro'
 
@@ -51,3 +68,28 @@ param managedPrometheusName =  'datasynchro-prometheus'
 param prometheusAndGrafanaEnabled =  true
 
 param  skuName  = 'Standard'
+
+// SQL Server
+param sqlserverName = 'sqlserver-datasynchro'
+param sqlserverAdminLogin = 'logcorner'
+param databaseName = 'LogCorner.EduSync.Speech.Database'
+
+// AKS ALB Controller
+param controllerServiceAccountName = 'alb-controller-sa'
+param controllerNamespace = 'azure-alb-system'
+
+// Service Bus
+param serviceBusNamespaceName = 'sb-namespace-datasynchro'
+param serviceBusQueueName = 'sb-queue-datasynchro'
+
+// Cosmos DB
+param cosmosdbAccountName = 'cosmos-datasynchro-002'
+param cosmosdbDatabaseName = 'LogCorner.EduSync.Speech.Database'
+
+// Application Gateway for Containers
+param userAssignedIdentities_azure_alb_identity_name = 'azure_alb_identity'
+param applicationGatewayForContainersName = 'appgwforcon-datasynchro'
+
+// Azure OpenAI
+param openAiEnabled = true
+param openAiName = 'datasynchro-openai-001'

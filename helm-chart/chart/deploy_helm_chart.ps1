@@ -1,20 +1,18 @@
-$RESOURCE_GROUP = "RG-EVENT-DRIVEN-ARCHITECTURE"
-$WORKLOAD_NAMESPACE = "azure-workloads"
-$RELEASE_NAME = "logcorner-command"
-
-$ALB_IDENTITY_NAME = "azure_alb_identity"
-
-$GATEWAY_CONTROLLER_NAMESPACE = "azure-alb-system"
-
-$APPLICATION_FOR_CONTAINER_HOST_NAME = "app.cloud-devops-craft.com"
-
-$UAMI="workload-managed-identity"
-$CLUSTER_NAME="datasynchro-aks"
-
-$CERTIFICATE_NAME="logcorner-datasync-cert"
-$APP_GATEWAY_FOR_CONTAINER_NAME="appgwforcon-datasynchro"
-
-$WAF_POLICY_NAME="appgwc-waf-policy"
+[CmdletBinding()]
+param(
+  [string]$RESOURCE_GROUP ,
+  [string]$WORKLOAD_NAMESPACE ,
+  [string]$RELEASE_NAME ,
+  [string]$ALB_IDENTITY_NAME ,
+  [string]$GATEWAY_CONTROLLER_NAMESPACE ,
+  [string]$APPLICATION_FOR_CONTAINER_HOST_NAME ,
+  [string]$UAMI ,
+  [string]$CLUSTER_NAME ,
+  [string]$CERTIFICATE_NAME ,
+  [string]$APP_GATEWAY_FOR_CONTAINER_NAME ,
+  [string]$WAF_POLICY_NAME ,
+  [string]$APP_INSIGHTS_NAME 
+)
 
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 
@@ -48,7 +46,6 @@ $webApplicationFirewallResourceId = $webApplicationFirewall.ResourceId
 
 write-host "webApplicationFirewallResourceId: $webApplicationFirewallResourceId"
 
-$APP_INSIGHTS_NAME = "datasyncappi"
 ## Retrieve application insights connection string for monitoring configuration in Helm chart$APP_INSIGHTS_NAME = "datasyncappi"
 
 $APP_INSIGHTS_CONNECTION_STRING = az monitor app-insights component show `

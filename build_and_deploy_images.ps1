@@ -1,8 +1,7 @@
 param( 
     [string]$acrName = "datasynchroacr"
 )
-# Set the ACR name and log in
-$acrName = "datasynchroacr"
+
 $accessToken = az acr login --name $acrName --expose-token --output tsv --query accessToken
 
 # Lancer docker login avec token

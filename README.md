@@ -1,16 +1,51 @@
 # LogCorner.EduSync
 Building microservices through Event Driven Architecture
 
-# How to Set Up OpenTelemetry on Azure Kubernetes Service (AKS) =>  https://oneuptime.com/blog/post/2026-02-06-opentelemetry-azure-kubernetes-service-aks/view
+# deploy bicep
 
 $resourceGroupName="RG-EVENT-DRIVEN-ARCHITECTURE"
 
 New-AzResourceGroupDeployment `
   -Name "datasynchro-event-driven-architecture" `
   -ResourceGroupName $resourceGroupName `
-  -TemplateFile main.bicep `
-  -TemplateParameterFile main.bicepparam `
+  -TemplateFile iac/bicep/main.bicep `
+  -TemplateParameterFile iac/bicep/main.bicepparam `
   -DeploymentDebugLogLevel All
+
+# Build and deploy apps
+
+.\build_and_deploy_images.ps1 -acrName "datasynchroacr"
+
+# deploy self signed certificate to keyvault
+$pfxPassword = Read-Host "Enter PFX password" -AsSecureString
+.\create_and_upload_certificate.ps1 `
+  -vaultName "kv-datasynchro-003" `
+  -certificateName "logcorner-datasync-cert" `
+  -domain "cloud-devops-craft.com" `
+  -pfxPassword $pfxPassword
+
+
+# deploy helm chart
+Set-Location "c:\Users\logcorner\source\repos\LogCorner.EduSync.Speech\helm-chart\chart"; 
+
+.\deploy_helm_chart.ps1 `
+  -RESOURCE_GROUP "RG-EVENT-DRIVEN-ARCHITECTURE" `
+  -WORKLOAD_NAMESPACE "azure-workloads" `
+  -RELEASE_NAME "logcorner-command" `
+  -ALB_IDENTITY_NAME "azure_alb_identity" `
+  -GATEWAY_CONTROLLER_NAMESPACE "azure-alb-system" `
+  -APPLICATION_FOR_CONTAINER_HOST_NAME "app.cloud-devops-craft.com" `
+  -UAMI "workload-managed-identity" `
+  -CLUSTER_NAME "datasynchro-aks" `
+  -CERTIFICATE_NAME "logcorner-datasync-cert" `
+  -APP_GATEWAY_FOR_CONTAINER_NAME "appgwforcon-datasynchro" `
+  -WAF_POLICY_NAME "appgwc-waf-policy" `
+  -APP_INSIGHTS_NAME "datasyncappi"
+
+
+
+
+
 
 
 # install helm 
