@@ -49,7 +49,7 @@ param workloadIdentityServiceAccountName  = 'workload-identity-sa'
 
 param cosmosJumpboxPrincipalId =  '367790c8-560f-4506-8f81-47bba7117b26' // Object ID of the user or service principal to be granted access to Cosmos DB from a jumpbox. Replace with actual value.
 
-param keyvault_name =  'kv-datasynchro-003'
+param keyvault_name =  'kv-datasynchro-004'
 
 param actionGroupEmailvaAddress =  'leyegora@gmail.com'
 
@@ -92,4 +92,4 @@ param applicationGatewayForContainersName = 'appgwforcon-datasynchro'
 
 // Azure OpenAI
 param openAiEnabled = true
-param openAiName = 'datasynchro-openai-001'
+param openAiName = 'datasynchro-openai-004'

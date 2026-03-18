@@ -19,7 +19,7 @@ New-AzResourceGroupDeployment `
 # deploy self signed certificate to keyvault
 $pfxPassword = Read-Host "Enter PFX password" -AsSecureString
 .\create_and_upload_certificate.ps1 `
-  -vaultName "kv-datasynchro-003" `
+  -vaultName "kv-datasynchro-004" `
   -certificateName "logcorner-datasync-cert" `
   -domain "cloud-devops-craft.com" `
   -pfxPassword $pfxPassword

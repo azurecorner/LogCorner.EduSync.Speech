@@ -11,7 +11,7 @@ namespace LogCorner.EduSync.Speech.ChatBotService.Controllers
 
         public ChatbotService()
         {
-            var endpoint = new Uri("https://datasynchro-openai-001.cognitiveservices.azure.com/");
+            var endpoint = new Uri("https://datasynchro-openai-004.cognitiveservices.azure.com/");
             var deploymentName = "gpt-4.1-mini";
 
             var credential = new DefaultAzureCredential(
