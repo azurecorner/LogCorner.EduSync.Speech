@@ -9,19 +9,30 @@ namespace LogCorner.EduSync.Speech.ChatBotService.Controllers
     {
         private readonly ChatClient _chatClient;
 
-        public ChatbotService()
+        public ChatbotService(IConfiguration Configuration)
         {
-            var endpoint = new Uri("https://datasynchro-openai-004.cognitiveservices.azure.com/");
-            var deploymentName = "gpt-4.1-mini";
+            var openAiEndpointString = Configuration["OpenAiEndpoint"] 
+                ?? throw new InvalidOperationException("OpenAiEndpoint configuration is missing.");
+
+            var openAiEndpoint = new Uri(openAiEndpointString);
+            
+            var deploymentName = Configuration["DeploymentName"] 
+                ?? throw new InvalidOperationException("DeploymentName configuration is missing.");
+
+            var userAssignedClientId = Configuration["UserAssignedClientId"];
+            var tenantId = Configuration["TenantId"];
+
+            var managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? userAssignedClientId;
+            var azureTenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID") ?? tenantId;
 
             var credential = new DefaultAzureCredential(
                        new DefaultAzureCredentialOptions
                        {
-                           ManagedIdentityClientId = "c13bc131-8273-4623-88ad-a76c2eeb181d", // workload-managed-identity
-                           TenantId = "f12a747a-cddf-4426-96ff-ebe055e215a3"
+                           ManagedIdentityClientId = managedIdentityClientId ,// workload-managed-identity
+                           TenantId = azureTenantId
                        }
                    );
-            AzureOpenAIClient azureClient = new(endpoint, credential);
+            AzureOpenAIClient azureClient = new(openAiEndpoint, credential);
             _chatClient = azureClient.GetChatClient(deploymentName);
         }
 

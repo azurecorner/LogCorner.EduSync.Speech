@@ -36,3 +36,8 @@ spec:
               value: http://+:5000
             - name: ASPNETCORE_ENVIRONMENT
               value: Kubernetes
+            - name: OpenAiEndpoint
+              value: https://datasynchro-openai-005.cognitiveservices.azure.com/
+            - name: DeploymentName
+              value: gpt-4.1-mini
+          

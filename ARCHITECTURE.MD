@@ -4,6 +4,8 @@
 
 ## 1) System Overview
 
+This section describes the platform at a high level, including its core architectural style, principal runtime components, and how responsibilities are split across write, read, messaging, real-time, and AI capabilities.
+
 LogCorner.EduSync.Speech is an event-driven microservices platform deployed on AKS, following CQRS patterns:
 
 - **Write side**: Command API + Azure SQL
@@ -13,6 +15,16 @@ LogCorner.EduSync.Speech is an event-driven microservices platform deployed on A
 - **Real-time notifications**: SignalR Hub
 - **User-facing app**: Front-end MVC app consuming APIs + hub
 - **AI feature**: Chatbot service using Azure OpenAI
+
+### How data flows across these components
+
+1. The front-end sends write requests (create/update/delete) to the **Command API**.
+2. The Command API persists transactional state in **Azure SQL**.
+3. After successful writes, events are published to an **Azure Service Bus queue**.
+4. The **Broker/Worker** consumes those events and updates read projections in **Cosmos DB**.
+5. The front-end retrieves query data through the **Query API**, which reads from Cosmos DB.
+6. The **SignalR Hub** pushes real-time update notifications to connected clients.
+7. The **Chatbot service** handles conversational requests and calls **Azure OpenAI** for AI inference.
 
 ---
 
@@ -183,7 +195,6 @@ New-AzResourceGroupDeployment `
 - Query service uses `DefaultAzureCredential` with managed identity options
 - Key Vault integration exists in command/query startup paths for non-development environments
 - Ingress path is protected by WAF-enabled gateway
-- Diagram intent indicates private endpoint-first access model for Azure services
 
 ### Security Principles
 

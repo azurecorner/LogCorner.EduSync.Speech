@@ -261,6 +261,9 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
   }
+  dependsOn: [ 
+    keyvault
+  ]
 }    
  
 module containerRegistry 'modules/containerRegistry.bicep' = {
@@ -451,9 +454,9 @@ module keyvault 'modules/keyvault.bicep' = {
     workloadManagedIdentityName:workloadManagedIdentityName
     privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
-  dependsOn: [
+ /*  dependsOn: [
     aksCluster 
-  ]
+  ] */
 }
 
 module gateway 'modules/applicationGatewayForContainers.bicep' = {

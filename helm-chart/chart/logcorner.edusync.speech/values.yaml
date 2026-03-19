@@ -6,7 +6,7 @@ applicationGatewayForContainerResourceId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 applicationGatewayForContainerFrontEndName: datasynchro-frontend
 webApplicationFirewallResourceId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 
-keyvaultName: kv-datasynchro-004
+keyvaultName: kv-datasynchro-005
 secretName: logcorner-datasync-cert
 tenantId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 

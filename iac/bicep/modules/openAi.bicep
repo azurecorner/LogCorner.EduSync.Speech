@@ -118,6 +118,8 @@ module cosmosdbPrivateEndpoint 'private_endpoint.bicep' = {
   dependsOn: [
 #disable-next-line no-unnecessary-dependson
     accounts_open_ai_foundry
+    foundry_project
+    foundry_model
   ]
 }
 

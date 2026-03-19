@@ -106,7 +106,7 @@ Generate a self-signed certificate and upload it to Key Vault for use by the App
 $pfxPassword = Read-Host "Enter PFX password" -AsSecureString
 
 .\create_and_upload_certificate.ps1 `
-  -vaultName        "kv-datasynchro-004" `
+  -vaultName        "kv-datasynchro-005" `
   -certificateName  "logcorner-datasync-cert" `
   -domain           "cloud-devops-craft.com" `
   -pfxPassword      $pfxPassword
