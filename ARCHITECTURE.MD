@@ -6,6 +6,9 @@
 
 This section describes the platform at a high level, including its core architectural style, principal runtime components, and how responsibilities are split across write, read, messaging, real-time, and AI capabilities.
 
+![Azure High-Level Architecture](./diagrams/architecture-Azure%20High-Level%20Architecture.drawio.png)
+
+
 LogCorner.EduSync.Speech is an event-driven microservices platform deployed on AKS, following CQRS patterns:
 
 - **Write side**: Command API + Azure SQL
@@ -26,6 +29,8 @@ LogCorner.EduSync.Speech is an event-driven microservices platform deployed on A
 6. The **SignalR Hub** pushes real-time update notifications to connected clients.
 7. The **Chatbot service** handles conversational requests and calls **Azure OpenAI** for AI inference.
 
+![Data Flow](./diagrams/dataflow.drawio.png)
+
 ---
 
 ## 2) Azure Infrastructure Topology
@@ -38,7 +43,7 @@ Based on `architecture.drawio` and Bicep deployment artifacts.
 - **Spoke VNet** hosting AKS and supporting PaaS resources
 - **Hub ↔ Spoke peering**
 - **Private DNS Zones** linked to hub and spoke VNets to resolve private endpoint FQDNs
-- Architecture note in diagram indicates all services are secured via **Private Endpoints** (no public network access)
+- All services are secured via **Private Endpoints** (no public network access)
 
 ### Core Platform Services
 
@@ -183,8 +188,8 @@ New-AzResourceGroupDeployment `
 
 ### Application Packaging and Release
 
-- Container build/push script at repository root
-- Helm chart under `helm-chart/chart/logcorner.edusync.speech`
+- Container build/push script at repository root  (.\build_and_deploy_images.ps1)
+- Helm chart under `helm-chart/chart/logcorner.edusync.speech`  (.\helm-chart\chart\deploy_helm_chart.ps1)
 - Workload identity values and gateway integration configured in chart values
 
 ---
@@ -193,7 +198,7 @@ New-AzResourceGroupDeployment `
 
 - Managed identity is used by workloads for Azure resource access
 - Query service uses `DefaultAzureCredential` with managed identity options
-- Key Vault integration exists in command/query startup paths for non-development environments
+- Azure Key Vault is integrated across the entire solution, with command and query services loading secrets securely.
 - Ingress path is protected by WAF-enabled gateway
 
 ### Security Principles

@@ -29,22 +29,5 @@ jobs:
     inputs:
       command: test
       projects: '**/*Unit[Tt]ests/*.csproj'
-  - task: DotNetCoreCLI@2
-    displayName: dotnet pack
-    inputs:
-      command: 'pack'
-      packagesToPack: 'src/LogCorner.EduSync.Speech.SharedKernel/LogCorner.EduSync.Speech.SharedKernel.csproj'
-      packDirectory: '$(Build.ArtifactStagingDirectory)/Nugets'
-      nobuild: true
-      versioningScheme: 'off'
-  
-  - task: NuGetCommand@2
-    displayName: NuGet push
-    inputs:
-      command: 'push'
-      packagesToPush: '$(Build.ArtifactStagingDirectory)/Nugets/*.nupkg'
-      nuGetFeedType: 'external'
-      publishFeedCredentials: 'nuget.org'
-      allowPackageConflicts: true
-    continueOnError: true
+
 ...

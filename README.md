@@ -38,15 +38,15 @@ Building microservices through Event Driven Architecture
 
 The solution is hosted on **Azure Kubernetes Service (AKS)** and uses the following Azure services:
 
-- **Azure Container Registry (ACR)** — stores Docker images
-- **Azure Service Bus** — event bus between Command and Broker services
-- **Azure Cosmos DB** — read-model store for the Query side
-- **Azure Key Vault** — secrets and TLS certificate storage
-- **Application Gateway for Containers** — ingress with WAF policy
-- **Azure Monitor / Application Insights** — observability and telemetry
-- **Azure Managed Identity / Workload Identity** — passwordless authentication for pods
+- **Azure Container Registry (ACR)** : stores Docker images
+- **Azure Service Bus** : event bus between Command and Broker services
+- **Azure Cosmos DB** : read-model store for the Query side
+- **Azure Key Vault** : secrets and TLS certificate storage
+- **Application Gateway for Containers** : ingress with WAF policy
+- **Azure Monitor / Application Insights** : observability and telemetry
+- **Azure Managed Identity / Workload Identity** : passwordless authentication for pods
 
-See [iac/bicep/architecture.md](iac/bicep/architecture.md) for the architecture diagram.
+See [ARCHITECTURE.MD](./ARCHITECTURE.MD) for the architecture diagram.
 
 ---
 
@@ -55,17 +55,10 @@ See [iac/bicep/architecture.md](iac/bicep/architecture.md) for the architecture 
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) with the `alb` extension
 - [Azure PowerShell (`Az` module)](https://learn.microsoft.com/en-us/powershell/azure/install-az-ps)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- [Helm](https://helm.sh/docs/intro/install/) — verify with `helm version --short`
+- [Helm](https://helm.sh/docs/intro/install/) : verify with `helm version --short`
 - [Docker](https://docs.docker.com/get-docker/)
-- An Azure subscription with the following resource providers registered:
 
-```powershell
-az provider register --namespace Microsoft.ContainerService
-az provider register --namespace Microsoft.Network
-az provider register --namespace Microsoft.NetworkFunction
-az provider register --namespace Microsoft.ServiceNetworking
-az extension add --name alb
-```
+- An Azure subscription with the Contributor + User Access Administrator Role Enabled
 
 ---
 
@@ -149,16 +142,6 @@ kubectl rollout restart deployment -n azure-workloads
 # View pod logs
 kubectl logs <pod-name> -n azure-workloads
 
-# Test SignalR Hub from within the cluster
-kubectl exec -it curl-test -n azure-workloads -- curl -v -k http://signalr-service/logcornerhub
-
-# Test Command API from within the cluster
-kubectl exec -it curl-test -n azure-workloads -- `
-  curl -v -k -X POST http://webapi-service/api/speech `
-  -H "Content-Type: application/json" `
-  -d '{"title":"this is a title","description":"Lorem Ipsum ...","url":"http://test.com","typeId":1}'
-```
-
 ---
 
 ## Helm Reference
@@ -197,10 +180,9 @@ Azure Pipelines definitions are located in:
 
 | File | Purpose |
 |---|---|
-| `cicd/dotnet/azure-pipelines.yml` | Build and test .NET services |
+| `cicd/azure-pipelines-build.yml` | Build and test .NET services |
 | `cicd/azure-pipelines-db.yml` | Database migrations |
 | `cicd/azure-pipelines-helm.yml` | Helm chart deployment |
-| `src/broker/azure-pipelines.yml` | Broker service pipeline |
 
 ---
 
