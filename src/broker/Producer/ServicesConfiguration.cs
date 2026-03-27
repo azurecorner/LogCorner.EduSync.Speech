@@ -8,7 +8,6 @@ namespace LogCorner.EduSync.Speech.Producer
         public static void AddProducer(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<IProducerService, ProducerService>();
-           
         }
     }
 }

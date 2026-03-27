@@ -117,27 +117,35 @@ namespace LogCorner.EduSync.Speech.ServiceBus
         {
             var messages = new List<T>();
 
-            Console.WriteLine($"*******************-Listening for messages on queue: {serviceBusQueueName}");
+            Console.WriteLine($"*******************-Receiving messages from queue: {serviceBusQueueName}");
             var receiver = client.CreateReceiver(serviceBusQueueName);
 
-            // loop si tu veux runAlways
-
-            Console.WriteLine($"*******************-Receiving messages from queue: {serviceBusQueueName}");
-
-            var receivedMessages = await receiver.ReceiveMessagesAsync(
-                maxMessages: 10,
-                maxWaitTime: TimeSpan.FromSeconds(1), // ⚡ réduit la latence
-                cancellationToken: stoppingToken);
-
-            foreach (var msg in receivedMessages)
+            try
             {
-                var body = msg.Body.ToString();
-                var message = _jsonSerializer.Deserialize<T>(body);
+                var receivedMessages = await receiver.ReceiveMessagesAsync(
+                    maxMessages: 10,
+                    maxWaitTime: TimeSpan.FromMilliseconds(100), // ⚡ Reduced to 100ms for faster response
+                    cancellationToken: stoppingToken);
 
-                if (message != null)
-                    messages.Add(message);
+                if (receivedMessages.Any())
+                {
+                    Console.WriteLine($"*******************-Received {receivedMessages.Count} message(s)");
+                }
 
-                await receiver.CompleteMessageAsync(msg, stoppingToken);
+                foreach (var msg in receivedMessages)
+                {
+                    var body = msg.Body.ToString();
+                    var message = _jsonSerializer.Deserialize<T>(body);
+
+                    if (message != null)
+                        messages.Add(message);
+
+                    await receiver.CompleteMessageAsync(msg, stoppingToken);
+                }
+            }
+            finally
+            {
+                await receiver.DisposeAsync();
             }
 
             return messages;

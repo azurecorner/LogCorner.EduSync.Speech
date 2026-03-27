@@ -1,5 +1,6 @@
 using Azure.Identity;
 using LogCorner.EduSync.Speech.Application.UseCases;
+using LogCorner.EduSync.Speech.CosmosDb;
 using LogCorner.EduSync.Speech.Infrastructure;
 using LogCorner.EduSync.Speech.Presentation.Exceptions;
 using Microsoft.AspNetCore.Builder;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
 using System;
 using System.Collections.Generic;
-using LogCorner.EduSync.Speech.CosmosDb;
+
 namespace LogCorner.EduSync.Speech.Presentation
 {
     public class Startup

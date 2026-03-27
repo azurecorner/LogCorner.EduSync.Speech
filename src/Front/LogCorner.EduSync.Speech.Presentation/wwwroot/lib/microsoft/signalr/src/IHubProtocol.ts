@@ -148,15 +148,13 @@ export interface CancelInvocationMessage extends HubInvocationMessage {
     readonly invocationId: string;
 }
 
-export interface AckMessage extends HubMessageBase
-{
+export interface AckMessage extends HubMessageBase {
     readonly type: MessageType.Ack;
 
     readonly sequenceId: number;
 }
 
-export interface SequenceMessage extends HubMessageBase
-{
+export interface SequenceMessage extends HubMessageBase {
     readonly type: MessageType.Sequence;
 
     readonly sequenceId: number;

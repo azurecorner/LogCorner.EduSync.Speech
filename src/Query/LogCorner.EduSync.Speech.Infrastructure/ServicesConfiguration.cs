@@ -1,8 +1,4 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace LogCorner.EduSync.Speech.Infrastructure
+﻿namespace LogCorner.EduSync.Speech.Infrastructure
 {
     //public static class ServicesConfiguration
     //{

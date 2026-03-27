@@ -12,6 +12,8 @@ spec:
       app: {{ .Values.labels.app }}
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-dotnet: "monitoring/otel-instrumentation"
       labels:
         app: {{ .Values.labels.app }}
     spec:
@@ -42,6 +44,8 @@ spec:
               value: {{ .Values.env.hubUrl | quote }}
             - name: HubUrlInternal
               value: {{ .Values.env.hubUrlInternal | quote }}
+            - name: ChatBotUrl
+              value: {{ .Values.env.ChatBotUrl | quote }}
 
 ---
 apiVersion: v1

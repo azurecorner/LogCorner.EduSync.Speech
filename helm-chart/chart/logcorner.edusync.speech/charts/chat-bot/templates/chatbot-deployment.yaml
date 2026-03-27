@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatbot-deployment
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: chatbot
+spec:  
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chatbot
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-dotnet: "monitoring/otel-instrumentation"
+      labels:
+        app: chatbot
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: workload-identity-sa
+      containers:
+        - name: chat-bot
+          image: datasynchroacr.azurecr.io/chat-bot:latest
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:5000
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Kubernetes
+            - name: OpenAiEndpoint
+              value: https://datasynchro-openai-005.cognitiveservices.azure.com/
+            - name: DeploymentName
+              value: gpt-4.1-mini
+          

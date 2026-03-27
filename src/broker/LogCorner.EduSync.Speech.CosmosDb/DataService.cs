@@ -6,7 +6,6 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 {
     public sealed class DataService : IDataService
     {
-
         private string databaseName;
         private string ContainerName;
         private readonly CosmosClient _cosmosClient;
@@ -20,7 +19,7 @@ namespace LogCorner.EduSync.Speech.CosmosDb
 
         public async Task CreateAsync<T>(Func<string, Task> writeOutputAsync, T item, string partitionKeyValue)
         {
-          Database database = _cosmosClient.GetDatabase(databaseName);
+            Database database = _cosmosClient.GetDatabase(databaseName);
 
             Container container = database.GetContainer(ContainerName);
 

@@ -80,15 +80,6 @@ resource roleAssignmentUserManagedIdentity 'Microsoft.Authorization/roleAssignme
   }
 }
 
-/* resource roleAssignmentServicePrincipal 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(AzureServiceBusDataOwnerReference.id, serviceBusDataOwnerServicePrincipalId, serviceBusNamespace.id)
-  scope: serviceBusNamespace
-  properties: {
-    principalId: serviceBusDataOwnerServicePrincipalId
-    roleDefinitionId: AzureServiceBusDataOwnerReference.id
-    principalType: 'servicePrincipal'
-  }
-} */
 
 resource roleAssignmentAdminUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(AzureServiceBusDataOwnerReference.id, serviceBusDataOwnerAdminUserId, serviceBusNamespace.id)

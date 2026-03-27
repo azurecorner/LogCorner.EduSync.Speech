@@ -8,13 +8,14 @@ param databaseName string
 @description('Name of the SQL Database.')
 param serverLocation string = resourceGroup().location
 
+param clientIpAddress string 
+
 resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
   name: sqlServerName
   location: serverLocation
   properties: {
     administratorLogin: adminLogin
     administratorLoginPassword: adminPassword
-    //publicNetworkAccess: 'SecuredByPerimeter'
      publicNetworkAccess: 'Enabled' //  for development purposes, change to 'SecuredByPerimeter' for production
   }
 }
@@ -32,8 +33,8 @@ resource allowClientIPAddress 'Microsoft.Sql/servers/firewallRules@2024-05-01-pr
   parent: sqlServer
   name: 'allowClientIPAddress'
   properties: {
-    startIpAddress: '86.245.251.176'
-    endIpAddress: '86.245.251.176'
+    startIpAddress: clientIpAddress
+    endIpAddress: clientIpAddress
   }
 }
 

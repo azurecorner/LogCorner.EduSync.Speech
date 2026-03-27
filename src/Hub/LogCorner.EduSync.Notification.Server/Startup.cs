@@ -69,9 +69,8 @@ namespace LogCorner.EduSync.Notification.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-              
+
                 endpoints.MapHub<LogCornerHub<object>>("/logcornerhub");
-              
             });
         }
     }

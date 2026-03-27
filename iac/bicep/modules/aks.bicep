@@ -8,9 +8,6 @@ param prefix string
 param userAssignedIdentities string 
 
 
-@description('Log analytics ID on Input.')
-param LoganalyticID string
-
 @description('ACR name on Input.')
 param acrName string
 
@@ -26,8 +23,6 @@ param SubnetId string
 
 param vmSize string 
 
-param privateDNSZoneName string
-
 
 @description('Specifies whether to enable Workload Identity. The default value is false.')
 param workloadIdentityEnabled bool = false
@@ -38,16 +33,11 @@ param oidcIssuerProfileEnabled bool = true
 @description('The role definition ID for the ACR pull role.')
 var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
 
-var enablePrivateCluster = true
 
 @description('The role definition ID for the Kubernetes Service RBAC Cluster Admin role.')
 var kubernetesServiceRBACClusterAdminId = resourceId('Microsoft.Authorization/roleDefinitions', 'b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b')
 
 var keyVaultSecretsUserRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6') // Key Vault Secrets User Role
-
-resource privatednsZone 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
-  name: privateDNSZoneName
-}
 
 param workloadManagedIdentityName string
 
@@ -56,8 +46,6 @@ param serviceAccountName string
 param serviceAccountNamespace string 
 
 param keyVaultName string
-
-var AzureServiceBusDataOwner = '090c5cfd-751d-490a-894a-3ce6f1109419'
 
 //  This user-defined managed identity used by the workload to connect to the Azure services with a security token issued by Azue Active Directory
 resource workloadManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
@@ -69,18 +57,7 @@ resource KeyVault 'Microsoft.KeyVault/vaults@2024-06-01' existing = {
   name: keyVaultName
 }
 
-/* 
-module AzureServiceBusDataOwnerrRole 'roleAssignment.bicep' = {
-  name: 'AzureServiceBusDataOwnerRole'
-  params: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', AzureServiceBusDataOwner) 
-    identityPrincipalId: workloadManagedIdentity.properties.principalId 
-    roleDescription: 'Allows for full access to Azure Service Bus resources'
-    principalType:'ServicePrincipal'
-  }
-}
- */
-resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
+resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-10-02-preview' = {
   name: ClusterName
   location: location
   tags: tags
@@ -102,12 +79,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
     }
 
     addonProfiles: {
-        omsAgent: {
-        enabled: true
-        config: {
-          logAnalyticsWorkspaceResourceID: LoganalyticID
-        }
-      }
+      
        azureKeyvaultSecretsProvider: {
         enabled: true
       }
@@ -131,6 +103,30 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2025-07-01' = {
         vnetSubnetID: SubnetId
       }      
     ]
+     azureMonitorProfile: {
+      metrics: {
+        enabled: true
+        kubeStateMetrics: {
+          metricAnnotationsAllowList: ''
+          metricLabelsAllowlist: ''
+        }
+      }
+
+       appMonitoring: {
+        autoInstrumentation: {
+          enabled: true
+        }
+        openTelemetryLogs: {
+          enabled: true
+          port: 4317
+        }
+        openTelemetryMetrics: {
+          enabled: true
+          port: 4318
+        }
+      }
+      
+    }
     autoScalerProfile: {
       expander: 'random'
     }
@@ -215,5 +211,5 @@ output kubeletidentityObjectId string =aksCluster.properties.identityProfile.kub
 output id string = aksCluster.id
 output name string = aksCluster.name
 output issuerUrl string = aksCluster.properties.oidcIssuerProfile.issuerURL
-//output workloadManagedIdentityClientId string = workloadManagedIdentity.properties.clientId
+
 output nodeResourceGroup string = aksCluster.properties.nodeResourceGroup

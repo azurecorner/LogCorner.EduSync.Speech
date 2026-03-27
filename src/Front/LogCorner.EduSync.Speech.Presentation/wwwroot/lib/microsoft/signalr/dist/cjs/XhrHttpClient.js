@@ -45,8 +45,8 @@ class XhrHttpClient extends HttpClient_1.HttpClient {
             if (headers) {
                 Object.keys(headers)
                     .forEach((header) => {
-                    xhr.setRequestHeader(header, headers[header]);
-                });
+                        xhr.setRequestHeader(header, headers[header]);
+                    });
             }
             if (request.responseType) {
                 xhr.responseType = request.responseType;

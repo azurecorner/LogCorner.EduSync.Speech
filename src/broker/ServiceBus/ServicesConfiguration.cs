@@ -8,7 +8,6 @@ namespace LogCorner.EduSync.Speech.ServiceBus
         public static void AddServiceBus(this IServiceCollection services)
         {
             services.AddSharedKernel();
-          
 
             services.AddSingleton<IServiceBusProducer, AzureServiceBus>();
             services.AddSingleton<IServiceBusReceiver, AzureServiceBus>();

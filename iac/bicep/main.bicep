@@ -1,11 +1,11 @@
-@description('Specifies the name of the container registry.')
+@description('Specifies the tags applied to all supported resources.')
 param tags object 
 
 @description('Specifies the location for all resources.')
 
 param location string = resourceGroup().location
 
-@description('Specifies the name of the system agent pool subnet.')
+@description('Specifies the prefix used when composing resource names.')
 param prefix string
 
 @description('Specifies the name of the user assigned identity.')
@@ -17,7 +17,7 @@ param logAnalyticsWorkspaceName string
 @description('Specifies the name of the ApplicationInsight')
 param applicationInsightName string
 
-@description('')
+@description('Specifies the Microsoft Entra object ID for the admin user or group.')
 param adminUserObjectId string
 
 @description('Specifies the SKU of the container registry.')
@@ -26,21 +26,27 @@ param  containerRegistrySku  string
 @description('Specifies the name of the container registry.')
 param containerRegistryName string 
 
-@description('Specifies the name of the cluster   resource.')
+@description('Specifies the name of the AKS cluster resource.')
 param ClusterName string 
 
-param sqlserverName string = 'sqlserver-${prefix}'
+@description('Specifies the name of the Azure SQL Server resource.')
+param sqlserverName string
 
-param sqlserverAdminLogin string = 'logcorner'
+@description('Specifies the administrator login name for the Azure SQL Server.')
+param sqlserverAdminLogin string
 @secure()
+@description('Specifies the administrator password for the Azure SQL Server.')
 param sqlserverAdminPassword string
 
-param databaseName string = 'LogCorner.EduSync.Speech.Database'
+@description('Specifies the name of the primary application database.')
+param databaseName string
 
+@description('Specifies the list of private DNS zone names to create and link to the virtual networks.')
 param privateDnsZoneNames  array = [
-  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net'
+  'privatelink.azurecr.io' , 'privatelink.vaultcore.azure.net','privatelink.database.windows.net','privatelink.${resourceGroup().location}.azmk8s.io','privatelink.documents.azure.com','privatelink.servicebus.windows.net','privatelink.file.core.windows.net','privatelink.cognitiveservices.azure.com'
 ]
 
+@description('Specifies the name of the Azure Key Vault resource.')
 param keyvault_name string 
 
 @description('Specifies the namespace of the application.')
@@ -52,35 +58,114 @@ param workloadIdentityServiceAccountName string
 @description('Specifies the name of the workload managed identity.')
 param workloadManagedIdentityName string 
 
+@description('Specifies the name of the hub virtual network used for peering.')
 param hubVirtualNetworkName string
 
-param controllerServiceAccountName string = 'alb-controller-sa'
+@description('Specifies the Kubernetes service account name used by the ALB controller.')
+param controllerServiceAccountName string
 
-param controllerNamespace string ='azure-alb-system'
+@description('Specifies the Kubernetes namespace used by the ALB controller.')
+param controllerNamespace string
 
-@description('Name of the private link subnet where the SQL Server private endpoint will be created.')
+// Network parameters
+@description('Specifies the address space assigned to the spoke virtual network.')
+param virtualNetworkAddressSpace array 
+@description('Specifies the name of the AKS subnet.')
+param aks_subnet_name string 
+@description('Specifies the address prefix of the AKS subnet.')
+param aks_subnet_addressPrefix string 
+@description('Specifies the name of the application gateway subnet.')
+param appgw_subnet_name string 
+@description('Specifies the address prefix of the application gateway subnet.')
+param appgw_subnet_addressPrefix string 
+@description('Specifies the name of the private endpoint subnet.')
+param privatelink_subnet_name string 
+@description('Specifies the address prefix of the private endpoint subnet.')
+param privatelink_subnet_addressPrefix string 
+@description('Specifies the name of the Application Gateway for Containers subnet.')
+param applicationGatewayForContainersSubnetName string 
+@description('Specifies the address prefix of the Application Gateway for Containers subnet.')
+param applicationGatewayForContainersSubnetAddressPrefix string 
+@description('Specifies the name of the container instance subnet.')
+param containerInstanceSubnetName string 
+@description('Specifies the address prefix of the container instance subnet.')
+param containerInstanceSubnetAddressPrefix string 
+@description('Specifies the name of the API Management subnet.')
+param appim_subnet_name string 
+@description('Specifies the address prefix of the API Management subnet.')
+param appim_subnet_addressPrefix string 
+
+@description('Specifies the PowerShell deployment script content used to initialize database objects.')
 param runScript string = loadTextContent('./scripts/run.ps1')
 var createTablesScriptRaw = loadTextContent('./scripts/createTables.sql')
 var createTablesScriptBase64 = base64(createTablesScriptRaw)
-@description('Name of the virtual network where the container instance subnet is located.')
+@description('Specifies the name of the storage account used by the deployment script.')
 param storageAccountName string
 
-param serviceBusNamespaceName string = 'sb-namespace-${prefix}'
-param serviceBusQueueName string = 'sb-queue-${prefix}'
+@description('Specifies the name of the Azure Service Bus namespace.')
+param serviceBusNamespaceName string
+@description('Specifies the name of the Azure Service Bus queue.')
+param serviceBusQueueName string
 
 
-param cosmosdbAccountName string = 'cosmos-${prefix}-002'
-param cosmosdbDatabaseName string = 'LogCorner.EduSync.Speech.Database'
+@description('Specifies the name of the Azure Cosmos DB account.')
+param cosmosdbAccountName string
+@description('Specifies the name of the Azure Cosmos DB database.')
+param cosmosdbDatabaseName string
 @description('Optional principal ID for Cosmos SQL Built-in Data Contributor (jumpbox/system identity). Leave empty to skip.')
 param cosmosJumpboxPrincipalId string 
 
 // Application Gateway for Containers
-
-param userAssignedIdentities_azure_alb_identity_name string = 'azure_alb_identity'
+@description('Specifies the name of the user-assigned managed identity used by the ALB controller.')
+param userAssignedIdentities_azure_alb_identity_name string
 @description('Specifies the name of the Application Gateway for Containers.')
-param applicationGatewayForContainersName string = 'appgwforcon-${prefix}'
+param applicationGatewayForContainersName string
 
+  
+// Azure OpenAI Service
+@description('Specifies whether creating the Azure OpenAi resource or not.')
+param openAiEnabled bool
+
+@description('Specifies the name of the Azure OpenAI resource.')
+param openAiName string
+
+
+@description('Specifies the name of the AKS managed resource group that hosts cluster-managed resources.')
 param nodeResourceGroupName string= 'MC_${resourceGroup().name}_${ClusterName}_${location}'
+
+
+// Observability parameters
+
+
+// *** Optional: Deploy Managed Prometheus and Grafana if monitoring is required. ***
+@description('Specifies whether create or not Azure Monitor managed service for Prometheus and Azure Managed Grafana resources.')
+param prometheusAndGrafanaEnabled bool 
+
+@description('Specifies the name of the managed Prometheus resource.')
+param managedPrometheusName string
+
+@description('Specifies the name of the managed Grafana resource.')
+param managedGrafana string
+
+@description('Specifies the SKU of the managed Grafana resource.')
+param    skuName string 
+
+@description('Specifies the API key for the managed Grafana resource.')
+param    apiKey string 
+
+
+@description('Specifies whether to create an action group for alerting.')
+param actionGroupEnabled bool
+
+@description('Specifies the name of the action group.') 
+param actionGroupShortName string
+
+@description('Specifies the email address to use for the action group.')
+@secure()
+param actionGroupEmailvaAddress string
+
+@description('Specifies whether to use the common alert schema for the action group.')
+param actionGroupUseCommonAlertSchema  bool
 
 resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2020-11-01' existing = {
   name: hubVirtualNetworkName
@@ -105,44 +190,24 @@ resource userAssignedIdentities_azure_alb_identity_resource 'Microsoft.ManagedId
   location: location
 }
 
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
-  name: logAnalyticsWorkspaceName
-  tags: tags
-  location: location
-  properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
-  }
-}
-
-resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightName
-  location: location
-  tags: tags
-  kind: 'other'
-  properties: {
-    Application_Type: 'web'
-    WorkspaceResourceId: logAnalyticsWorkspace.id
-  }
-}
- 
 module network 'modules/network.bicep' = {
   name: '${prefix}-network'
   params: {
     virtualNetworkName: '${prefix}-vnet'
     location: location
-    virtualNetworkAddressSpace: ['10.200.0.0/16']
-    aks_subnet_name: 'aks-subnet'
-    appgw_subnet_name: 'appgw-subnet'
-    aks_subnet_addressPrefix: '10.200.0.0/22'
-    appgw_subnet_addressPrefix:'10.200.4.0/24'
-    privatelink_subnet_name:'privatelink-subnet'
-    privatelink_subnet_addressPrefix:'10.200.5.0/24'
-    applicationGatewayForContainersSubnetName: 'appgwforcontainers-subnet'
-    applicationGatewayForContainersSubnetAddressPrefix: '10.200.6.0/24'
-    containerInstanceSubnetName: 'containerinstance-subnet'
-    containerInstanceSubnetAddressPrefix: '10.200.7.0/24'
+    virtualNetworkAddressSpace: virtualNetworkAddressSpace
+    aks_subnet_name: aks_subnet_name
+    appgw_subnet_name: appgw_subnet_name
+    aks_subnet_addressPrefix: aks_subnet_addressPrefix
+    appgw_subnet_addressPrefix: appgw_subnet_addressPrefix
+    privatelink_subnet_name: privatelink_subnet_name
+    privatelink_subnet_addressPrefix: privatelink_subnet_addressPrefix
+    applicationGatewayForContainersSubnetName: applicationGatewayForContainersSubnetName
+    applicationGatewayForContainersSubnetAddressPrefix: applicationGatewayForContainersSubnetAddressPrefix
+    containerInstanceSubnetName: containerInstanceSubnetName
+    containerInstanceSubnetAddressPrefix: containerInstanceSubnetAddressPrefix
+    appim_subnet_name: appim_subnet_name
+    appim_subnet_addressPrefix: appim_subnet_addressPrefix
   }
 }
 
@@ -177,8 +242,7 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     ]
   }
 }]
-
-/* module aksCluster 'modules/aks.bicep' = {
+ module aksCluster 'modules/aks.bicep' = {
   name: 'aks-cluster'
   params: {
     ClusterName: ClusterName
@@ -187,19 +251,20 @@ module PrivateDnsZone 'modules/private_dns_zone.bicep' = [for privateDnsZoneName
     userAssignedIdentities: managedIdentity.id
     acrName: containerRegistryName
     vmSize: 'Standard_DS2_v2'
-    privateDNSZoneName: 'privatelink.${resourceGroup().location}.azmk8s.io'
     keyVaultName: keyvault_name
     SubnetId: network.outputs.aks_subnet_id
     tags: tags
     adminGroupObjectIDs: [adminUserObjectId]
-    LoganalyticID: logAnalyticsWorkspace.id
     serviceAccountNamespace: workloadIdentityserviceAccounNamespace
     serviceAccountName: workloadIdentityServiceAccountName
     workloadManagedIdentityName: workloadManagedIdentityName
     workloadIdentityEnabled: true
     oidcIssuerProfileEnabled: true
   }
-}  */
+  dependsOn: [ 
+    keyvault
+  ]
+}    
  
 module containerRegistry 'modules/containerRegistry.bicep' = {
   name: 'containerRegistry'
@@ -208,7 +273,7 @@ module containerRegistry 'modules/containerRegistry.bicep' = {
     sku: containerRegistrySku
     adminUserEnabled : false
     location: location
-     workspaceId: logAnalyticsWorkspace.id
+     workspaceId: monitoring.outputs.logAnalyticsWorkspaceId
     tags: tags
   }
 }
@@ -241,6 +306,7 @@ module sqlserver 'modules/sql-server.bicep' = {
     adminPassword: sqlserverAdminPassword
     databaseName: databaseName
     serverLocation: location
+    clientIpAddress: '86.245.251.176'
   }
 }
 
@@ -295,7 +361,7 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
   }
 }
 
- module deploymentScript 'modules/deployment-script.bicep' =  {
+module deploymentScript 'modules/deployment-script.bicep' =  {
   name: 'deployment-script'
   params: {
     location: location
@@ -313,8 +379,8 @@ module storagePrivateEndpoint 'modules/private_endpoint.bicep' = {
     storagePrivateEndpoint
     slqServerPrivateEndpoint
   ]
-} 
- 
+}  
+  
 // *** Service Bus Namespace and Queue ***
 
  module servicebus 'modules/serviceBus.bicep' = {
@@ -379,7 +445,7 @@ module cosmosdbPrivateEndpoint 'modules/private_endpoint.bicep' = {
     PrivateDnsZone
   ]
 }
-/* 
+
 module keyvault 'modules/keyvault.bicep' = {
   name: keyvault_name
   params: {
@@ -388,9 +454,9 @@ module keyvault 'modules/keyvault.bicep' = {
     workloadManagedIdentityName:workloadManagedIdentityName
     privatelink_subnet_id: network.outputs.privatelink_subnet_id
   }
-  dependsOn: [
-    aksCluster
-  ]
+ /*  dependsOn: [
+    aksCluster 
+  ] */
 }
 
 module gateway 'modules/applicationGatewayForContainers.bicep' = {
@@ -401,12 +467,14 @@ module gateway 'modules/applicationGatewayForContainers.bicep' = {
     alb_subnet_id:network.outputs.applicationGatewayForContainersSubnet_id
     nodeResourceGroupName: nodeResourceGroupName
     userManagedIdentityprincipalId: userAssignedIdentities_azure_alb_identity_resource.properties.principalId
+    appgwc_waf_policy_name: 'appgwc-waf-policy'
+    appgwc_security_policy_name: 'appgwc-security-policy'
  }
-  dependsOn: [
-    aksCluster
+dependsOn: [
+   aksCluster
   ]
-} 
- 
+}    
+  
 resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_azure_alb_identity_name 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2025-01-31-preview' = {
   parent: userAssignedIdentities_azure_alb_identity_resource
   name: userAssignedIdentities_azure_alb_identity_name
@@ -417,6 +485,66 @@ resource userAssignedIdentities_azure_alb_identity_name_userAssignedIdentities_a
       'api://AzureADTokenExchange'
     ]
   }
-} 
+}  
   
- */
+// OBSERVABILITY MODULES
+
+module monitoring 'modules/monitoring.bicep' = {
+  name: '${prefix}-monitoring'
+  params: {
+ logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
+ appInsightName: applicationInsightName
+ sku: 'PerGB2018'
+   type: 'web'
+    requestSource: 'CustomDeployment'
+     name: '${prefix}-actionGroup'
+    enabled: actionGroupEnabled
+    groupShortName: actionGroupShortName
+    emailAddress: actionGroupEmailvaAddress
+    useCommonAlertSchema: actionGroupUseCommonAlertSchema
+  }
+}
+
+module prometheus 'modules/managedPrometheus.bicep' = if (prometheusAndGrafanaEnabled){
+  name: '${prefix}-managedPrometheus'
+  params: {
+    name: managedPrometheusName
+    publicNetworkAccess: 'Enabled'
+    location: location
+    tags: tags
+    clusterName: ClusterName
+    actionGroupId: actionGroupEnabled ? monitoring.outputs.actionGroupId : ''
+  }
+}
+
+module grafana 'modules/managedGrafana.bicep' =  if (prometheusAndGrafanaEnabled){
+  name: '${prefix}-managedGrafana'
+  params: {
+    name: managedGrafana
+    prometheusName: managedPrometheusName
+    location: location
+    tags: tags
+    skuName: skuName
+    apiKey: apiKey
+    userId: adminUserObjectId
+  }
+
+  dependsOn: [
+    prometheus
+  ]
+}     
+
+ module openAi 'modules/openAi.bicep' = if (openAiEnabled) {
+  name: 'openAi'
+  params: {
+    foundry_name: openAiName
+    location: location
+    foundry_sku: 'S0'
+    project_name: '${openAiName}-project'
+    PrivateDnsZone:'privatelink.cognitiveservices.azure.com'
+    privatelink_subnet_id: network.outputs.privatelink_subnet_id
+    workloadManagedIdentityName: workloadManagedIdentity.name
+    workspaceId: monitoring.outputs.logAnalyticsWorkspaceId
+  }
+}
+ 
