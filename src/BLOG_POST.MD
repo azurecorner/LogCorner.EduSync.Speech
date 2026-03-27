@@ -15,7 +15,7 @@ The platform is designed to support scalable write/read separation, asynchronous
 
 ## High-level system overview
 
-![Azure High-Level Architecture](../diagrams/architecture-Azure%20High-Level%20Architecture.drawio.png)
+![Azure High-Level Architecture](../diagrams/High-Level-Architecture.png)
 
 At runtime, the front-end sends create/update/delete actions to the Command API. After successful persistence to Azure SQL, events are published to Azure Service Bus. A broker/worker service consumes those events and updates read projections in Cosmos DB. Query APIs then serve these projections, while SignalR pushes updates to connected clients. The chatbot service handles conversational requests by calling Azure OpenAI.
 
@@ -53,7 +53,7 @@ The `src/` folder is organized by runtime concerns and bounded contexts:
 
 ## End-to-end data flow
 
-![Data Flow](../diagrams/dataflow.drawio.png)
+![Data Flow](../diagrams/dataflow.png)
 
 1. Internet traffic enters through Application Gateway for Containers (WAF + TLS).
 2. Requests are routed to workloads in AKS.
